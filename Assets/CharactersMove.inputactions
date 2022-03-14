@@ -1,0 +1,51 @@
+{
+    "name": "CharactersMove",
+    "maps": [
+        {
+            "name": "CharactersMove",
+            "id": "5c1b2053-6f69-4790-9015-951bb91702a8",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "49c40f50-2c10-45db-96d7-3b94776198c2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "379304cb-fa03-46b9-8b89-b9bf01540ad6",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard + Mouse",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Keyboard + Mouse",
+            "bindingGroup": "Keyboard + Mouse",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}
