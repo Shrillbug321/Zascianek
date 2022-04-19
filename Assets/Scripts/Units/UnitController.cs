@@ -1,12 +1,13 @@
 using Assets.Scripts;
+using Assets.Scripts.Units;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CharacterMove : MonoBehaviour
+public class UnitController : MonoBehaviour
 {
-    public Unit UnitObject;
+    public UnitModel Unit;
     public Rigidbody2D rb2D;
     Vector2 oldPos = new Vector2();
     Vector2 movement = new Vector2();
@@ -19,19 +20,19 @@ public class CharacterMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        UnitObject = ScriptableObject.CreateInstance<Unit>();
-        UnitObject.rb2D = rb2D = GetComponent<Rigidbody2D>();
+        Unit = UnitFactory.Create();
+        Unit.rb2D = rb2D = GetComponent<Rigidbody2D>();
         oldPos = rb2D.position;
         movement = rb2D.position;
-        UnitObject.WorkBuildingId = 1;
-        workBuilding = BuildingFactory.Buildings[UnitObject.WorkBuildingId];
+        Unit.WorkBuildingId = 1;
+        workBuilding = BuildingFactory.Buildings[Unit.WorkBuildingId];
     }
 
     // Update is called once per frame
     void Update()
     {
         //StartCoroutine(MoveObject());
-        if (workBuilding.rb2D.position != UnitObject.position)
+        if (workBuilding.rb2D.position != Unit.position)
         {
             if (!moveStart)
             {
@@ -40,7 +41,7 @@ public class CharacterMove : MonoBehaviour
             }
             else
             {
-                float speed = 5;
+                float speed = 2;
                 while (Vector2.Distance(rb2D.position, movement) > 0.2)
                 {
                     movementStatus += Time.deltaTime;
@@ -50,11 +51,11 @@ public class CharacterMove : MonoBehaviour
                 }
                 moveStart = false;
                 movementStatus = 0;
-                if (UnitObject.WorkBuildingId == 1)
-                    UnitObject.WorkBuildingId = 0;
+                if (Unit.WorkBuildingId == 1)
+                    Unit.WorkBuildingId = 0;
                 else
-                    UnitObject.WorkBuildingId = 1;
-                workBuilding = BuildingFactory.Buildings[UnitObject.WorkBuildingId];
+                    Unit.WorkBuildingId = 1;
+                workBuilding = BuildingFactory.Buildings[Unit.WorkBuildingId];
                 oldPos = movement;
             }
             
@@ -81,11 +82,11 @@ public class CharacterMove : MonoBehaviour
             print(movementStatus);
             yield return null;
         }
-        if (UnitObject.WorkBuildingId == 1)
-            UnitObject.WorkBuildingId = 0;
+        if (Unit.WorkBuildingId == 1)
+            Unit.WorkBuildingId = 0;
         else
-            UnitObject.WorkBuildingId = 1; 
-        workBuilding = BuildingFactory.Buildings[UnitObject.WorkBuildingId];
+            Unit.WorkBuildingId = 1; 
+        workBuilding = BuildingFactory.Buildings[Unit.WorkBuildingId];
         oldPos = movement;
     }
 }

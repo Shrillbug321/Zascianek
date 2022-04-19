@@ -59,9 +59,10 @@
     <Compile Include="Assets\Scripts\Building.cs" />
     <Compile Include="Assets\Scripts\Granary.cs" />
     <Compile Include="Assets\Scripts\BuildingController.cs" />
-    <Compile Include="Assets\Scripts\CharacterMove.cs" />
+    <Compile Include="Assets\Scripts\Units\UnitController.cs" />
     <Compile Include="Assets\Scripts\BuildingFactory.cs" />
-    <Compile Include="Assets\Scripts\Unit.cs" />
+    <Compile Include="Assets\Scripts\Units\UnitFactory.cs" />
+    <Compile Include="Assets\Scripts\Units\UnitModel.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Scripts\CharacterMove — kopia.cs" />
   </ItemGroup>
