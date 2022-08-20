@@ -22693,3 +22693,7 @@
 /obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 /Library/AnnotationManager
 /Library/ArtifactDB
+*.meta
+/Temp
+/Builds
+/Library

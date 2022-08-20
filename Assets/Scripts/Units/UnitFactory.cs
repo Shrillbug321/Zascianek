@@ -13,6 +13,7 @@ namespace Assets.Scripts.Units
 		public static UnitModel Create()
 		{
 			UnitModel unit = ScriptableObject.CreateInstance<UnitModel>();
+			unit.Camera = Camera.main;
 			unit.UnitId = Units.Count;
 			Units.Add(unit);
 			return unit;

@@ -9,19 +9,20 @@ public class UnitController : MonoBehaviour
 {
     public UnitModel Unit;
     public Rigidbody2D rb2D;
-    Vector2 oldPos = new Vector2();
-    Vector2 movement = new Vector2();
+    protected Vector2 oldPos = new Vector2();
+    protected Vector2 movement = new Vector2();
     private Vector2 target;
-    int offsetX = 10;
-    int offsetY = 5;
-    Building workBuilding;
-    bool moveStart = false;
-    float movementStatus = 0;
+    protected int offsetX = 20;
+    protected int offsetY = 10;
+    protected Building workBuilding;
+    protected bool moveStart = false;
+    protected float movementStatus = 0;
     // Start is called before the first frame update
     void Start()
     {
         Unit = UnitFactory.Create();
         Unit.rb2D = rb2D = GetComponent<Rigidbody2D>();
+        Unit.transform = GetComponent<Transform>();
         oldPos = rb2D.position;
         movement = rb2D.position;
         Unit.WorkBuildingId = 1;
@@ -46,7 +47,7 @@ public class UnitController : MonoBehaviour
                 {
                     movementStatus += Time.deltaTime;
                     rb2D.position = Vector2.Lerp(oldPos, movement, movementStatus / speed);
-                    print(movementStatus);
+                    //print(movementStatus);
                     return;
                 }
                 moveStart = false;
@@ -74,12 +75,13 @@ public class UnitController : MonoBehaviour
     public IEnumerator MoveObject()
     {
         float movementStatus = 0;
-        float speed = Vector2.Distance(rb2D.position, movement)/2;
+        //float speed = 0.8f;
+        float speed = Vector2.Distance(rb2D.position, movement)/6;
         while (Vector2.Distance(rb2D.position, movement) > 0.1)
         {
-            movementStatus += Time.deltaTime;
+            movementStatus += 0.001f;
             rb2D.position = Vector2.Lerp(oldPos, movement, movementStatus / speed);
-            print(movementStatus);
+            //print(movementStatus);
             yield return null;
         }
         if (Unit.WorkBuildingId == 1)

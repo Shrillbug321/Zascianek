@@ -14,7 +14,9 @@ namespace Assets.Scripts
 		public string UnitName { get; set; }
 		public float Speed { get; set; }
 		public Rigidbody2D rb2D;
+		public Transform transform;
 		public UnitController UnitMove;
 		public Vector2 position = new Vector2();
+		public Camera Camera { get; set; }
 	}
 }
