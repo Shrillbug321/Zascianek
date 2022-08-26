@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,7 +25,13 @@ public class Infrantry : Warrior
 		}*/
 		if (collision.GetType() == typeof(BoxCollider2D))
 		{
-			print('c');
+			UnitModel enemy = collision.GetComponent<UnitModel>();
+			DecreaseHP(enemy, 33);
 		}
+	}
+
+	protected override void Attack()
+	{
+		throw new System.NotImplementedException();
 	}
 }

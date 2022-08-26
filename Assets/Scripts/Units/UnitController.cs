@@ -82,6 +82,14 @@ public class UnitController : MonoBehaviour
 
          }*/
     }
+
+    protected virtual void DecreaseHP(UnitModel unit, int HowMany)
+    {
+        unit.HP -= HowMany;
+        if (unit.HP <= 0)
+            print("zgon");
+    }
+
     public IEnumerator MoveObject()
     {
         float movementStatus = 0;

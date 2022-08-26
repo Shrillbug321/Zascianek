@@ -1094,7 +1094,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -1294,8 +1294,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb2D: {fileID: 0}
+  oldPos: {x: 0, y: 0}
+  movement: {x: 0, y: 0}
+  target: {x: 0, y: 0}
+  offsetX: 20
+  offsetY: 10
+  workBuilding: {fileID: 0}
+  moveStart: 0
+  movementStatus: 0
   stopped: 0
   SeenEnemy: 0
+  enemyPos: {x: 0, y: 0}
 --- !u!50 &790614947
 Rigidbody2D:
   serializedVersion: 4
@@ -2065,8 +2074,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb2D: {fileID: 0}
+  oldPos: {x: 0, y: 0}
+  movement: {x: 0, y: 0}
+  target: {x: 0, y: 0}
+  offsetX: 20
+  offsetY: 10
+  workBuilding: {fileID: 0}
+  moveStart: 0
+  movementStatus: 0
   stopped: 0
   SeenEnemy: 0
+  enemyPos: {x: 0, y: 0}
 --- !u!61 &1315780722
 BoxCollider2D:
   m_ObjectHideFlags: 0

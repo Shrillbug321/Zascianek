@@ -13,6 +13,7 @@ namespace Assets.Scripts
 		public int WorkBuildingId { get; set; }
 		public string Name { get; set; }
 		public float Speed { get; set; }
+		public int HP { get; set; } = 100;
 		public Rigidbody2D rb2D;
 		public Transform transform;
 		public UnitController UnitMove;
