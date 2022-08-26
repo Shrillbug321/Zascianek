@@ -126,6 +126,14 @@ Library: lib_burst_generated
 --compilation-defines=UNITY_INPUT_SYSTEM_ENABLE_PHYSICS2D
 --compilation-defines=UNITY_INPUT_SYSTEM_ENABLE_UI
 --compilation-defines=ENABLE_ANIMATION_BURST
+--compilation-defines=CINEMACHINE_TIMELINE
+--compilation-defines=CINEMACHINE_PHYSICS_2D
+--compilation-defines=CINEMACHINE_PHYSICS
+--compilation-defines=CINEMACHINE_UGUI
+--compilation-defines=CINEMACHINE_PIXEL_PERFECT_2_0_3
+--compilation-defines=CINEMACHINE_UNITY_INPUTSYSTEM
+--compilation-defines=CINEMACHINE_UNITY_ANIMATION
+--compilation-defines=CINEMACHINE_UNITY_IMGUI
 --compilation-defines=TIMELINE_FRAMEACCURATE
 --compilation-defines=ENABLE_SPRITESHAPE_BURST
 --linker-options=PdbAltPath="Zaścianek_Data/Plugins/x86_64"
@@ -139,6 +147,8 @@ Library: lib_burst_generated
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.Burst.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.Animation.Runtime.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.TextMeshPro.dll
+--root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Assembly-CSharp.dll
+--root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Cinemachine.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.Timeline.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.SpriteShape.Runtime.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.PixelPerfect.dll
@@ -146,7 +156,6 @@ Library: lib_burst_generated
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.IK.Runtime.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.Tilemap.Extras.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.InternalAPIEngineBridge.001.dll
---root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Assembly-CSharp.dll
 --assembly-folder=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\
 --pdb-search-paths=Temp/ManagedSymbols/
 --method=Unity.Burst.BurstCompiler+BurstCompilerHelper, Unity.Burst, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::IsBurstEnabled()--8c2be93e18276203cbd918daa2748a10
@@ -280,6 +289,14 @@ Library: lib_burst_generated
 --compilation-defines=UNITY_INPUT_SYSTEM_ENABLE_PHYSICS2D
 --compilation-defines=UNITY_INPUT_SYSTEM_ENABLE_UI
 --compilation-defines=ENABLE_ANIMATION_BURST
+--compilation-defines=CINEMACHINE_TIMELINE
+--compilation-defines=CINEMACHINE_PHYSICS_2D
+--compilation-defines=CINEMACHINE_PHYSICS
+--compilation-defines=CINEMACHINE_UGUI
+--compilation-defines=CINEMACHINE_PIXEL_PERFECT_2_0_3
+--compilation-defines=CINEMACHINE_UNITY_INPUTSYSTEM
+--compilation-defines=CINEMACHINE_UNITY_ANIMATION
+--compilation-defines=CINEMACHINE_UNITY_IMGUI
 --compilation-defines=TIMELINE_FRAMEACCURATE
 --compilation-defines=ENABLE_SPRITESHAPE_BURST
 --linker-options=PdbAltPath="Zaścianek_Data/Plugins/x86_64"
@@ -293,6 +310,8 @@ Library: lib_burst_generated
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.Burst.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.Animation.Runtime.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.TextMeshPro.dll
+--root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Assembly-CSharp.dll
+--root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Cinemachine.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.Timeline.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.SpriteShape.Runtime.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.PixelPerfect.dll
@@ -300,7 +319,6 @@ Library: lib_burst_generated
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.IK.Runtime.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.2D.Tilemap.Extras.dll
 --root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Unity.InternalAPIEngineBridge.001.dll
---root-assembly=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\Assembly-CSharp.dll
 --assembly-folder=E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Temp\StagingArea\Data\Managed\
 --pdb-search-paths=Temp/ManagedSymbols/
 --method=Unity.Burst.BurstCompiler+BurstCompilerHelper, Unity.Burst, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::IsBurstEnabled()--8c2be93e18276203cbd918daa2748a10

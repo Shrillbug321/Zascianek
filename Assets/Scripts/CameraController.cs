@@ -29,7 +29,7 @@ public class CameraController : MonoBehaviour
 
 	//Im mniejsze tym bli¿ej
 	private readonly float zoomMin = 10;
-	private readonly float zoomStart = 6;
+	private readonly float zoomStart = 6; //6
 	private readonly float zoomMax = 4;
 	private Camera camera = null;
 	// Start is called before the first frame update
