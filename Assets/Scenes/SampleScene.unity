@@ -357,7 +357,7 @@ SpriteRenderer:
   m_Size: {x: 5.6, y: 7.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &82705932
@@ -572,7 +572,7 @@ SpriteRenderer:
   m_Size: {x: 5.6, y: 7.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &352276159
@@ -994,6 +994,7 @@ GameObject:
   - component: {fileID: 770174428}
   - component: {fileID: 770174427}
   - component: {fileID: 770174430}
+  - component: {fileID: 770174431}
   m_Layer: 0
   m_Name: enemy_infrantry
   m_TagString: Enemy
@@ -1110,6 +1111,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.17, y: 2.43}
   m_EdgeRadius: 0
+--- !u!114 &770174431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770174425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88687cb4f973ba34083eeb00dd03bb5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb2D: {fileID: 0}
+  stopped: 1
+  SeenEnemy: 0
 --- !u!1 &786270577
 GameObject:
   m_ObjectHideFlags: 0
@@ -1176,7 +1192,7 @@ SpriteRenderer:
   m_Size: {x: 5.6, y: 7.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &786270579
@@ -1209,7 +1225,7 @@ GameObject:
   - component: {fileID: 790614948}
   m_Layer: 0
   m_Name: ludek 1
-  m_TagString: Warrior
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1294,17 +1310,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb2D: {fileID: 0}
-  oldPos: {x: 0, y: 0}
-  movement: {x: 0, y: 0}
-  target: {x: 0, y: 0}
-  offsetX: 20
-  offsetY: 10
-  workBuilding: {fileID: 0}
-  moveStart: 0
-  movementStatus: 0
-  stopped: 0
+  stopped: 1
   SeenEnemy: 0
-  enemyPos: {x: 0, y: 0}
 --- !u!50 &790614947
 Rigidbody2D:
   serializedVersion: 4
@@ -1502,7 +1509,7 @@ SpriteRenderer:
   m_Size: {x: 5.6, y: 7.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &970776232
@@ -1834,8 +1841,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c64a62bc5d3139d4389fb3959b875e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb2D: {fileID: 0}
-  stopped: 0
 --- !u!1 &1178169789
 GameObject:
   m_ObjectHideFlags: 0
@@ -1902,7 +1907,7 @@ SpriteRenderer:
   m_Size: {x: 5.6, y: 7.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1178169791
@@ -1933,11 +1938,9 @@ GameObject:
   - component: {fileID: 1315780722}
   - component: {fileID: 1315780716}
   - component: {fileID: 1315780719}
-  - component: {fileID: 1315780720}
-  - component: {fileID: 1315780721}
   m_Layer: 0
   m_Name: infranty
-  m_TagString: Warrior
+  m_TagString: PlayerWarrior
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1952,7 +1955,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -2040,51 +2043,6 @@ MonoBehaviour:
   rb2D: {fileID: 0}
   stopped: 0
   SeenEnemy: 0
---- !u!50 &1315780720
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1315780715}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!114 &1315780721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1315780715}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 813fa1357cb25a443a5f8a6bce9f8885, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb2D: {fileID: 0}
-  oldPos: {x: 0, y: 0}
-  movement: {x: 0, y: 0}
-  target: {x: 0, y: 0}
-  offsetX: 20
-  offsetY: 10
-  workBuilding: {fileID: 0}
-  moveStart: 0
-  movementStatus: 0
-  stopped: 0
-  SeenEnemy: 0
-  enemyPos: {x: 0, y: 0}
 --- !u!61 &1315780722
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2095,7 +2053,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -2222,7 +2180,7 @@ SpriteRenderer:
   m_Size: {x: 5.6, y: 7.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1528506849

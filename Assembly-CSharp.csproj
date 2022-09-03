@@ -59,13 +59,16 @@
     <Compile Include="Assets\Scripts\Buildings\Building.cs" />
     <Compile Include="Assets\Scripts\Granary.cs" />
     <Compile Include="Assets\Scripts\Buildings\BuildingController.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Infrantry.cs" />
+    <Compile Include="Assets\Scripts\Units\Warriors\Player\Infrantry.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Warrior.cs" />
     <Compile Include="Assets\Scripts\Units\UnitController.cs" />
+    <Compile Include="Assets\Scripts\Units\Warriors\Enemy\EnemyInfrantry.cs" />
     <Compile Include="Assets\Scripts\Buildings\BuildingFactory.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Units\Warriors\AbstractWarrior.cs" />
     <Compile Include="Assets\Scripts\Units\UnitFactory.cs" />
     <Compile Include="Assets\Scripts\Units\UnitModel.cs" />
+    <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Enemy.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Scripts\CharacterMove — kopia.cs" />
   </ItemGroup>

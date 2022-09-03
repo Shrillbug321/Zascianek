@@ -1,11 +1,20 @@
+using Assets.Scripts;
 using System;
+using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public abstract class Warrior : UnitController
+public class Warrior : AbstractWarrior
 {
-	public bool SeenEnemy = false;
-	Vector2 enemyPos = Vector2.zero;
+	public override void Start()
+	{
+		base.Start();
+
+		ComparingTags = new string []{ "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
+	}
+
 	// Update is called once per frame
 	protected void Update()
 	{
@@ -21,31 +30,19 @@ public abstract class Warrior : UnitController
 		{
 			RightClick();
 		}
-		if (SeenEnemy && stopped)
-		{
-			oldPos = Unit.transform.position;
-			movement = enemyPos;
-			stopped = false;
-		}
 	}
-
-	protected abstract void Attack();
-
-	
 
 	protected void LeftClick(Vector2 mousePos)
 	{
-		if (!Unit.IsChoosen)
+		if (!IsChoosen)
 		{
 			RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
-			if (hit.collider.gameObject.name == Unit.Name)
+			if (hit.collider.gameObject.name == Name)
 			{
 				if (Math.Abs(hit.collider.attachedRigidbody.position.x - mousePos.x) < 0.25f)// && hit.collider.GetType() == typeof(BoxCollider2D))
 				{
-
-					Unit.IsChoosen = true;
-					print(Unit.Name);
-
+					IsChoosen = true;
+					print(Name);
 				}
 			}
 		}
@@ -58,7 +55,7 @@ public abstract class Warrior : UnitController
 			}
 			else
 			{
-				oldPos = Unit.rb2D.position;
+				oldPos = rb2D.position;
 				movement = new Vector2(mousePos.x, mousePos.y);
 			}
 		}
@@ -67,40 +64,6 @@ public abstract class Warrior : UnitController
 
 	public void RightClick()
 	{
-		Unit.IsChoosen = false;
-	}
-
-	protected virtual void OnTriggerEnter2D(Collider2D collision)
-	{
-		if (collision.GetType() == typeof(CircleCollider2D))
-		{
-			if (!SeenEnemy)
-			{
-				enemyPos = collision.gameObject.transform.position;
-				SeenEnemy = true;
-				stopped = true;
-			}
-
-		}
-	}
-
-	private void OnTriggerExit2D(Collider2D collision)
-	{
-		if (collision.GetType() == typeof(CircleCollider2D))
-		{
-			if (SeenEnemy)
-			{
-				SeenEnemy = false;
-			}
-		}
-	}
-
-	private void OnMouseDown()
-	{
-		//print("mysz");
-	}
-	private void OnMouseEnter()
-	{
-		//print("k");
+		IsChoosen = false;
 	}
 }

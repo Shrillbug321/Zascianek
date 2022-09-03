@@ -1,4 +1,4 @@
-using Assets.Scripts;
+/*using Assets.Scripts;
 using Assets.Scripts.Units;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ public class UnitController : MonoBehaviour
     protected float movementStatus = 0;
     public Coroutine move;
     public bool stopped = true;
-    // Start is called before the first frame update
+
     void Start()
     {
         //move = MoveObject();
@@ -29,58 +29,11 @@ public class UnitController : MonoBehaviour
         oldPos = Unit.rb2D.position;
         movement = Unit.rb2D.position;
         Unit.WorkBuildingId = 1;
-        //print(Unit.UnitId);
-        //workBuilding = BuildingFactory.Buildings[Unit.WorkBuildingId];
     }
 
-    // Update is called once per frame
     public void Update()
     {
-
-        float smoothTime = 0.11f;
-
-        Vector2 yVelocity = Vector2.zero;
-        //print(move);
         Unit.transform.position = Vector2.MoveTowards(Unit.transform.position, movement, 4f*Time.deltaTime);
-        //StartCoroutine(MoveObject());
-        /*if (workBuilding.rb2D.position != Unit.position)
-        {
-            if (!moveStart)
-            {
-                movement = workBuilding.rb2D.position;
-                moveStart = true;
-            }
-            else
-            {
-                float speed = 2;
-                while (Vector2.Distance(rb2D.position, movement) > 0.2)
-                {
-                    movementStatus += Time.deltaTime;
-                    rb2D.position = Vector2.Lerp(oldPos, movement, movementStatus / speed);
-                    //print(movementStatus);
-                    return;
-                }
-                moveStart = false;
-                movementStatus = 0;
-                if (Unit.WorkBuildingId == 1)
-                    Unit.WorkBuildingId = 0;
-                else
-                    Unit.WorkBuildingId = 1;
-                workBuilding = BuildingFactory.Buildings[Unit.WorkBuildingId];
-                oldPos = movement;
-            }
-            
-            *//*movement.x = movement.x / 1920 * 20 - offsetX;
-            movement.y = movement.y / 1080 * 10 - offsetY;*//*
-        }*/
-        /* var mouse = Mouse.current;
-         if (mouse.leftButton.wasPressedThisFrame)
-         {
-             movement = mouse.position.ReadValue();
-             movement.x = movement.x / 1920 * 20 - offsetX;
-             movement.y = movement.y / 1080 * 10 - offsetY;
-
-         }*/
     }
 
     protected virtual void DecreaseHP(UnitModel unit, int HowMany)
@@ -98,26 +51,27 @@ public class UnitController : MonoBehaviour
         print(speed);
         while (Vector2.Distance(Unit.transform.position, movement) > 0.1 && !stopped)
         {
-            /*if (stopped)
+            *//*if (stopped)
             {
                 print("stop");
                 Unit.rb2D.position = movement;
                     oldPos = movement;
                 yield break;
-            }*/
+            }*//*
             movementStatus += 0.001f;
             Unit.transform.position = Vector2.Lerp(oldPos, movement, Time.deltaTime);
             //print(movementStatus);
             yield return null;
         }
-        /*if (Unit.WorkBuildingId == 1)
+        *//*if (Unit.WorkBuildingId == 1)
             Unit.WorkBuildingId = 0;
         else
             Unit.WorkBuildingId = 1; 
-        workBuilding = BuildingFactory.Buildings[Unit.WorkBuildingId];*/
+        workBuilding = BuildingFactory.Buildings[Unit.WorkBuildingId];*//*
 
         oldPos = movement;
     }
 }
 
 
+*/
