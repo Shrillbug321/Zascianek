@@ -11,12 +11,10 @@ public class Warrior : AbstractWarrior
 	public override void Start()
 	{
 		base.Start();
-
-		ComparingTags = new string []{ "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
 	}
 
 	// Update is called once per frame
-	protected void Update()
+	public override void Update()
 	{
 		base.Update();
 		Mouse mouse = Mouse.current;
@@ -39,10 +37,9 @@ public class Warrior : AbstractWarrior
 			RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
 			if (hit.collider.gameObject.name == Name)
 			{
-				if (Math.Abs(hit.collider.attachedRigidbody.position.x - mousePos.x) < 0.25f)// && hit.collider.GetType() == typeof(BoxCollider2D))
+				if (Math.Abs(hit.collider.attachedRigidbody.position.x - mousePos.x) < 0.25f)
 				{
 					IsChoosen = true;
-					print(Name);
 				}
 			}
 		}

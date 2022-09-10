@@ -1,0 +1,127 @@
+using Assets.Scripts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class GameplayController : MonoBehaviour
+{
+	protected string Type;
+	public readonly string[] PlayerTags = { "PlayerWarrior", "PlayerInfrantry", "PlayerCrossbower", "PlayerHeavyInfrantry" };
+	public readonly string[] EnemyTags = { "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
+	private List<UnitModel> units = new List<UnitModel>();
+	public static GameplayController Instance;
+
+	private void Awake()
+	{
+		if (Instance != null && Instance != this)
+		{
+			Destroy(this);
+		}
+		else
+		{
+			Instance = this;
+		}
+	}
+
+	public void AddUnit(UnitModel unit)
+	{
+		units.Add(unit);
+	}
+
+	public void RemoveUnit(UnitModel unit)
+	{
+		units.Remove(unit);
+	}
+
+	void Update()
+	{
+		Mouse mouse = Mouse.current;
+		Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
+		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
+		RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
+		//print(hit.collider.transform.position.x);
+		if (hit.collider != null && CursorCanChanged(mousePos, hit))// && hit.collider.GetType() == typeof(BoxCollider2D))
+		{
+			string tag = hit.collider.gameObject.tag;
+			//print(hit.collider.GetType());
+
+			switch (WhatIsHit(tag))
+			{
+				case "Warrior":
+					OnMouseEnter("Warrior");
+					break;
+				case "Enemy":
+					OnMouseEnter("Enemy");
+					break;
+				default:
+					OnMouseExit();
+					break;
+			}
+
+			/*if (PlayerTags.Contains(tag) && CursorCanChanged(mousePos, hit))
+			{
+				OnMouseEnter("Warrior");
+			}
+			if (EnemyTags.Contains(tag) && CursorCanChanged(mousePos, hit))
+			{
+				OnMouseEnter("Enemy");
+			}*/
+		}
+		else
+		{
+			OnMouseExit();
+		}
+	}
+
+	private void OnMouseEnter(string type)
+	{
+		if (type == "Warrior")
+		{
+			if (units.Any(u => u.IsChoosen))
+			{
+				SetCursor("Assets/HUD/cursor_go_to.png");
+			}
+			else
+			{
+				SetCursor("Assets/HUD/cursor_highlighted.png");
+			}
+		}
+		if (type == "Enemy" && units.Any(u => u.IsChoosen))
+		{
+			SetCursor("Assets/HUD/sable_cursor2.png");
+		}
+	}
+
+	private void OnMouseExit()
+	{
+		if (units.Any(u => u.IsChoosen))
+		{
+			SetCursor("Assets/HUD/cursor_go_to.png");
+		}
+		else SetCursor("Assets/HUD/cursor.png");
+	}
+
+	private bool CursorCanChanged(Vector2 mousePos, RaycastHit2D hit)
+	{
+		return Math.Abs(hit.collider.transform.position.x - mousePos.x) < 0.5f &&
+		 Math.Abs(hit.collider.transform.position.y - mousePos.y) < 0.5f;
+	}
+
+	private void SetCursor(string path)
+	{
+		Texture2D cursor = (Texture2D)AssetDatabase.LoadAssetAtPath(path, typeof(Texture2D));
+		Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);
+	}
+
+	private string WhatIsHit(string tag)
+	{
+		if (PlayerTags.Contains(tag))
+			return "Warrior";
+		if (EnemyTags.Contains(tag))
+			return "Enemy";
+		return "";
+	}
+}

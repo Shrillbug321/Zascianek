@@ -43,12 +43,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Characters
-    uniqueID: 4150522463
+  - name: Outdoors
+    uniqueID: 2925430751
     locked: 0
   - name: Objects
     uniqueID: 471978095
     locked: 0
-  - name: Outdoors
-    uniqueID: 2925430751
+  - name: Characters
+    uniqueID: 4150522463
     locked: 0

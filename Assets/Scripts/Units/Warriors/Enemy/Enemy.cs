@@ -14,9 +14,8 @@ public class Enemy : AbstractWarrior
 	}
 
 	// Update is called once per frame
-	protected void Update()
+	public override void Update()
 	{
 		base.Update();
-		ComparingTags = new string[] { "PlayerWarrior", "PlayerInfrantry", "PlayerCrossbower", "EnemyHeavyInfrantry" };
 	}
 }

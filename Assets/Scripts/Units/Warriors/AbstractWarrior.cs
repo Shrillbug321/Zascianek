@@ -8,86 +8,31 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Random = System.Random;
 
 public class AbstractWarrior : UnitModel
 {
 	public bool SeenEnemy = false;
 	public int AttackSpeed { get; set; }
-	public int Damage { get; set; }
-	public string[] ComparingTags { get; set; }
-	public readonly string[] PlayerTags = { "PlayerWarrior", "PlayerInfrantry", "PlayerCrossbower", "HeavyInfrantry" };
-	public readonly string[] EnemyTags = { "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
-	protected string Type; 
-	Vector2 enemyPos = Vector2.zero;
+	public int DamageMin { get; set; }
+	public int DamageMax { get; set; }
 	protected UnitModel enemy;
+	Vector2 enemyPos = Vector2.zero;
+	public string[] PlayerTags;
+	public string[] EnemyTags;
+	public WeaponType WeaponType { get; set; }
 
+	Random random = new Random();
 	public override void Start()
 	{
 		base.Start();
+		PlayerTags = GameplayController.Instance.PlayerTags;
+		EnemyTags = GameplayController.Instance.EnemyTags;
 	}
 
-	// Update is called once per frame
-	protected void Update()
+	public override void Update()
 	{
 		base.Update();
-
-		RaycastHit hitInfo = new RaycastHit();
-		Mouse mouse = Mouse.current;
-		Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
-		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
-		RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
-		//Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		if (hit.collider != null)
-		{
-			if (hit.collider.gameObject.name == Name)
-			{
-				//if (hover_state == HoverState.NONE)
-				{
-					Type = "Warrior";
-					hit.collider.SendMessage("OnMouseEnter", SendMessageOptions.DontRequireReceiver);
-					//hoveredGO = hitInfo.collider.gameObject;
-				}
-				//hover_state = HoverState.HOVER;
-			}
-			if (hit.collider.gameObject.CompareTag("Enemy"))
-			{
-				//if (hover_state == HoverState.NONE)
-				{
-					Type = "Enemy";
-
-					hit.collider.SendMessage("OnMouseEnter", SendMessageOptions.DontRequireReceiver);
-					//hoveredGO = hitInfo.collider.gameObject;
-				}
-				//hover_state = HoverState.HOVER;
-			}
-			/*else
-			{
-				if (hover_state == HoverState.HOVER)
-				{
-					hoveredGO.SendMessage("OnMouseExit", SendMessageOptions.DontRequireReceiver);
-				}
-				hover_state = HoverState.NONE;
-			}*/
-
-			/*if (hover_state == HoverState.HOVER)
-			{
-				hitInfo.collider.SendMessage("OnMouseOver", SendMessageOptions.DontRequireReceiver); //Mouse is hovering
-				if (Input.GetMouseButtonDown(0))
-				{
-					hitInfo.collider.SendMessage("OnMouseDown", SendMessageOptions.DontRequireReceiver); //Mouse down
-				}
-				if (Input.GetMouseButtonUp(0))
-				{
-					hitInfo.collider.SendMessage("OnMouseUp", SendMessageOptions.DontRequireReceiver); //Mouse up
-				}
-
-			}*/
-		}
-		else
-		{
-			SendMessage("OnMouseExit", SendMessageOptions.DontRequireReceiver);
-		}
-
 		if (SeenEnemy && stopped)
 		{
 			oldPos = transform.position;
@@ -96,36 +41,73 @@ public class AbstractWarrior : UnitModel
 		}
 	}
 
-	protected async virtual Task Attack(CancellationToken token) { }
+	protected async Task Attack(CancellationToken token)
+	{
+		do
+		{
+			enemy.DecreaseHP(Damage() - enemy.Armor);
+			enemy.Blinking(AttackSpeed, token);
+			await Task.Delay(AttackSpeed);
+		} while (enemy.HP > 0 && !token.IsCancellationRequested);
+
+
+		if (token.IsCancellationRequested)
+			return;
+
+		await enemy.Rotate();
+		Destroy(enemy.gameObject);
+	}
+
+	public int Damage()
+	{
+		return random.Next(DamageMin, DamageMax + 1);
+	}
 
 	public virtual void OnTriggerEnter2D(Collider2D collision)
 	{
 		string tag = collision.tag;
-		if (ComparingTags.Contains(tag))
+		if (tag == this.tag) return;
+		if (PlayerTags.Contains(tag) || EnemyTags.Contains(tag))
 		{
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
-				if (!SeenEnemy)
-				{
-					enemyPos = collision.gameObject.transform.position;
-					SeenEnemy = true;
-					stopped = true;
-				}
+				print(WeaponType);
+				if (WeaponType == WeaponType.Cold && !SeenEnemy)
+					{
+						enemyPos = collision.gameObject.transform.position;
+						float offx = direction.x > 0.0f ? -0.35f : 0.35f;
 
+						movement.x = enemyPos.x + offx;
+						movement.y = enemyPos.y;
+						//movement = enemyPos;
+						/*SeenEnemy = true;
+						stopped = true;*/
+					}
+				if (WeaponType == WeaponType.Distance)
+				{
+					enemy = collision.GetComponent<UnitModel>();
+					print(";");
+					Attack(token);
+				}
 			}
 			if (collision.GetType() == typeof(BoxCollider2D))
 			{
-				enemy = collision.GetComponent<UnitModel>();
+				if (WeaponType == WeaponType.Cold)
+				{
+					enemy = collision.GetComponent<UnitModel>();
+					if (enemy.sr.flipX)
+					enemy.sr.flipX = false;
+					float offx = direction.x > 0.0f ? -0.85f : 0.85f;
+					Vector2 pos = collision.gameObject.transform.position;
+					/*movement.x = pos.x + offx;
+					movement.y = pos.y;*/
+					//movement = pos;
+					//stopped = true;
+					//transform.position.x += offx;
+					print("\"");
+					Attack(token);
+				}
 
-				/*Vector2 direction = transform.InverseTransformDirection(rb2D.velocity);
-				float offx, offy;
-
-				offx = direction.x > 0.0f ? -0.5f : 0.5f;
-				Vector2 pos = collision.gameObject.transform.position;
-				movement.x = pos.x + offx;*/
-
-				movement = collision.gameObject.transform.position;
-				Attack(token);
 			}
 		}
 	}
@@ -133,7 +115,7 @@ public class AbstractWarrior : UnitModel
 	public void OnTriggerExit2D(Collider2D collision)
 	{
 		string tag = collision.tag;
-		if (ComparingTags.Contains(tag))
+		if (PlayerTags.Contains(tag) || EnemyTags.Contains(tag))
 		{
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
@@ -147,6 +129,9 @@ public class AbstractWarrior : UnitModel
 			if (collision.GetType() == typeof(BoxCollider2D))
 			{
 				tokenSource.Cancel();
+				tokenSource.Dispose();
+				tokenSource = new CancellationTokenSource();
+				token = tokenSource.Token;
 			}
 		}
 	}
@@ -155,27 +140,9 @@ public class AbstractWarrior : UnitModel
 	{
 		print("mysz");
 	}
-	private void OnMouseEnter()
-	{
-		print("k");
-		if (Type == "Warrior")
-		{
-Texture2D cursor = (Texture2D)AssetDatabase.LoadAssetAtPath("Assets/HUD/cursor_highlighted.png", typeof(Texture2D));
-		Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);
-		}
-		if (Type == "Enemy" && IsChoosen)
-		{
-Texture2D cursor = (Texture2D)AssetDatabase.LoadAssetAtPath("Assets/HUD/sable_cursor.png", typeof(Texture2D));
-		Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);
-		}
-		
+}
 
-	}
-	private void OnMouseExit()
-	{
-		print("k");
-		Texture2D cursor = (Texture2D)AssetDatabase.LoadAssetAtPath("Assets/HUD/cursor.png", typeof(Texture2D));
-		Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);
-
-	}
+public enum WeaponType
+{
+	Cold, Distance
 }

@@ -18,7 +18,7 @@ namespace Assets.Scripts.Units
 			//unit.AddComponent<UnitModel>();
 			//UnitModel model = unit.GetComponent<UnitModel>();
 			//UnitModel unit = new UnitModel();
-			unit.Camera = Camera.main;
+			//unit.Camera = Camera.main;
 			unit.UnitId = Units.Count;
 			unit.Name = name;
 			//unit.gameObject = new GameObject();
