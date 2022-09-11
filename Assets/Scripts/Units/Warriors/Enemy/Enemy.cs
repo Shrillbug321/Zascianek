@@ -1,12 +1,4 @@
-﻿using Assets.Scripts;
-using System;
-using System.Collections;
-using System.Threading;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.InputSystem;
-
-public class Enemy : AbstractWarrior
+﻿public class Enemy : AbstractWarrior
 {
 	public override void Start()
 	{

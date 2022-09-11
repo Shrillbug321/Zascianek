@@ -17,13 +17,9 @@ public class GameplayController : MonoBehaviour
 	private void Awake()
 	{
 		if (Instance != null && Instance != this)
-		{
 			Destroy(this);
-		}
 		else
-		{
 			Instance = this;
-		}
 	}
 
 	public void AddUnit(UnitModel unit)
@@ -42,12 +38,9 @@ public class GameplayController : MonoBehaviour
 		Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
 		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
 		RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
-		//print(hit.collider.transform.position.x);
-		if (hit.collider != null && CursorCanChanged(mousePos, hit))// && hit.collider.GetType() == typeof(BoxCollider2D))
+		if (hit.collider != null && MouseInRange(mousePos, hit, 0.5f))
 		{
 			string tag = hit.collider.gameObject.tag;
-			//print(hit.collider.GetType());
-
 			switch (WhatIsHit(tag))
 			{
 				case "Warrior":
@@ -60,20 +53,8 @@ public class GameplayController : MonoBehaviour
 					OnMouseExit();
 					break;
 			}
-
-			/*if (PlayerTags.Contains(tag) && CursorCanChanged(mousePos, hit))
-			{
-				OnMouseEnter("Warrior");
-			}
-			if (EnemyTags.Contains(tag) && CursorCanChanged(mousePos, hit))
-			{
-				OnMouseEnter("Enemy");
-			}*/
 		}
-		else
-		{
-			OnMouseExit();
-		}
+		else OnMouseExit();
 	}
 
 	private void OnMouseEnter(string type)
@@ -104,13 +85,13 @@ public class GameplayController : MonoBehaviour
 		else SetCursor("Assets/HUD/cursor.png");
 	}
 
-	private bool CursorCanChanged(Vector2 mousePos, RaycastHit2D hit)
+	public bool MouseInRange(Vector2 mousePos, RaycastHit2D hit, float range)
 	{
-		return Math.Abs(hit.collider.transform.position.x - mousePos.x) < 0.5f &&
-		 Math.Abs(hit.collider.transform.position.y - mousePos.y) < 0.5f;
+		return Math.Abs(hit.collider.transform.position.x - mousePos.x) < range &&
+		 Math.Abs(hit.collider.transform.position.y - mousePos.y) < range;
 	}
 
-	private void SetCursor(string path)
+	public void SetCursor(string path)
 	{
 		Texture2D cursor = (Texture2D)AssetDatabase.LoadAssetAtPath(path, typeof(Texture2D));
 		Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);

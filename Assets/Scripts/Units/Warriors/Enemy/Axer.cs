@@ -1,16 +1,16 @@
-public class Bower : Enemy
+﻿public class Axer : Enemy
 {
     public override void Start()
     {
         base.Start();
-        HP = 85;
-        Speed = 5;
+        HP = 110;
+        Speed = 3.5f;
         AttackSpeed = 1000;
-        DamageMin = 12;
-        DamageMax = 14;
-        Armor = 7;
+        DamageMin = 25;
+        DamageMax = 27;
+        Armor = 12;
         WeaponType = WeaponType.Distance;
-        SetCircleCollider(9);
+        SetCircleCollider(15);
         gameObject.tag = "Enemy";
     }
 

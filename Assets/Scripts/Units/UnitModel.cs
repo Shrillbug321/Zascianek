@@ -24,7 +24,6 @@ namespace Assets.Scripts
 		public SpriteRenderer sr;
 		protected Vector2 oldPos = new Vector2();
 		protected Vector2 movement = new Vector2();
-		private Vector2 target;
 		public Vector2 direction;
 		protected Building workBuilding;
 		protected bool moveStart = false;
@@ -47,35 +46,29 @@ namespace Assets.Scripts
 			gameObject.AddComponent<SpriteRenderer>();
 			sr = GetComponent<SpriteRenderer>();
 			sr.sortingLayerName = "Characters";
+			gameObject.layer = LayerMask.NameToLayer("Characters");
 
 			BoxCollider2D bc2d = gameObject.AddComponent<BoxCollider2D>();
 			bc2d.isTrigger = true; 
 			bc2d.size = new Vector2(1.17f, 2.27f);
-			//gameObject.AddComponent<BoxCollider2D>();
-			/*GetComponent<BoxCollider2D>().isTrigger = true;
-			GetComponent<BoxCollider2D>().size = new Vector2(1.17f, 2.27f);*/
-			//gameObject.AddComponent<CircleCollider2D>();
-
-			
-			/*GetComponent<CircleCollider2D>().isTrigger = true;
-			GetComponent<CircleCollider2D>()*/
-			gameObject.layer = LayerMask.NameToLayer("Characters");
-			//print(GetComponent<CircleCollider2D>().radius);
 
 			oldPos = rb2D.position;
 			movement = rb2D.position;
 
 			tokenSource = new CancellationTokenSource();
 			token = tokenSource.Token;
+
 			GameplayController.Instance.AddUnit(this);
 		}
 
 		public virtual void Update()
 		{
-			if (Vector2.Distance(transform.position, movement) > 0.5)
-			transform.position = Vector2.MoveTowards(transform.position, movement, 4f * Time.deltaTime);
-			direction = ((Vector2)transform.position - oldPos).normalized;
-			sr.flipX =  direction.x <= 0;
+			if (!stopped && Vector2.Distance(transform.position, movement) > 0.5)
+			{
+				transform.position = Vector2.MoveTowards(transform.position, movement, Speed * Time.deltaTime);
+				direction = ((Vector2)transform.position - oldPos).normalized;
+				sr.flipX = direction.x <= 0;
+			}
 		}
 
 		public async Task Rotate()
@@ -88,10 +81,10 @@ namespace Assets.Scripts
 				await Task.Delay(100);
 			}
 		}
+
 		public virtual void DecreaseHP(int HowMany)
 		{
 			HP = HowMany > 0 ? HP - HowMany : HP;
-			print(HowMany);
 		}
 
 		public async Task Blinking(int attackSpeed, CancellationToken token)

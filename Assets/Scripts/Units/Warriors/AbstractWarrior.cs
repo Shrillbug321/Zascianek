@@ -1,13 +1,9 @@
 ﻿using Assets.Scripts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Random = System.Random;
 
 public class AbstractWarrior : UnitModel
@@ -22,7 +18,7 @@ public class AbstractWarrior : UnitModel
 	public string[] EnemyTags;
 	public WeaponType WeaponType { get; set; }
 
-	Random random = new Random();
+	Random random = new();
 	public override void Start()
 	{
 		base.Start();
@@ -33,16 +29,15 @@ public class AbstractWarrior : UnitModel
 	public override void Update()
 	{
 		base.Update();
-		if (SeenEnemy && stopped)
-		{
-			oldPos = transform.position;
-			movement = enemyPos;
-			stopped = false;
-		}
 	}
 
 	protected async Task Attack(CancellationToken token)
 	{
+		if ((direction.x < 0 && enemy.sr.flipX) || (direction.x > 0 && !enemy.sr.flipX))
+		{
+			enemy.sr.flipX = !enemy.sr.flipX;
+		}
+
 		do
 		{
 			enemy.DecreaseHP(Damage() - enemy.Armor);
@@ -69,24 +64,23 @@ public class AbstractWarrior : UnitModel
 		if (tag == this.tag) return;
 		if (PlayerTags.Contains(tag) || EnemyTags.Contains(tag))
 		{
+					enemy = collision.GetComponent<UnitModel>();
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
-				print(WeaponType);
 				if (WeaponType == WeaponType.Cold && !SeenEnemy)
-					{
-						enemyPos = collision.gameObject.transform.position;
-						float offx = direction.x > 0.0f ? -0.35f : 0.35f;
+				{
+					print("PPP");
+					enemyPos = collision.gameObject.transform.position;
+					float offx = direction.x > 0.0f ? -0.35f : 0.35f;
 
-						movement.x = enemyPos.x + offx;
-						movement.y = enemyPos.y;
-						//movement = enemyPos;
-						/*SeenEnemy = true;
-						stopped = true;*/
-					}
+					movement.x = enemyPos.x + offx;
+					movement.y = enemyPos.y;
+					stopped = false;
+					
+				}
 				if (WeaponType == WeaponType.Distance)
 				{
-					enemy = collision.GetComponent<UnitModel>();
-					print(";");
+					stopped = true;
 					Attack(token);
 				}
 			}
@@ -94,17 +88,6 @@ public class AbstractWarrior : UnitModel
 			{
 				if (WeaponType == WeaponType.Cold)
 				{
-					enemy = collision.GetComponent<UnitModel>();
-					if (enemy.sr.flipX)
-					enemy.sr.flipX = false;
-					float offx = direction.x > 0.0f ? -0.85f : 0.85f;
-					Vector2 pos = collision.gameObject.transform.position;
-					/*movement.x = pos.x + offx;
-					movement.y = pos.y;*/
-					//movement = pos;
-					//stopped = true;
-					//transform.position.x += offx;
-					print("\"");
 					Attack(token);
 				}
 
@@ -120,10 +103,7 @@ public class AbstractWarrior : UnitModel
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
 				if (SeenEnemy)
-				{
 					SeenEnemy = false;
-				}
-
 			}
 
 			if (collision.GetType() == typeof(BoxCollider2D))
@@ -134,11 +114,6 @@ public class AbstractWarrior : UnitModel
 				token = tokenSource.Token;
 			}
 		}
-	}
-
-	private void OnMouseOn()
-	{
-		print("mysz");
 	}
 }
 

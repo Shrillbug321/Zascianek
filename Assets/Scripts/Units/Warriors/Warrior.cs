@@ -1,8 +1,4 @@
-using Assets.Scripts;
 using System;
-using System.Collections;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,13 +9,13 @@ public class Warrior : AbstractWarrior
 		base.Start();
 	}
 
-	// Update is called once per frame
 	public override void Update()
 	{
 		base.Update();
 		Mouse mouse = Mouse.current;
 		Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
 		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
+
 		if (mouse.leftButton.wasPressedThisFrame)
 		{
 			LeftClick(mousePos);
@@ -35,9 +31,9 @@ public class Warrior : AbstractWarrior
 		if (!IsChoosen)
 		{
 			RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
-			if (hit.collider.gameObject.name == Name)
+			if (hit.collider?.gameObject.name == Name)
 			{
-				if (Math.Abs(hit.collider.attachedRigidbody.position.x - mousePos.x) < 0.25f)
+				if (GameplayController.Instance.MouseInRange(mousePos, hit, 0.5f))
 				{
 					IsChoosen = true;
 				}
@@ -55,6 +51,7 @@ public class Warrior : AbstractWarrior
 				oldPos = rb2D.position;
 				movement = new Vector2(mousePos.x, mousePos.y);
 			}
+			stopped = false;
 		}
 
 	}
@@ -62,5 +59,6 @@ public class Warrior : AbstractWarrior
 	public void RightClick()
 	{
 		IsChoosen = false;
+		GameplayController.Instance.SetCursor("Assets/HUD/cursor.png");
 	}
 }

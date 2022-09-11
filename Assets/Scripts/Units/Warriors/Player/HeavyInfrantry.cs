@@ -1,14 +1,14 @@
-public class Infrantry : Warrior
+﻿public class HeavyInfrantry : Warrior
 {
 	public override void Start()
 	{
 		base.Start();
-		HP = 100;
-		Speed = 4f;
-		AttackSpeed = 2000;
-		DamageMin = 18;
-		DamageMax = 20;
-		Armor = 8;
+		HP = 120;
+		Speed = 3f;
+		AttackSpeed = 2500;
+		DamageMin = 25;
+		DamageMax = 28;
+		Armor = 15;
 		WeaponType = WeaponType.Cold;
 		SetCircleCollider(5);
 		gameObject.tag = "PlayerWarrior";
