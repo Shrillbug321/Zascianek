@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -24,12 +19,13 @@ namespace Assets.Scripts
 		public SpriteRenderer sr;
 		protected Vector2 oldPos = new Vector2();
 		protected Vector2 movement = new Vector2();
+		protected Vector2 temp = new Vector2();
 		public Vector2 direction;
 		protected Building workBuilding;
 		protected bool moveStart = false;
 		protected float movementStatus = 0;
-		public bool stopped = true;
-
+		//public bool stopped = true;
+		public Collider2D colliderObject;
 
 		public CancellationTokenSource tokenSource;
 		public CancellationToken token;
@@ -41,7 +37,7 @@ namespace Assets.Scripts
 
 			gameObject.AddComponent<Rigidbody2D>();
 			rb2D = GetComponent<Rigidbody2D>();
-			GetComponent<Rigidbody2D>().simulated = true;
+			GetComponent<Rigidbody2D>().freezeRotation = true;
 
 			gameObject.AddComponent<SpriteRenderer>();
 			sr = GetComponent<SpriteRenderer>();
@@ -49,7 +45,7 @@ namespace Assets.Scripts
 			gameObject.layer = LayerMask.NameToLayer("Characters");
 
 			BoxCollider2D bc2d = gameObject.AddComponent<BoxCollider2D>();
-			bc2d.isTrigger = true; 
+			bc2d.isTrigger = true;
 			bc2d.size = new Vector2(1.17f, 2.27f);
 
 			oldPos = rb2D.position;
@@ -63,12 +59,16 @@ namespace Assets.Scripts
 
 		public virtual void Update()
 		{
-			if (!stopped && Vector2.Distance(transform.position, movement) > 0.5)
+			if (moveStart && Vector2.Distance(transform.position, movement) > 0.5)
 			{
 				transform.position = Vector2.MoveTowards(transform.position, movement, Speed * Time.deltaTime);
-				direction = ((Vector2)transform.position - oldPos).normalized;
-				sr.flipX = direction.x <= 0;
+				direction = (movement - oldPos).normalized;
+				if (direction.x != 0)
+					sr.flipX = direction.x < 0;
 			}
+			/*else {
+   moveStart = false;
+			}*/
 		}
 
 		public async Task Rotate()
@@ -84,6 +84,7 @@ namespace Assets.Scripts
 
 		public virtual void DecreaseHP(int HowMany)
 		{
+			print(HowMany);
 			HP = HowMany > 0 ? HP - HowMany : HP;
 		}
 
@@ -109,6 +110,45 @@ namespace Assets.Scripts
 		public void OnDestroy()
 		{
 			GameplayController.Instance.RemoveUnit(this);
+		}
+
+		public virtual void OnTriggerEnter2D(Collider2D collision)
+		{
+			string tag = collision.tag;
+			colliderObject = collision;
+			if (tag == this.tag) return;
+			if (GetComponent<BoxCollider2D>().IsTouching(collision))
+			{
+				if (tag == "Finish")
+				{
+					oldPos = transform.position;
+					temp = movement;
+					movement.x = (transform.position.x + ((BoxCollider2D)collision).size.x +3)*direction.x;
+					movement.y = (transform.position.y + ((BoxCollider2D)collision).size.y+3)*direction.y;
+					gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+				}
+			}
+			if (collision.GetType() == typeof(CircleCollider2D))
+			{
+
+			}
+
+		}
+
+		public virtual void OnTriggerExit2D(Collider2D collision)
+		{
+			colliderObject = null;
+			if (collision.GetType() == typeof(BoxCollider2D))
+			{
+				gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+				oldPos = transform.position;
+				movement = temp;
+
+			}
+			if (collision.GetType() == typeof(CircleCollider2D))
+			{
+
+			}
 		}
 	}
 }

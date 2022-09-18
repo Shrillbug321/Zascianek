@@ -9,10 +9,10 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{6B923E9F-64DC-849B-9286-76E921068110}</ProjectGuid>
+    <ProjectGuid>{CED78504-FBA3-CB2A-EFC9-910F04F24943}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>.</BaseDirectory>
@@ -48,7 +48,7 @@
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <UnityProjectGenerator>Package</UnityProjectGenerator>
     <UnityProjectGeneratorVersion>2.0.14</UnityProjectGeneratorVersion>
-    <UnityProjectType>Game:1</UnityProjectType>
+    <UnityProjectType>GamePlugins:3</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2021.2.7f1</UnityVersion>
   </PropertyGroup>
@@ -56,68 +56,88 @@
     <Analyzer Include="D:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Unity Save Load Utility\Surrogates\Vector3Surrogate.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Surrogates\Vector4Surrogate.cs" />
-    <Compile Include="Assets\Scripts\Buildings\Building.cs" />
-    <Compile Include="Assets\Scripts\Granary.cs" />
-    <Compile Include="Assets\Scripts\HUDController.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Axer.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\PersistenceMarker.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Non-Mono Classes\SceneObject.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Player\Settler.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Surrogates\Color32Surrogate.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Surrogates\QuaternionSurrogate.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Utilities\TypeSystem.cs" />
-    <Compile Include="Assets\Scripts\Buildings\BuildingController.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\ExampleScriptsAndClasses\TestClass.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Player\Infrantry.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\ExampleScriptsAndClasses\TestScript.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Surrogates\ColorSurrogate.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Warrior.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\SaveLoadMenu.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\ObjectIdentifier.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Enemy\EnemyInfrantry.cs" />
-    <Compile Include="Assets\Scripts\Buildings\BuildingFactory.cs" />
-    <Compile Include="Assets\Scripts\CameraController.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\AbstractWarrior.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Non-Mono Classes\SaveGame.cs" />
-    <Compile Include="Assets\Scripts\GameplayController.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Player\HeavyInfrantry.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Surrogates\Vector2Surrogate.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Attributes\USLUAttributes.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Bower.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\SaveLoadUtility.cs" />
-    <Compile Include="Assets\Scripts\Units\UnitModel.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\Non-Mono Classes\ObjectComponent.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Player\Crossbower.cs" />
-    <Compile Include="Assets\Unity Save Load Utility\SaveLoad.cs" />
-    <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Enemy.cs" />
-    <Compile Include="Assets\Scripts\Game.cs" />
-    <Compile Include="Assets\Scripts\CharacterMove — kopia.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\IStorage.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\PendingBuffer.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\Easing.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\Streams\DeflaterOutputStream.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\DeflaterConstants.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\XmlSupport.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\SerializationUnits.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\prewarm.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\ResultLogger.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\InflaterDynHeader.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\Broadcaster.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Rooms\PreserveObjectWhenLoading.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\ComponentDependencies.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Checksums\IChecksum.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\OnlyInRangeManager.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\GetSet.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\StoreAnimator.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\UnitySerializer.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\PersistentStorage\DataContainer.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Rooms\DontStoreObjectInRoom.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\UnitySerializerVersion.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\MonoBehaviourEx.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Encryption\ZipAESStream.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\SharpZipBaseException.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\Delegates\DelegateSupport.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\ZipEntry.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Entry.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Rooms\RoomManager.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Storage.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Encryption\PkzipClassic.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\Loom.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Encryption\ZipAESTransform.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SevenZipHelper.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\PrefabIdentifier.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\DeflaterEngine.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\PersistentStorage\FilePrefs.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\Deflater.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\LoadAnimations.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\StoredReferences.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\SaveGameManager.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Checksums\StrangeCRC.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\UnitySerializationExtensions.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\UniqueIdentifier.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Rooms\Room.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Rooms\Examples\PlayerLocator.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Rooms\Examples\PlayerSpawnPoint.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Checksums\Adler32.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\EmptyObjectIdentifier.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\TransformExtensions.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Checksums\CRC32.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\GetWritableAttributes.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\ZipHelperStream.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\Streams\InflaterInputStream.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\PersistentStorage\SaveOnQuit.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\ZipExtraData.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\Curves.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\Inflater.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Rooms\RoomDataSaveGameStorage.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\Rooms\RoomLoader.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\LevelLoader.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\DeflaterHuffman.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\GetSetGeneric.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\StoreMesh.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\StoreInformation.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\Radical.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\TimeSpecialist.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\Smoothing.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\DeflaterPending.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\ZipConstants.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\InRangeItem.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\SharpZIP\src\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Utility\Types.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\StoreMaterials.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\RemoveEditors.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\RadicalRoutine.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Radical\System\RadicalRoutineHelper.cs" />
+    <Compile Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\Serialization\LevelSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
-    <None Include="Assets\Nowy dokument tekstowy.txt" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
-    <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF.shader" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
-    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
-    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
-    <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
-    <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
+    <None Include="Assets\Plugins\OpenUnityTools\unityserializer-ng\license.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -875,6 +895,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="ZSerializer.Editor.csproj">
+      <Project>{33435724-0222-C75C-D4F5-6E4293244975}</Project>
+      <Name>ZSerializer.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="ZSerializer.Runtime.csproj">
+      <Project>{3065B27B-9429-B064-CD8C-2E7F68E38F4D}</Project>
+      <Name>ZSerializer.Runtime</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

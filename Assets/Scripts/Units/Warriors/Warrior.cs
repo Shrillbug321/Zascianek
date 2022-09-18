@@ -48,10 +48,12 @@ public class Warrior : AbstractWarrior
 			}
 			else
 			{
+
 				oldPos = rb2D.position;
 				movement = new Vector2(mousePos.x, mousePos.y);
+				moveStart = true;
+
 			}
-			stopped = false;
 		}
 
 	}

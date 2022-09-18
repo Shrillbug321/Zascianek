@@ -11,8 +11,19 @@ public class GameplayController : MonoBehaviour
 	protected string Type;
 	public readonly string[] PlayerTags = { "PlayerWarrior", "PlayerInfrantry", "PlayerCrossbower", "PlayerHeavyInfrantry" };
 	public readonly string[] EnemyTags = { "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
-	private List<UnitModel> units = new List<UnitModel>();
 	public static GameplayController Instance;
+	public Camera Camera;
+	public	GameObject mainCamera;
+	public List<UnitModel> units = new List<UnitModel>();
+
+	SaveLoadUtility slu;
+	public void Start()
+	{
+		slu = gameObject.AddComponent<SaveLoadUtility>();
+		mainCamera = Resources.Load<GameObject>("Prefabs/Common/MainCamera");
+		Instantiate(mainCamera);
+	}
+
 
 	private void Awake()
 	{
@@ -41,6 +52,7 @@ public class GameplayController : MonoBehaviour
 		if (hit.collider != null && MouseInRange(mousePos, hit, 0.5f))
 		{
 			string tag = hit.collider.gameObject.tag;
+			
 			switch (WhatIsHit(tag))
 			{
 				case "Warrior":
@@ -48,6 +60,14 @@ public class GameplayController : MonoBehaviour
 					break;
 				case "Enemy":
 					OnMouseEnter("Enemy");
+					break;
+				case "Save":
+					if (mouse.leftButton.wasPressedThisFrame)
+					Save();
+					break;
+				case "Load":
+					if (mouse.leftButton.wasPressedThisFrame)
+					Load();
 					break;
 				default:
 					OnMouseExit();
@@ -103,6 +123,21 @@ public class GameplayController : MonoBehaviour
 			return "Warrior";
 		if (EnemyTags.Contains(tag))
 			return "Enemy";
+		if (tag=="EditorOnly")
+			return "Save";
+		if (tag=="Respawn")
+			return "Load";
 		return "";
+	}
+
+	public async void Save()
+	{
+		slu.SaveGame("n");
+	}
+
+	public async void Load()
+	{
+		slu.LoadGame("n");
+		Instantiate(mainCamera);
 	}
 }

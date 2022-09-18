@@ -483,3 +483,5 @@
 /Library/SourceAssetDB
 /Library/SourceAssetDB-lock
 /obj/Debug/Assembly-CSharp.csproj.AssemblyReference.cache
+/Assets/MySaveData.dat
+/Assets/New SaveGame.sav

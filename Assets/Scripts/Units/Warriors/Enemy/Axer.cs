@@ -9,7 +9,7 @@
         DamageMin = 25;
         DamageMax = 27;
         Armor = 12;
-        WeaponType = WeaponType.Distance;
+        WeaponType = WeaponType.Cold;
         SetCircleCollider(15);
         gameObject.tag = "Enemy";
     }

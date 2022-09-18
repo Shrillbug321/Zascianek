@@ -41,8 +41,11 @@ public class CameraController : MonoBehaviour
 		cameraMove.z = transform.position.z;
 		mouse = Mouse.current;
 		camera.orthographicSize = zoomStart;
+		//Instantiate(camera);
 		//target = Vector2.zero;
+		//DontDestroyOnLoad(camera);
 	}
+
 	void Update()
 	{
 		float x = mouse.position.ReadValue().x;
@@ -66,7 +69,7 @@ public class CameraController : MonoBehaviour
 				break;
 		}
 
-		if (cameraTransform.position.x > xMax)
+		/*if (cameraTransform.position.x > xMax)
 		{
 			cameraTransform.position = new Vector3(xMax, cameraTransform.position.y, -5);
 		}
@@ -84,7 +87,7 @@ public class CameraController : MonoBehaviour
 		if (cameraTransform.position.y < yMin)
 		{
 			cameraTransform.position = new Vector3(cameraTransform.position.x, yMin, -5);
-		}
+		}*/
 
 		if (x > rightScroll)
 		{
