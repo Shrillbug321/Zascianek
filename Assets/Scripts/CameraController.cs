@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,9 +10,7 @@ public class CameraController : MonoBehaviour
 	public Vector2 movement;
 	public Vector2 oldPos;
 	public Transform cameraTransform;
-	private float screenWidth, screenHeight;
 	private Vector3 cameraMove;
-	private Rect screenRect;
 	private Mouse mouse;
 	private const float speed = 0.1f;
 	private float xMin = 0;
@@ -25,7 +21,6 @@ public class CameraController : MonoBehaviour
 	private float leftScroll = 0.2f * Screen.width;
 	private float upScroll = 0.8f * Screen.height;
 	private float downScroll = 0.2f * Screen.height;
-
 
 	//Im mniejsze tym bli¿ej
 	private readonly float zoomMin = 10;
@@ -41,9 +36,6 @@ public class CameraController : MonoBehaviour
 		cameraMove.z = transform.position.z;
 		mouse = Mouse.current;
 		camera.orthographicSize = zoomStart;
-		//Instantiate(camera);
-		//target = Vector2.zero;
-		//DontDestroyOnLoad(camera);
 	}
 
 	void Update()
@@ -68,26 +60,6 @@ public class CameraController : MonoBehaviour
 					Camera.main.orthographicSize += 0.2f;
 				break;
 		}
-
-		/*if (cameraTransform.position.x > xMax)
-		{
-			cameraTransform.position = new Vector3(xMax, cameraTransform.position.y, -5);
-		}
-
-		if (cameraTransform.position.x < xMin)
-		{
-			cameraTransform.position = new Vector3(xMin, cameraTransform.position.y, -5);
-		}
-
-		if (cameraTransform.position.y > yMax)
-		{
-			cameraTransform.position = new Vector3(cameraTransform.position.x, yMax, -5);
-		}
-
-		if (cameraTransform.position.y < yMin)
-		{
-			cameraTransform.position = new Vector3(cameraTransform.position.x, yMin, -5);
-		}*/
 
 		if (x > rightScroll)
 		{

@@ -2,26 +2,22 @@ using Assets.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
+using System.Threading;
+using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
-public class GameplayController : MonoBehaviour
+public class GameplayController : GameplayControllerInitializer
 {
-	protected string Type;
-	public readonly string[] PlayerTags = { "PlayerWarrior", "PlayerInfrantry", "PlayerCrossbower", "PlayerHeavyInfrantry" };
-	public readonly string[] EnemyTags = { "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
-	public static GameplayController Instance;
-	public Camera Camera;
-	public	GameObject mainCamera;
-	public List<UnitModel> units = new List<UnitModel>();
-
-	SaveLoadUtility slu;
-	public void Start()
+	public override void Start()
 	{
+		base.Start();
 		slu = gameObject.AddComponent<SaveLoadUtility>();
 		mainCamera = Resources.Load<GameObject>("Prefabs/Common/MainCamera");
 		Instantiate(mainCamera);
+		MakeMoney();
 	}
 
 
@@ -52,7 +48,7 @@ public class GameplayController : MonoBehaviour
 		if (hit.collider != null && MouseInRange(mousePos, hit, 0.5f))
 		{
 			string tag = hit.collider.gameObject.tag;
-			
+			print(tag);
 			switch (WhatIsHit(tag))
 			{
 				case "Warrior":
@@ -63,11 +59,33 @@ public class GameplayController : MonoBehaviour
 					break;
 				case "Save":
 					if (mouse.leftButton.wasPressedThisFrame)
-					Save();
+						Save();
 					break;
 				case "Load":
 					if (mouse.leftButton.wasPressedThisFrame)
-					Load();
+						Load();
+					break;
+				case "Granary":
+					if (mouse.leftButton.wasPressedThisFrame)
+					{
+
+						if (Items["money"] < 15)
+						{
+							//ShowGUIImage("Prefabs/HUD/Image");
+							HUDController.hud.ShowGUIText("Potrzeba 15 monet!");
+							return;
+						}
+						else
+						{
+							var a = Instantiate(Resources.Load<UnitModel>("Prefabs/Units/infrantry"));
+							Vector3 pos = hit.collider.transform.position;
+							a.transform.position = new Vector3(pos.x, pos.y - 1f, 0);
+							a.gameObject.name = units.Count.ToString();
+						}
+					}
+					print("p");
+
+					//units.Add(a);
 					break;
 				default:
 					OnMouseExit();
@@ -83,16 +101,16 @@ public class GameplayController : MonoBehaviour
 		{
 			if (units.Any(u => u.IsChoosen))
 			{
-				SetCursor("Assets/HUD/cursor_go_to.png");
+				SetCursor(pathToCursors + "/cursor_go_to");
 			}
 			else
 			{
-				SetCursor("Assets/HUD/cursor_highlighted.png");
+				SetCursor(pathToCursors + "/cursor_highlighted");
 			}
 		}
 		if (type == "Enemy" && units.Any(u => u.IsChoosen))
 		{
-			SetCursor("Assets/HUD/sable_cursor2.png");
+			SetCursor(pathToCursors + "/sable_cursor2");
 		}
 	}
 
@@ -100,9 +118,9 @@ public class GameplayController : MonoBehaviour
 	{
 		if (units.Any(u => u.IsChoosen))
 		{
-			SetCursor("Assets/HUD/cursor_go_to.png");
+			SetCursor(pathToCursors + "/cursor_go_to");
 		}
-		else SetCursor("Assets/HUD/cursor.png");
+		else SetCursor(pathToCursors + "/cursor");
 	}
 
 	public bool MouseInRange(Vector2 mousePos, RaycastHit2D hit, float range)
@@ -113,7 +131,7 @@ public class GameplayController : MonoBehaviour
 
 	public void SetCursor(string path)
 	{
-		Texture2D cursor = (Texture2D)AssetDatabase.LoadAssetAtPath(path, typeof(Texture2D));
+		Texture2D cursor = Resources.Load<Texture2D>(path);
 		Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);
 	}
 
@@ -123,10 +141,12 @@ public class GameplayController : MonoBehaviour
 			return "Warrior";
 		if (EnemyTags.Contains(tag))
 			return "Enemy";
-		if (tag=="EditorOnly")
+		if (tag == "EditorOnly")
 			return "Save";
-		if (tag=="Respawn")
+		if (tag == "Respawn")
 			return "Load";
+		if (tag == "Granary")
+			return "Granary";
 		return "";
 	}
 
@@ -140,4 +160,20 @@ public class GameplayController : MonoBehaviour
 		slu.LoadGame("n");
 		Instantiate(mainCamera);
 	}
+
+	public async Task MakeMoney()
+	{
+		while (true)
+		{
+			Items["money"]++;
+			print("OPOP");
+			await Task.Delay(2000);
+		}
+	}
+
+	/*public void OnGUI()
+	{
+
+		GUILayout.Label("Kanohi and Skills");
+	}*/
 }

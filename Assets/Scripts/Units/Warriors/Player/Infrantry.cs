@@ -1,6 +1,3 @@
-using UnityEditor;
-using UnityEngine;
-
 public class Infrantry : Warrior
 {
 	public override void Start()
@@ -15,7 +12,6 @@ public class Infrantry : Warrior
 		WeaponType = WeaponType.Cold;
 		SetCircleCollider(5);
 		gameObject.tag = "PlayerWarrior";
-		sr.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(Path+"/infranty.png");
 	}
 
 	public override void Update()

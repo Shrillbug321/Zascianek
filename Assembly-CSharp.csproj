@@ -88,12 +88,14 @@
     <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Bower.cs" />
     <Compile Include="Assets\Unity Save Load Utility\SaveLoadUtility.cs" />
     <Compile Include="Assets\Scripts\Units\UnitModel.cs" />
+    <Compile Include="Assets\Scripts\GameplayControllerInitializer.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Non-Mono Classes\ObjectComponent.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Player\Crossbower.cs" />
     <Compile Include="Assets\Unity Save Load Utility\SaveLoad.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Enemy.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Scripts\CharacterMove — kopia.cs" />
+    <Compile Include="Assets\Scripts\HUD\HealthBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

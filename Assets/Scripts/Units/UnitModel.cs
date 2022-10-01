@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -26,6 +27,7 @@ namespace Assets.Scripts
 		protected float movementStatus = 0;
 		//public bool stopped = true;
 		public Collider2D colliderObject;
+		public Image healthBar;
 
 		public CancellationTokenSource tokenSource;
 		public CancellationToken token;
@@ -50,6 +52,9 @@ namespace Assets.Scripts
 
 			oldPos = rb2D.position;
 			movement = rb2D.position;
+			healthBar = Instantiate(Resources.Load<Image>("Prefabs/HUD/HealthBar"));
+			healthBar.transform.position = Camera.main.WorldToScreenPoint(transform.position);
+			//healthBar.SetActive(false);
 
 			tokenSource = new CancellationTokenSource();
 			token = tokenSource.Token;
@@ -119,6 +124,7 @@ namespace Assets.Scripts
 			if (tag == this.tag) return;
 			if (GetComponent<BoxCollider2D>().IsTouching(collision))
 			{
+				print("ppp");
 				if (tag == "Finish")
 				{
 					oldPos = transform.position;
@@ -137,12 +143,16 @@ namespace Assets.Scripts
 
 		public virtual void OnTriggerExit2D(Collider2D collision)
 		{
+			string tag = collision.tag;
 			colliderObject = null;
 			if (collision.GetType() == typeof(BoxCollider2D))
 			{
-				gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
-				oldPos = transform.position;
-				movement = temp;
+				if (tag == "Finish")
+				{
+					gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+					oldPos = transform.position;
+					movement = temp;
+				}
 
 			}
 			if (collision.GetType() == typeof(CircleCollider2D))

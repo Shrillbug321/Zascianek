@@ -56,8 +56,10 @@
     <Analyzer Include="D:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Save Manager\Editor\Carter Games\Save Manager\DataTypeHelper.cs" />
-    <Compile Include="Assets\Save Manager\Editor\Carter Games\Save Manager\SaveDataEditor.cs" />
+    <Compile Include="Assets\Editor\MyCustomEditor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Editor\MyCustomEditor.uxml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -848,17 +850,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{CED78504-FBA3-CB2A-EFC9-910F04F24943}</Project>
-      <Name>Assembly-CSharp-firstpass</Name>
-    </ProjectReference>
     <ProjectReference Include="Assembly-CSharp.csproj">
       <Project>{6B923E9F-64DC-849B-9286-76E921068110}</Project>
       <Name>Assembly-CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="Assembly-CSharp-Editor-firstpass.csproj">
-      <Project>{C05A8787-F1AB-B42B-EDFE-0E181BD9F49C}</Project>
-      <Name>Assembly-CSharp-Editor-firstpass</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

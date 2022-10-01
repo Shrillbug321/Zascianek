@@ -17,7 +17,7 @@ public class AbstractWarrior : UnitModel
 	public string[] PlayerTags;
 	public string[] EnemyTags;
 	public WeaponType WeaponType { get; set; }
-	public const string Path = "Assets/Sprites/Units/Units";
+	public const string Path = "/Sprites/Units/";
 
 	Random random = new();
 	public override void Start()
@@ -69,6 +69,7 @@ public class AbstractWarrior : UnitModel
 			enemy = collision.GetComponent<AbstractWarrior>();
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
+		if (SeenEnemy) return;
 				if (WeaponType == WeaponType.Cold && !SeenEnemy)
 				{
 					enemyPos = collision.gameObject.transform.position;
@@ -89,6 +90,7 @@ public class AbstractWarrior : UnitModel
 					movement = enemy.gameObject.transform.position;
 					moveStart = true;
 				}
+				SeenEnemy = true;
 			}
 			if (collision.GetType() == typeof(BoxCollider2D))
 			{

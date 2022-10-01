@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System;//for Type class
 using System.Reflection;
 using System.Linq;
-using UnityEditor;
 
 public class SaveLoadUtility : MonoBehaviour {
 
