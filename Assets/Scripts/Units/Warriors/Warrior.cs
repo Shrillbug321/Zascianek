@@ -1,6 +1,6 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static GameplayControllerInitializer;
 
 public class Warrior : AbstractWarrior
 {
@@ -28,14 +28,14 @@ public class Warrior : AbstractWarrior
 
 	protected void LeftClick(Vector2 mousePos)
 	{
-		if (!IsChoosen)
+		if (!isChoosen)
 		{
 			RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
-			if (hit.collider?.gameObject.name == Name)
+			if (hit.collider?.gameObject.name == unitName)
 			{
-				if (GameplayController.Instance.MouseInRange(mousePos, hit, 0.5f))
+				if (gameplay.MouseInRange(mousePos, hit, 0.5f))
 				{
-					IsChoosen = true;
+					isChoosen = true;
 				}
 			}
 		}
@@ -60,7 +60,7 @@ public class Warrior : AbstractWarrior
 
 	public void RightClick()
 	{
-		IsChoosen = false;
-		GameplayController.Instance.SetCursor("Assets/HUD/cursor.png");
+		isChoosen = false;
+		gameplay.SetCursor("Assets/HUD/cursor.png");
 	}
 }

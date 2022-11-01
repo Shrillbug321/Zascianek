@@ -1,20 +1,20 @@
 ﻿//Add an ObjectIdentifier component to each Prefab that might possibly be serialized and deserialized.
-//The name variable is not used by the serialization; it is just there so you can name your prefabs any way you want, 
-//while the "in-game" name can be something different
-//for example, an item that the play can inspect might have the prefab name "sword_01_a", 
-//but the name (not the GameObject name; that is the prefab name! We are talking about the variable "name" here!) can be "Short Sword", 
+//The unitName variable is not used by the serialization; it is just there so you can unitName your prefabs any way you want, 
+//while the "in-game" unitName can be something different
+//for example, an item that the play can inspect might have the prefab unitName "sword_01_a", 
+//but the unitName (not the GameObject unitName; that is the prefab unitName! We are talking about the variable "unitName" here!) can be "Short Sword", 
 //which is what the player will see when inspecting it in his inventory, a shop, et cetera.
-//To clarify again: A GameObject's (and thus, prefab's) name should be the same as prefabName, while the variable "name" in this script can be anything you want (or nothing at all).
+//To clarify again: A GameObject's (and thus, prefab's) unitName should be the same as prefabName, while the variable "unitName" in this script can be anything you want (or nothing at all).
 
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 //The data for the ObjectIdentifier is completely handled by the save function so it should never be saved directly.
 //The save method contains abstractn additional checked to make sure this doesn't happen.
 [SaveNoMembers]
-public class ObjectIdentifier : MonoBehaviour {
-	
+public class ObjectIdentifier : MonoBehaviour
+{
+
 	public string prefabName;
 	public string id;
 	public string idParent;
@@ -31,7 +31,8 @@ public class ObjectIdentifier : MonoBehaviour {
 	public ComponentSaveMode componentSaveMode = ComponentSaveMode.MonoListInclusive;
 	public List<string> componentTypesToSave = new List<string>();
 
-	public enum ComponentSaveMode {
+	public enum ComponentSaveMode
+	{
 		All,
 		None,
 		Mono,
@@ -40,23 +41,30 @@ public class ObjectIdentifier : MonoBehaviour {
 		ListExclusive
 	};
 
-	public void SetID() {
-		if(string.IsNullOrEmpty(id)) {
+	public void SetID()
+	{
+		if (string.IsNullOrEmpty(id))
+		{
 			id = System.Guid.NewGuid().ToString();
 		}
 
 		CheckForParent();
 	}
-	
-	private void CheckForParent() {
-		
-		if(transform.parent == null) {
+
+	private void CheckForParent()
+	{
+
+		if (transform.parent == null)
+		{
 			idParent = null;
 		}
-		else {
+		else
+		{
 			ObjectIdentifier oi_parent = transform.parent.GetComponent<ObjectIdentifier>();
-			if(oi_parent != null) {
-				if(string.IsNullOrEmpty(oi_parent.id)) {
+			if (oi_parent != null)
+			{
+				if (string.IsNullOrEmpty(oi_parent.id))
+				{
 					oi_parent.SetID();
 				}
 				idParent = oi_parent.id;

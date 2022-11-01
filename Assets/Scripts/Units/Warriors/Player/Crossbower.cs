@@ -3,13 +3,13 @@
 	public override void Start()
 	{
 		base.Start();
-		HP = 90;
-		Speed = 5f;
-		AttackSpeed = 2000;
-		DamageMin = 12;
-		DamageMax = 14;
-		Armor = 7;
-		WeaponType = WeaponType.Distance;
+		hp = 90;
+		speed = 5f;
+		attackSpeed = 2000;
+		damageMin = 12;
+		damageMax = 14;
+		armor = 7;
+		weaponType = WeaponType.Distance;
 		SetCircleCollider(9);
 		gameObject.tag = "PlayerWarrior";
 	}

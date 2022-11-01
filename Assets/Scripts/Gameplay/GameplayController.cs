@@ -1,10 +1,7 @@
 using Assets.Scripts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -14,6 +11,7 @@ public class GameplayController : GameplayControllerInitializer
 	public override void Start()
 	{
 		base.Start();
+		mouse = Mouse.current;
 		slu = gameObject.AddComponent<SaveLoadUtility>();
 		mainCamera = Resources.Load<GameObject>("Prefabs/Common/MainCamera");
 		Instantiate(mainCamera);
@@ -23,10 +21,10 @@ public class GameplayController : GameplayControllerInitializer
 
 	private void Awake()
 	{
-		if (Instance != null && Instance != this)
+		if (gameplay != null && gameplay != this)
 			Destroy(this);
 		else
-			Instance = this;
+			gameplay = this;
 	}
 
 	public void AddUnit(UnitModel unit)
@@ -39,11 +37,19 @@ public class GameplayController : GameplayControllerInitializer
 		units.Remove(unit);
 	}
 
+	public void AddBuilding(Building building)
+	{
+		buildings.Add(building);
+	}
+
+	public void RemoveBuilding(Building building)
+	{
+		buildings.Remove(building);
+	}
+
 	void Update()
 	{
-		Mouse mouse = Mouse.current;
-		Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
-		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
+		Vector2 mousePos = GetMousePosToWorldPoint();
 		RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
 		if (hit.collider != null && MouseInRange(mousePos, hit, 0.5f))
 		{
@@ -69,7 +75,7 @@ public class GameplayController : GameplayControllerInitializer
 					if (mouse.leftButton.wasPressedThisFrame)
 					{
 
-						if (Items["money"] < 15)
+						if (items["money"] < 15)
 						{
 							//ShowGUIImage("Prefabs/HUD/Image");
 							HUDController.hud.ShowGUIText("Potrzeba 15 monet!");
@@ -93,13 +99,26 @@ public class GameplayController : GameplayControllerInitializer
 			}
 		}
 		else OnMouseExit();
+		if (isMove)
+		{
+			building.transform.position = GetMousePosToWorldPoint();
+		}
+		if (mouse.leftButton.wasPressedThisFrame)
+		{
+			if (isMove)
+			{
+				building.transform.position = GetMousePosToWorldPoint();
+				items["wood"] -= 2;
+				isMove = false;
+			}
+		}
 	}
 
 	private void OnMouseEnter(string type)
 	{
 		if (type == "Warrior")
 		{
-			if (units.Any(u => u.IsChoosen))
+			if (units.Any(u => u.isChoosen))
 			{
 				SetCursor(pathToCursors + "/cursor_go_to");
 			}
@@ -108,7 +127,7 @@ public class GameplayController : GameplayControllerInitializer
 				SetCursor(pathToCursors + "/cursor_highlighted");
 			}
 		}
-		if (type == "Enemy" && units.Any(u => u.IsChoosen))
+		if (type == "Enemy" && units.Any(u => u.isChoosen))
 		{
 			SetCursor(pathToCursors + "/sable_cursor2");
 		}
@@ -116,7 +135,7 @@ public class GameplayController : GameplayControllerInitializer
 
 	private void OnMouseExit()
 	{
-		if (units.Any(u => u.IsChoosen))
+		if (units.Any(u => u.isChoosen))
 		{
 			SetCursor(pathToCursors + "/cursor_go_to");
 		}
@@ -137,9 +156,9 @@ public class GameplayController : GameplayControllerInitializer
 
 	private string WhatIsHit(string tag)
 	{
-		if (PlayerTags.Contains(tag))
+		if (playerTags.Contains(tag))
 			return "Warrior";
-		if (EnemyTags.Contains(tag))
+		if (enemyTags.Contains(tag))
 			return "Enemy";
 		if (tag == "EditorOnly")
 			return "Save";
@@ -165,15 +184,33 @@ public class GameplayController : GameplayControllerInitializer
 	{
 		while (true)
 		{
-			Items["money"]++;
-			print("OPOP");
-			await Task.Delay(2000);
+			items["money"]++;
+			await Task.Delay(100);
 		}
 	}
 
-	/*public void OnGUI()
+	public void LoadBuilding(string buildingName)
 	{
+		building = Instantiate(Resources.Load<GameObject>("Prefabs/Buildings/"+buildingName));
+		//Vector3 pos = hit.collider.transform.position;
+		building.transform.position = GetMousePosToWorldPoint();
+		building.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+		building.gameObject.name = "ppp";
+		isMove = true;
+		print(building);
+		//building.gameObject.name = buildings.Count.ToString();
+	}
 
-		GUILayout.Label("Kanohi and Skills");
-	}*/
+	public Vector2 GetMousePosToWorldPoint()
+	{
+		Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
+		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
+		return mousePos;
+	}
+	public Vector2 GetMousePos()
+	{
+		Vector3 mousePos3D = mouse.position.ReadValue();
+		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
+		return mousePos;
+	}
 }

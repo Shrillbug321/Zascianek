@@ -1,22 +1,22 @@
 ﻿public class Axer : Enemy
 {
-    public override void Start()
-    {
-        base.Start();
-        HP = 110;
-        Speed = 3.5f;
-        AttackSpeed = 1000;
-        DamageMin = 25;
-        DamageMax = 27;
-        Armor = 12;
-        WeaponType = WeaponType.Cold;
-        SetCircleCollider(15);
-        gameObject.tag = "Enemy";
-    }
+	public override void Start()
+	{
+		base.Start();
+		hp = 110;
+		speed = 3.5f;
+		attackSpeed = 1000;
+		damageMin = 25;
+		damageMax = 27;
+		armor = 12;
+		weaponType = WeaponType.Cold;
+		SetCircleCollider(15);
+		gameObject.tag = "Enemy";
+	}
 
-    // Update is called once per frame
-    public override void Update()
-    {
-        base.Update();
-    }
+	// Update is called once per frame
+	public override void Update()
+	{
+		base.Update();
+	}
 }

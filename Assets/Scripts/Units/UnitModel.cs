@@ -2,19 +2,20 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using static GameplayControllerInitializer;
 
 namespace Assets.Scripts
 {
 	public class UnitModel : MonoBehaviour
 	{
-		public int UnitId { get; set; }
-		public int WorkBuildingId { get; set; }
-		public string Name { get; set; }
-		public float Speed { get; set; }
-		public int HP { get; set; } = 100;
-		public string Type { get; set; }
-		public int Armor { get; set; }
-		public bool IsChoosen { get; set; } = false;
+		public int unitId { get; set; }
+		public int workBuildingId { get; set; }
+		public string unitName { get; set; }
+		public float speed { get; set; }
+		public int hp { get; set; } = 100;
+		public string type { get; set; }
+		public int armor { get; set; }
+		public bool isChoosen { get; set; } = false;
 
 		public Rigidbody2D rb2D;
 		public SpriteRenderer sr;
@@ -34,7 +35,7 @@ namespace Assets.Scripts
 		public virtual void Start()
 		{
 			//UnitId = Units.Count;
-			Name = name;
+			unitName = name;
 			//WorkBuildingId = 1;
 
 			gameObject.AddComponent<Rigidbody2D>();
@@ -59,14 +60,14 @@ namespace Assets.Scripts
 			tokenSource = new CancellationTokenSource();
 			token = tokenSource.Token;
 
-			GameplayController.Instance.AddUnit(this);
+			gameplay.AddUnit(this);
 		}
 
 		public virtual void Update()
 		{
 			if (moveStart && Vector2.Distance(transform.position, movement) > 0.5)
 			{
-				transform.position = Vector2.MoveTowards(transform.position, movement, Speed * Time.deltaTime);
+				transform.position = Vector2.MoveTowards(transform.position, movement, speed * Time.deltaTime);
 				direction = (movement - oldPos).normalized;
 				if (direction.x != 0)
 					sr.flipX = direction.x < 0;
@@ -90,7 +91,7 @@ namespace Assets.Scripts
 		public virtual void DecreaseHP(int HowMany)
 		{
 			print(HowMany);
-			HP = HowMany > 0 ? HP - HowMany : HP;
+			hp = HowMany > 0 ? hp - HowMany : hp;
 		}
 
 		public async Task Blinking(int attackSpeed, CancellationToken token)
@@ -114,7 +115,7 @@ namespace Assets.Scripts
 
 		public void OnDestroy()
 		{
-			GameplayController.Instance.RemoveUnit(this);
+			gameplay.RemoveUnit(this);
 		}
 
 		public virtual void OnTriggerEnter2D(Collider2D collision)
@@ -129,8 +130,8 @@ namespace Assets.Scripts
 				{
 					oldPos = transform.position;
 					temp = movement;
-					movement.x = (transform.position.x + ((BoxCollider2D)collision).size.x +3)*direction.x;
-					movement.y = (transform.position.y + ((BoxCollider2D)collision).size.y+3)*direction.y;
+					movement.x = (transform.position.x + ((BoxCollider2D)collision).size.x + 3) * direction.x;
+					movement.y = (transform.position.y + ((BoxCollider2D)collision).size.y + 3) * direction.y;
 					gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
 				}
 			}

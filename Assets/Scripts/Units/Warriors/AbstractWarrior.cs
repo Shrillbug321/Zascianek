@@ -4,27 +4,27 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using static GameplayControllerInitializer;
 using Random = System.Random;
 
 public class AbstractWarrior : UnitModel
 {
-	public bool SeenEnemy = false;
-	public int AttackSpeed { get; set; }
-	public int DamageMin { get; set; }
-	public int DamageMax { get; set; }
+	public bool seenEnemy = false;
+	public int attackSpeed { get; set; }
+	public int damageMin { get; set; }
+	public int damageMax { get; set; }
 	protected AbstractWarrior enemy;
 	Vector2 enemyPos = Vector2.zero;
-	public string[] PlayerTags;
-	public string[] EnemyTags;
-	public WeaponType WeaponType { get; set; }
-	public const string Path = "/Sprites/Units/";
+	public string[] playerTags;
+	public string[] enemyTags;
+	public WeaponType weaponType { get; set; }
 
 	Random random = new();
 	public override void Start()
 	{
 		base.Start();
-		PlayerTags = GameplayController.Instance.PlayerTags;
-		EnemyTags = GameplayController.Instance.EnemyTags;
+		playerTags = gameplay.playerTags;
+		enemyTags = gameplay.enemyTags;
 	}
 
 	public override void Update()
@@ -41,10 +41,10 @@ public class AbstractWarrior : UnitModel
 
 		do
 		{
-			enemy.DecreaseHP(Damage() - enemy.Armor);
-			enemy.Blinking(AttackSpeed, token);
-			await Task.Delay(AttackSpeed);
-		} while (enemy.HP > 0 && !token.IsCancellationRequested);
+			enemy.DecreaseHP(Damage() - enemy.armor);
+			enemy.Blinking(attackSpeed, token);
+			await Task.Delay(attackSpeed);
+		} while (enemy.hp > 0 && !token.IsCancellationRequested);
 
 
 		if (token.IsCancellationRequested)
@@ -56,21 +56,21 @@ public class AbstractWarrior : UnitModel
 
 	public int Damage()
 	{
-		return random.Next(DamageMin, DamageMax + 1);
+		return random.Next(damageMin, damageMax + 1);
 	}
 
 	public override void OnTriggerEnter2D(Collider2D collision)
 	{
-	base.OnTriggerEnter2D(collision);
+		base.OnTriggerEnter2D(collision);
 		string tag = collision.tag;
 		if (tag == this.tag) return;
-		if (PlayerTags.Contains(tag) || EnemyTags.Contains(tag))
+		if (playerTags.Contains(tag) || enemyTags.Contains(tag))
 		{
 			enemy = collision.GetComponent<AbstractWarrior>();
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
-		if (SeenEnemy) return;
-				if (WeaponType == WeaponType.Cold && !SeenEnemy)
+				if (seenEnemy) return;
+				if (weaponType == WeaponType.Cold && !seenEnemy)
 				{
 					enemyPos = collision.gameObject.transform.position;
 					float offx = direction.x > 0.0f ? -0.35f : 0.35f;
@@ -80,21 +80,21 @@ public class AbstractWarrior : UnitModel
 					//moveStart = true;
 
 				}
-				if (WeaponType == WeaponType.Distance)
+				if (weaponType == WeaponType.Distance)
 				{
 					moveStart = false;
 					Attack(token);
 				}
-				if (enemy.WeaponType == WeaponType.Distance)
+				if (enemy.weaponType == WeaponType.Distance)
 				{
 					movement = enemy.gameObject.transform.position;
 					moveStart = true;
 				}
-				SeenEnemy = true;
+				seenEnemy = true;
 			}
 			if (collision.GetType() == typeof(BoxCollider2D))
 			{
-				if (WeaponType == WeaponType.Cold)
+				if (weaponType == WeaponType.Cold)
 				{
 					Attack(token);
 				}
@@ -105,15 +105,15 @@ public class AbstractWarrior : UnitModel
 
 	public override void OnTriggerExit2D(Collider2D collision)
 	{
-	base.OnTriggerExit2D(collision);
+		base.OnTriggerExit2D(collision);
 		string tag = collision.tag;
-		if (PlayerTags.Contains(tag) || EnemyTags.Contains(tag))
+		if (playerTags.Contains(tag) || enemyTags.Contains(tag))
 		{
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
-				if (SeenEnemy)
-					SeenEnemy = false;
-				if (WeaponType == WeaponType.Distance)
+				if (seenEnemy)
+					seenEnemy = false;
+				if (weaponType == WeaponType.Distance)
 				{
 					CreateToken();
 				}

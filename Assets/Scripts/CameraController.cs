@@ -46,7 +46,7 @@ public class CameraController : MonoBehaviour
 		float zoom = Camera.main.orthographicSize;
 		xMin = zoom * 1.45f - zoomStart * 1.75f;
 		xMax = 25 - zoom * 1.15f - zoomStart * 1.15f;
-		yMin = zoom - zoomStart*1.25f;
+		yMin = zoom - zoomStart * 1.25f;
 		yMax = 16 - zoom; //17-7=10
 
 		switch (scroll)

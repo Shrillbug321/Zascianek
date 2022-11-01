@@ -1,13 +1,15 @@
 ﻿using System.Runtime.Serialization;
 using UnityEngine;
 
-sealed class Vector4Surrogate : ISerializationSurrogate {
+sealed class Vector4Surrogate : ISerializationSurrogate
+{
 
 	// Method called to serialize a Vector4 object
 	public void GetObjectData(System.Object obj,
-		SerializationInfo info, StreamingContext context) {
+		SerializationInfo info, StreamingContext context)
+	{
 
-		Vector4 v4 = (Vector4) obj;
+		Vector4 v4 = (Vector4)obj;
 		info.AddValue("x", v4.x);
 		info.AddValue("y", v4.y);
 		info.AddValue("z", v4.z);
@@ -18,9 +20,10 @@ sealed class Vector4Surrogate : ISerializationSurrogate {
 	// Method called to deserialize a Vector4 object
 	public System.Object SetObjectData(System.Object obj,
 		SerializationInfo info, StreamingContext context,
-		ISurrogateSelector selector) {
+		ISurrogateSelector selector)
+	{
 
-		Vector4 v4 = (Vector4) obj;
+		Vector4 v4 = (Vector4)obj;
 		v4.x = (float)info.GetValue("x", typeof(float));
 		v4.y = (float)info.GetValue("y", typeof(float));
 		v4.z = (float)info.GetValue("z", typeof(float));

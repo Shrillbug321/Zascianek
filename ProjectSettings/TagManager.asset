@@ -8,6 +8,7 @@ TagManager:
   - PlayerWarrior
   - Granary
   - HUD_Food
+  - Building
   layers:
   - Default
   - TransparentFX
@@ -16,8 +17,8 @@ TagManager:
   - Water
   - UI
   - Outdoor
+  - Buildings
   - Characters
-  - 
   - 
   - 
   - 
@@ -51,6 +52,9 @@ TagManager:
   - name: Objects
     uniqueID: 471978095
     locked: 0
-  - name: Characters
+  - name: Buildings
     uniqueID: 4150522463
+    locked: 0
+  - name: Characters
+    uniqueID: 1280355515
     locked: 0

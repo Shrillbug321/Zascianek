@@ -1,27 +1,28 @@
 ﻿using Assets.Scripts;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameplayControllerInitializer : MonoBehaviour
 {
 	protected string Type;
-	public readonly string[] PlayerTags = { "PlayerWarrior", "PlayerInfrantry", "PlayerCrossbower", "PlayerHeavyInfrantry" };
-	public readonly string[] EnemyTags = { "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
-	public Dictionary<string, int> Items;
-	public static GameplayController Instance;
-	public Camera Camera;
+	public readonly string[] playerTags = { "PlayerWarrior", "PlayerInfrantry", "PlayerCrossbower", "PlayerHeavyInfrantry" };
+	public readonly string[] enemyTags = { "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
+	public Dictionary<string, int> items;
+	public static GameplayController gameplay;
+	public Camera camera;
+	public Mouse mouse;
 	public GameObject mainCamera;
 	public List<UnitModel> units = new List<UnitModel>();
+	public List<Building> buildings = new List<Building>();
 	protected string pathToCursors = "Prefabs/HUD/Cursors";
 	protected SaveLoadUtility slu;
+	protected GameObject building;
+	protected bool isMove;
 
 	public virtual void Start()
 	{
-		Items = new Dictionary<string, int>()
+		items = new Dictionary<string, int>()
 		{
 			["meat"] = 0,
 			["leather"] = 0,
@@ -31,7 +32,7 @@ public class GameplayControllerInitializer : MonoBehaviour
 			["sausage"] = 0,
 			["iron"] = 0,
 			["clay"] = 0,
-			["wood"] = 0,
+			["wood"] = 4,
 			["gold"] = 0,
 			["money"] = 0,
 			["wheat"] = 0,
@@ -42,5 +43,8 @@ public class GameplayControllerInitializer : MonoBehaviour
 			["crossbow"] = 0
 		};
 	}
-
+	public int GetItem(string item)
+	{
+		return items[item];
+	}
 }

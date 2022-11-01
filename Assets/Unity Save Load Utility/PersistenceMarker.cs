@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class PersistenceMarker : MonoBehaviour {
+public class PersistenceMarker : MonoBehaviour
+{
 
 }
 
