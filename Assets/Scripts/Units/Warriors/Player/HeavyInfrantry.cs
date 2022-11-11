@@ -10,8 +10,8 @@
 		damageMax = 28;
 		armor = 15;
 		weaponType = WeaponType.Cold;
-		SetCircleCollider(5);
-		gameObject.tag = "PlayerWarrior";
+		//SetCircleCollider(5);
+		gameObject.tag = "Warrior";
 	}
 
 	public override void Update()

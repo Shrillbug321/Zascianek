@@ -10,7 +10,7 @@ public class Bower : Enemy
 		damageMax = 14;
 		armor = 7;
 		weaponType = WeaponType.Distance;
-		SetCircleCollider(9);
+		//SetCircleCollider(9);
 		gameObject.tag = "Enemy";
 	}
 

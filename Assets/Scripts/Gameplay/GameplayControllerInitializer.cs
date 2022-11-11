@@ -6,7 +6,8 @@ using UnityEngine.InputSystem;
 public class GameplayControllerInitializer : MonoBehaviour
 {
 	protected string Type;
-	public readonly string[] playerTags = { "PlayerWarrior", "PlayerInfrantry", "PlayerCrossbower", "PlayerHeavyInfrantry" };
+	protected Vector2 mousePos;
+	public readonly string[] playerTags = { "Warrior", "PlayerInfrantry", "PlayerCrossbower", "PlayerHeavyInfrantry" };
 	public readonly string[] enemyTags = { "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
 	public Dictionary<string, int> items;
 	public static GameplayController gameplay;
@@ -18,33 +19,43 @@ public class GameplayControllerInitializer : MonoBehaviour
 	protected string pathToCursors = "Prefabs/HUD/Cursors";
 	protected SaveLoadUtility slu;
 	protected GameObject building;
-	protected bool isMove;
+	protected bool buildingIsPlacing;
+	public static HUDController hud;
+	public string lastClicked;
+	public bool unitIsChoosen;
+	public Mode mode = Mode.nothing;
 
 	public virtual void Start()
 	{
+		hud = new();
+		mode = Mode.nothing;
 		items = new Dictionary<string, int>()
 		{
-			["meat"] = 0,
-			["leather"] = 0,
-			["apple"] = 0,
-			["bread"] = 0,
-			["beer"] = 0,
-			["sausage"] = 0,
-			["iron"] = 0,
-			["clay"] = 0,
-			["wood"] = 4,
-			["gold"] = 0,
-			["money"] = 0,
-			["wheat"] = 0,
-			["flour"] = 0,
-			["hop"] = 0,
-			["sable"] = 0,
-			["armor"] = 0,
-			["crossbow"] = 0
+			["Meat"] = 0,
+			["Leather"] = 0,
+			["Apple"] = 0,
+			["Bread"] = 0,
+			["Beer"] = 0,
+			["Sausage"] = 0,
+			["Iron"] = 0,
+			["Clay"] = 0,
+			["Wood"] = 4,
+			["Gold"] = 0,
+			["Money"] = 0,
+			["Wheat"] = 0,
+			["Flour"] = 0,
+			["Hop"] = 0,
+			["Sable"] = 0,
+			["Armor"] = 0,
+			["Crossbow"] = 0
 		};
+		hud.Start();
 	}
 	public int GetItem(string item)
 	{
 		return items[item];
 	}
+}
+public enum Mode{
+	placing, unit, building, nothing
 }

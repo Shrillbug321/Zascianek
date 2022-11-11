@@ -49,12 +49,13 @@ public class GameplayController : GameplayControllerInitializer
 
 	void Update()
 	{
-		Vector2 mousePos = GetMousePosToWorldPoint();
+		mousePos = GetMousePosToWorldPoint();
 		RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
-		if (hit.collider != null && MouseInRange(mousePos, hit, 0.5f))
+		if (hit.collider != null && MouseInRange(mousePos, hit, 0.75f))
 		{
 			string tag = hit.collider.gameObject.tag;
-			print(tag);
+			//print(tag);
+			//print(hit.collider.gameObject.name);
 			switch (WhatIsHit(tag))
 			{
 				case "Warrior":
@@ -75,10 +76,10 @@ public class GameplayController : GameplayControllerInitializer
 					if (mouse.leftButton.wasPressedThisFrame)
 					{
 
-						if (items["money"] < 15)
+						if (items["Money"] < 15)
 						{
 							//ShowGUIImage("Prefabs/HUD/Image");
-							HUDController.hud.ShowGUIText("Potrzeba 15 monet!");
+							hud.ShowGUIText("Potrzeba 15 monet!");
 							return;
 						}
 						else
@@ -93,24 +94,72 @@ public class GameplayController : GameplayControllerInitializer
 
 					//units.Add(a);
 					break;
+				case "Building":
+					if (mouse.leftButton.wasPressedThisFrame && !unitIsChoosen)
+					//	print(hit.collider.gameObject.name);
+					//hud.SendMessage("BuildingClick", "AppleField");
+					{
+						mode = Mode.building;
+						hud.buildingController.BuildingClick(hit.collider.gameObject.GetComponent<Building>());
+					}
+					break;
 				default:
 					OnMouseExit();
 					break;
 			}
 		}
 		else OnMouseExit();
-		if (isMove)
+		//print(mode);
+		if (mode == Mode.placing)
 		{
 			building.transform.position = GetMousePosToWorldPoint();
 		}
+		OnMouseLeftClick();
+		OnMouseRightClick();
+	}
+
+	private void OnMouseLeftClick()
+	{
 		if (mouse.leftButton.wasPressedThisFrame)
 		{
-			if (isMove)
+			if (mode == Mode.placing)
 			{
-				building.transform.position = GetMousePosToWorldPoint();
-				items["wood"] -= 2;
-				isMove = false;
+				if (building.GetComponent<Building>().isColliding)
+				{
+					hud.ShowShortGUIText("Budynek nie mo¿e staæ na innym", time: 4000);
+				}
+				else
+				{
+					building.transform.position = GetMousePosToWorldPoint();
+					building.tag = "Building";
+					building.GetComponent<Building>().color = "Green";
+					building.layer = LayerMask.NameToLayer("Buildings");
+					items["Wood"] -= 2;
+					mode = Mode.nothing;
+
+					AbstractVillager villager = (AbstractVillager)units.Find(u => u.tag == "Villager" && u.workBuilding == null);
+					if (villager == null)
+						hud.ShowShortGUIText("Budynek nie ma pracownika", time: 4000);
+					else
+						villager.AssignToBuilding(building.GetComponent<Building>());
+				}
+
 			}
+		}
+	}
+
+	private void OnMouseRightClick()
+	{
+		if (mouse.rightButton.wasPressedThisFrame)
+		{
+			switch (mode)
+			{
+				case Mode.placing:
+					Destroy(building);
+					mode = Mode.nothing;
+					break;
+			}
+			mode = hud.buildingController.OnMouseRightClick(mode) ? Mode.nothing : mode;
 		}
 	}
 
@@ -156,6 +205,7 @@ public class GameplayController : GameplayControllerInitializer
 
 	private string WhatIsHit(string tag)
 	{
+		//print(tag);
 		if (playerTags.Contains(tag))
 			return "Warrior";
 		if (enemyTags.Contains(tag))
@@ -166,6 +216,8 @@ public class GameplayController : GameplayControllerInitializer
 			return "Load";
 		if (tag == "Granary")
 			return "Granary";
+		if (tag == "Building")
+			return "Building";
 		return "";
 	}
 
@@ -184,20 +236,21 @@ public class GameplayController : GameplayControllerInitializer
 	{
 		while (true)
 		{
-			items["money"]++;
-			await Task.Delay(100);
+			items["Money"]++;
+			await Task.Delay(300);
 		}
 	}
 
 	public void LoadBuilding(string buildingName)
 	{
-		building = Instantiate(Resources.Load<GameObject>("Prefabs/Buildings/"+buildingName));
+		building = Instantiate(Resources.Load<GameObject>("Prefabs/Buildings/" + buildingName));
 		//Vector3 pos = hit.collider.transform.position;
 		building.transform.position = GetMousePosToWorldPoint();
 		building.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-		building.gameObject.name = "ppp";
-		isMove = true;
-		print(building);
+		building.name = buildingName;
+		building.tag = "InBuild";
+		mode = Mode.placing;
+		//print(building);
 		//building.gameObject.name = buildings.Count.ToString();
 	}
 
@@ -212,5 +265,11 @@ public class GameplayController : GameplayControllerInitializer
 		Vector3 mousePos3D = mouse.position.ReadValue();
 		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
 		return mousePos;
+	}
+
+	public void OnCollisionStay(Collision col)
+	{
+		if (col.gameObject.tag == "Building")
+			print("bgf");
 	}
 }

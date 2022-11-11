@@ -10,8 +10,8 @@ public class Infrantry : Warrior
 		damageMax = 20;
 		armor = 8;
 		weaponType = WeaponType.Cold;
-		SetCircleCollider(5);
-		gameObject.tag = "PlayerWarrior";
+		//SetCircleCollider(5);
+		gameObject.tag = "Warrior";
 	}
 
 	public override void Update()

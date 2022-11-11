@@ -62,8 +62,10 @@
     <Compile Include="Assets\Scripts\Granary.cs" />
     <Compile Include="Assets\Scripts\HUD\HUDController.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Axer.cs" />
+    <Compile Include="Assets\Scripts\Buildings\Food\WheatField.cs" />
     <Compile Include="Assets\Unity Save Load Utility\PersistenceMarker.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Non-Mono Classes\SceneObject.cs" />
+    <Compile Include="Assets\Scripts\Units\Villagers\AbstractVillager.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Player\Settler.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Surrogates\Color32Surrogate.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Surrogates\QuaternionSurrogate.cs" />
@@ -72,6 +74,7 @@
     <Compile Include="Assets\Scripts\Buildings\BuildingController.cs" />
     <Compile Include="Assets\Unity Save Load Utility\ExampleScriptsAndClasses\TestClass.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Player\Infrantry.cs" />
+    <Compile Include="Assets\Scripts\Units\Villagers\Villager.cs" />
     <Compile Include="Assets\Unity Save Load Utility\ExampleScriptsAndClasses\TestScript.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Surrogates\ColorSurrogate.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Warrior.cs" />
@@ -79,6 +82,7 @@
     <Compile Include="Assets\Unity Save Load Utility\ObjectIdentifier.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Enemy\EnemyInfrantry.cs" />
     <Compile Include="Assets\Scripts\Buildings\BuildingFactory.cs" />
+    <Compile Include="Assets\Scripts\HUD\HUDBuildingText.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\AbstractWarrior.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Non-Mono Classes\SaveGame.cs" />
@@ -89,10 +93,13 @@
     <Compile Include="Assets\Unity Save Load Utility\Attributes\USLUAttributes.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Bower.cs" />
     <Compile Include="Assets\Unity Save Load Utility\SaveLoadUtility.cs" />
+    <Compile Include="Assets\Scripts\Buildings\Stock\Magazine.cs" />
     <Compile Include="Assets\Scripts\Units\UnitModel.cs" />
+    <Compile Include="Assets\Scripts\Buildings\Food\FoodBuilding.cs" />
     <Compile Include="Assets\Scripts\Gameplay\GameplayControllerInitializer.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Non-Mono Classes\ObjectComponent.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Player\Crossbower.cs" />
+    <Compile Include="Assets\Scripts\Buildings\Stock\Granary.cs" />
     <Compile Include="Assets\Unity Save Load Utility\SaveLoad.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Enemy.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />

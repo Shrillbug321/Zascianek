@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,40 +18,45 @@ namespace Assets.Scripts
 		public string type { get; set; }
 		public int armor { get; set; }
 		public bool isChoosen { get; set; } = false;
+		public string color { get; set; }
 
 		public Rigidbody2D rb2D;
 		public SpriteRenderer sr;
 		protected Vector2 oldPos = new Vector2();
-		protected Vector2 movement = new Vector2();
+		public Vector2 movement = new Vector2();
 		protected Vector2 temp = new Vector2();
 		public Vector2 direction;
-		protected Building workBuilding;
+		public Building workBuilding;
+		public string stockBuildingName;
 		protected bool moveStart = false;
 		protected float movementStatus = 0;
 		//public bool stopped = true;
 		public Collider2D colliderObject;
 		public Image healthBar;
+		private bool touchCollider;
 
-		public CancellationTokenSource tokenSource;
-		public CancellationToken token;
+		public CancellationTokenSource unitTokenSource;
+		public CancellationToken unitToken;
+		public CancellationTokenSource buildingTokenSource;
+		public CancellationToken buildingToken;
 		public virtual void Start()
 		{
 			//UnitId = Units.Count;
 			unitName = name;
 			//WorkBuildingId = 1;
 
-			gameObject.AddComponent<Rigidbody2D>();
+			//gameObject.AddComponent<Rigidbody2D>();
 			rb2D = GetComponent<Rigidbody2D>();
-			GetComponent<Rigidbody2D>().freezeRotation = true;
+			//GetComponent<Rigidbody2D>().freezeRotation = true;
 
-			gameObject.AddComponent<SpriteRenderer>();
+			//gameObject.AddComponent<SpriteRenderer>();
 			sr = GetComponent<SpriteRenderer>();
-			sr.sortingLayerName = "Characters";
-			gameObject.layer = LayerMask.NameToLayer("Characters");
+			/*sr.sortingLayerName = "Characters";
+			gameObject.layer = LayerMask.NameToLayer("Characters");*/
 
-			BoxCollider2D bc2d = gameObject.AddComponent<BoxCollider2D>();
+			/*BoxCollider2D bc2d = gameObject.AddComponent<BoxCollider2D>();
 			bc2d.isTrigger = true;
-			bc2d.size = new Vector2(1.17f, 2.27f);
+			bc2d.size = new Vector2(1.17f, 2.27f);*/
 
 			oldPos = rb2D.position;
 			movement = rb2D.position;
@@ -57,8 +64,11 @@ namespace Assets.Scripts
 			healthBar.transform.position = Camera.main.WorldToScreenPoint(transform.position);
 			//healthBar.SetActive(false);
 
-			tokenSource = new CancellationTokenSource();
-			token = tokenSource.Token;
+			unitTokenSource = new CancellationTokenSource();
+			unitToken = unitTokenSource.Token;
+
+			buildingTokenSource = new CancellationTokenSource();
+			buildingToken = buildingTokenSource.Token;
 
 			gameplay.AddUnit(this);
 		}
@@ -118,26 +128,70 @@ namespace Assets.Scripts
 			gameplay.RemoveUnit(this);
 		}
 
-		public virtual void OnTriggerEnter2D(Collider2D collision)
+		public virtual async void OnTriggerEnter2D(Collider2D collision)
 		{
 			string tag = collision.tag;
 			colliderObject = collision;
-			if (tag == this.tag) return;
-			if (GetComponent<BoxCollider2D>().IsTouching(collision))
-			{
-				print("ppp");
-				if (tag == "Finish")
-				{
-					oldPos = transform.position;
-					temp = movement;
-					movement.x = (transform.position.x + ((BoxCollider2D)collision).size.x + 3) * direction.x;
-					movement.y = (transform.position.y + ((BoxCollider2D)collision).size.y + 3) * direction.y;
-					gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
-				}
-			}
+			if (CompareTag(tag)) return;
+
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
+				if (collision.tag == "Building")
+				{
+					Building building = collision.GetComponent<Building>();
 
+					/*if (building == workBuilding)
+					{
+						moveStart = false;
+						//Hide();
+						sr.color = Color.clear;
+						building.Reset();
+						Dictionary<string, int> product = await building.Production();
+
+						print(product.Keys.First());
+						print(product.Values.First());
+						sr.color = Color.white;
+						movement = building.stockBuilding.transform.position;
+						moveStart = true;
+					}
+					if (collision.name == stockBuildingName)
+					{
+						moveStart = false;
+						await Wait(2000);
+
+						movement = workBuilding.transform.position;
+						moveStart = true;
+					}*/
+				}
+				return;
+			}
+
+			if (GetComponent<BoxCollider2D>().IsTouching(collision))
+			{
+				/*if (tag == "Building")// && !touchCollider)
+				{
+
+					//else
+					{
+						//touchCollider = true;
+						oldPos = transform.position;
+						temp = movement;
+						//todo ruch
+						movement.x = (transform.position.x + ((CircleCollider2D)collision).radius * 2) * direction.x;
+						movement.y = (transform.position.y + ((CircleCollider2D)collision).radius * 2) * direction.y;*//*
+					movement.x = (transform.position.x + ((BoxCollider2D)collision).size.x + 3) * direction.x;
+					movement.y = (transform.position.y + ((BoxCollider2D)collision).size.y + 3) * direction.y;*//*
+						gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+					}
+
+
+				}*/
+				if (tag == "InBuild")// && !touchCollider)
+				{
+					Building entered = collision.GetComponent<Building>();
+					entered.isColliding = true;
+					entered.sr.color = Color.gray;
+				}
 			}
 
 		}
@@ -146,7 +200,13 @@ namespace Assets.Scripts
 		{
 			string tag = collision.tag;
 			colliderObject = null;
-			if (collision.GetType() == typeof(BoxCollider2D))
+			if (tag == "InBuild")// && !touchCollider)
+			{
+				Building entered = collision.GetComponent<Building>();
+				entered.isColliding = false;
+				entered.sr.color = Color.white;
+			}
+			/*if (collision.GetType() == typeof(BoxCollider2D))
 			{
 				if (tag == "Finish")
 				{
@@ -155,11 +215,32 @@ namespace Assets.Scripts
 					movement = temp;
 				}
 
-			}
-			if (collision.GetType() == typeof(CircleCollider2D))
+			}*/
+			/*if (collision.GetType() == typeof(CircleCollider2D))
 			{
-
+				gameObject.GetComponent<CircleCollider2D>().isTrigger = true;
+				oldPos = transform.position;
+				movement = temp;
+			}*/
+		}
+		protected async Task Hide()
+		{
+			print("jkjkjk");
+			Color color = sr.color;
+			Color newColor = new Color(1, 1, 1, 0);
+			for (float i = 0; i == 10; i+=0.1f)
+			{
+				//sr.color = new Color(1, 1, 1, 0.1f * i);
+			sr.color = Color.Lerp(color, newColor, i);
+				await Task.Delay(1000);
 			}
+		}
+		protected async Task Wait(int time)
+		{
+			//for (float i = 0; i == 10; i+=0.1f)
+			//{
+				await Task.Delay(time);
+			//}
 		}
 	}
 }

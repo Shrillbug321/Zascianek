@@ -14,6 +14,7 @@ public class AbstractWarrior : UnitModel
 	public int damageMin { get; set; }
 	public int damageMax { get; set; }
 	protected AbstractWarrior enemy;
+	protected Building building;
 	Vector2 enemyPos = Vector2.zero;
 	public string[] playerTags;
 	public string[] enemyTags;
@@ -54,17 +55,35 @@ public class AbstractWarrior : UnitModel
 		Destroy(enemy.gameObject);
 	}
 
+	protected async Task AttackBuilding(CancellationToken token)
+	{
+		do
+		{
+			building.DecreaseDP(Damage());
+			building.Blinking(attackSpeed, token);
+			print(building.dp);
+			await Task.Delay(attackSpeed);
+		} while (building.dp > 0 && !token.IsCancellationRequested);
+
+
+		if (token.IsCancellationRequested)
+			return;
+
+		Destroy(building.gameObject);
+	}
+
 	public int Damage()
 	{
 		return random.Next(damageMin, damageMax + 1);
 	}
 
-	public override void OnTriggerEnter2D(Collider2D collision)
+	public override async void OnTriggerEnter2D(Collider2D collision)
 	{
 		base.OnTriggerEnter2D(collision);
 		string tag = collision.tag;
 		if (tag == this.tag) return;
-		if (playerTags.Contains(tag) || enemyTags.Contains(tag))
+
+		if ((playerTags.Contains(tag) || enemyTags.Contains(tag)))// && !seenEnemy)
 		{
 			enemy = collision.GetComponent<AbstractWarrior>();
 			if (collision.GetType() == typeof(CircleCollider2D))
@@ -77,28 +96,52 @@ public class AbstractWarrior : UnitModel
 
 					movement.x = enemyPos.x + offx;
 					movement.y = enemyPos.y;
+
+
+					/*Vector2 difference = (Vector2)transform.position - enemyPos;
+
+					movement.x = (difference.x / 2 + offx) * direction.x;
+					movement.y = difference.y / 2 * direction.y;*/
 					//moveStart = true;
 
 				}
 				if (weaponType == WeaponType.Distance)
 				{
 					moveStart = false;
-					Attack(token);
+					await Attack(unitToken);
+					moveStart = true;
 				}
 				if (enemy.weaponType == WeaponType.Distance)
 				{
-					movement = enemy.gameObject.transform.position;
+					//movement = enemy.gameObject.transform.position;
 					moveStart = true;
 				}
+				//movement = enemy.gameObject.transform.position;
+				//moveStart = true;
 				seenEnemy = true;
 			}
 			if (collision.GetType() == typeof(BoxCollider2D))
 			{
 				if (weaponType == WeaponType.Cold)
 				{
-					Attack(token);
+					moveStart = false;
+					await Attack(unitToken);
+					moveStart = true;
 				}
 
+			}
+		}
+
+		if (tag == "Building")
+		{
+			building = collision.GetComponent<Building>();
+			string color = building.GetComponent<Building>().color;
+			if (collision.GetType() == typeof(CircleCollider2D) &&
+			this.color != color) 
+			{
+				moveStart = false;
+				await AttackBuilding(buildingToken);
+				moveStart = true;
 			}
 		}
 	}
@@ -124,14 +167,27 @@ public class AbstractWarrior : UnitModel
 				CreateToken();
 			}
 		}
+
+		if(tag=="Building")
+		{
+			CreateBuildingToken();
+		}
 	}
 
 	private void CreateToken()
 	{
-		tokenSource.Cancel();
-		tokenSource.Dispose();
-		tokenSource = new CancellationTokenSource();
-		token = tokenSource.Token;
+		unitTokenSource.Cancel();
+		unitTokenSource.Dispose();
+		unitTokenSource = new CancellationTokenSource();
+		unitToken = unitTokenSource.Token;
+	}
+
+	private void CreateBuildingToken()
+	{
+		buildingTokenSource.Cancel();
+		buildingTokenSource.Dispose();
+		buildingTokenSource = new CancellationTokenSource();
+		buildingToken = buildingTokenSource.Token;
 	}
 }
 

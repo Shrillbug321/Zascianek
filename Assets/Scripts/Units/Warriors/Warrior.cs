@@ -7,6 +7,7 @@ public class Warrior : AbstractWarrior
 	public override void Start()
 	{
 		base.Start();
+		color = "Green";
 	}
 
 	public override void Update()
@@ -36,6 +37,7 @@ public class Warrior : AbstractWarrior
 				if (gameplay.MouseInRange(mousePos, hit, 0.5f))
 				{
 					isChoosen = true;
+					gameplay.unitIsChoosen = true;
 				}
 			}
 		}
@@ -61,6 +63,7 @@ public class Warrior : AbstractWarrior
 	public void RightClick()
 	{
 		isChoosen = false;
+		gameplay.unitIsChoosen = false;
 		gameplay.SetCursor("Assets/HUD/cursor.png");
 	}
 }
