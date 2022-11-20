@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 466987085241996306}
   m_Layer: 5
   m_Name: Church
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 466987085429265965}
   m_Layer: 5
   m_Name: Well
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -165,7 +165,7 @@ GameObject:
   - component: {fileID: 466987086602335890}
   m_Layer: 5
   m_Name: Market
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

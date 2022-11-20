@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using static GameplayControllerInitializer;
 
 public class Building : MonoBehaviour
 {
-	public int id { get; set; }
+	public int id;
 	public int typeId { get; set; }
 	public string buildingName { get; set; }
 	public bool isFireable { get; set; }
@@ -16,22 +17,19 @@ public class Building : MonoBehaviour
 	public int productionTime { get; set; }
 	public int transportTime { get; set; }
 	protected float time { get; set; }
-	public Dictionary<string, int> product { get; set; }
+	public Dictionary<string, int> products { get; set; }
 	public Building stockBuilding;
-	public string stockBuildingName;
-	public int productionProgress { get; set; }
+	public List<string> stockBuildingsNames;
+	public Dictionary<string, Building> getItemBuildings;
+	public Dictionary<string, int> stockedItems;
+	public string[] getItemBuildingsNames;
 	public string color;
 	//public const int MONTH = 30000;
 	public const int MONTH = 1;
-	public static Dictionary<string, int> needToBuild = new Dictionary<string, int>()
-	{
-		["Iron"] = 0,
-		["Clay"] = 0,
-		["Wood"] = 0,
-		["Gold"] = 0,
-		["Money"] = 0
-	};
+	public Dictionary<string, int> needToBuild;
+	public Dictionary<string, int> needToProduction;
 	public BuildingStatus status;
+	public string[] grounds;
 
 	public Rigidbody2D rb2D;
 	public SpriteRenderer sr;
@@ -43,6 +41,7 @@ public class Building : MonoBehaviour
 		//UnitId = Units.Count;
 		buildingName = name;
 		//WorkBuildingId = 1;
+		status = BuildingStatus.waitingForWorker;
 
 		gameObject.AddComponent<Rigidbody2D>();
 		rb2D = GetComponent<Rigidbody2D>();
@@ -53,9 +52,9 @@ public class Building : MonoBehaviour
 		sr.sortingLayerName = "Buildings";
 		gameObject.layer = LayerMask.NameToLayer("Buildings");
 
-		BoxCollider2D bc2d = gameObject.AddComponent<BoxCollider2D>();
+		//BoxCollider2D bc2d = gameObject.AddComponent<BoxCollider2D>();
 		//bc2d.isTrigger = true;
-		bc2d.size = new Vector2(1.17f, 2.27f);
+		//bc2d.size = new Vector2(1.17f, 2.27f);
 
 		/*oldPos = rb2D.position;
 		movement = rb2D.position;
@@ -69,15 +68,6 @@ public class Building : MonoBehaviour
 		gameplay.AddBuilding(this);
 		//Production();
 	}
-
-	public virtual async Task<Dictionary<string, int>> Production()
-	{
-		while (productionProgress < 99)
-			await Task.Delay(100);
-
-		return product;
-	}
-
 
 	/*public async Task WaitForProduct()
 	{
@@ -108,21 +98,122 @@ public class Building : MonoBehaviour
 
 	public virtual void Reset()
 	{
-		productionProgress = 0;
 	}
 
-	public virtual string CanBuild()
+	/*public string CanBuild(Vector2 position, string groundType = "")
 	{
 		string result = "";
+		result += CheckItemsNeedToBuilding();
+		if (groundType != "")
+			result += CheckGround(position, groundType);
+		return result;
+	}*/
+
+	public string CheckItemsNeedToBuilding()
+	{
+		string result = "";
+		if (needToBuild == null) return result;
 		foreach (var item in needToBuild)
 		{
-		Debug.LogWarning(item.Key);
-		Debug.LogWarning(item.Value);
-		Debug.LogWarning(gameplay.items[item.Key]);
+			Debug.LogWarning(item.Key);
+			Debug.LogWarning(item.Value);
+			Debug.LogWarning(gameplay.items[item.Key]);
 			if (gameplay.items[item.Key] < item.Value)
 			{
 				result += item.Value + " " + item.Key;
 			}
+		}
+		return result;
+	}
+
+	public string CheckGround(Vector2 position)
+	{
+		string result = "Nieprawid這we pod這瞠";
+		if (grounds.Length == 0) return "";
+		Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
+		foreach (string ground in grounds)
+		{
+			bool inRange = tilemap.TileTypeInRange(ground, position, 0);
+			if (inRange)
+				return "";
+		}
+		return result;
+	}
+
+	/*public string CheckGround(Vector2 position, string groundType)
+	{
+		string result = "";
+		if (grounds == null) return result;
+		Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
+		foreach (string ground in ground)
+		{
+
+		}
+		bool inRange = tilemap.TileTypeInRange(groundType, position, 0);
+		if (!inRange)
+			result = "Nieprawid這we pod這瞠";
+		return result;
+	}*/
+	public bool CanProduction(Dictionary<string, int> items = null)
+	{
+		//if (needToProduction == null) return true;
+		if (needToProduction != null && items == null) return false;
+		foreach (var item in items)
+		{
+			if (item.Value < needToProduction[item.Key])
+			{
+				return false;
+			}
+		}
+		status = BuildingStatus.production;
+		return true;
+	}
+
+	public void Build(Vector2 pos)
+	{
+		transform.position = pos;
+		tag = "Building";
+		color = "Green";
+		id = gameplay.buildings.Count;
+		gameplay.buildings.Add(this);
+		gameObject.layer = LayerMask.NameToLayer("Buildings");
+		DecreaseItemsToBuild();
+	}
+
+	public virtual void DecreaseItemsToBuild()
+	{
+		if (needToBuild == null) return;
+		foreach (var item in needToBuild)
+		{
+			gameplay.items[item.Key] -= item.Value;
+		}
+	}
+
+	public void AddItems(Dictionary<string, int> items)
+	{
+		foreach (var item in items)
+		{
+			gameplay.items[item.Key] += item.Value;
+		}
+	}
+	public async Task<Dictionary<string, int>> GetItems(Dictionary<string, int> items)
+	{
+		Dictionary<string, int> result = new Dictionary<string, int>();
+		foreach (var item in items)
+		{
+			if (stockedItems.ContainsKey(item.Key))
+			{
+				if (gameplay.items[item.Key] < item.Value)
+				{
+					return null;
+				}
+				if (gameplay.items[item.Key] >= item.Value)
+				{
+					result.Add(item.Key, item.Value);
+					gameplay.items[item.Key] -= item.Value;
+				}
+			}
+
 		}
 		return result;
 	}
@@ -135,7 +226,7 @@ public class Building : MonoBehaviour
 		if (GetComponent<CircleCollider2D>().IsTouching(collision))
 		{
 			Building entered = collision.GetComponent<Building>();
-			if (tag == "InBuild")// && !touchCollider)
+			if (tag == "InBuild")// && !around)
 			{
 				entered.isColliding = true;
 				entered.sr.color = Color.gray;
@@ -149,7 +240,7 @@ public class Building : MonoBehaviour
 		//print(tag);
 		Building entered = collision.GetComponent<Building>();
 		//if (CompareTag(tag)) return;
-		if (tag == "InBuild")// && !touchCollider)
+		if (tag == "InBuild")// && !around)
 		{
 			entered.isColliding = false;
 			entered.sr.color = Color.white;

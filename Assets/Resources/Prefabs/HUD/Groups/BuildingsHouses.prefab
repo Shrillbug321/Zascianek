@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 3155658010352783115}
   m_Layer: 5
   m_Name: HouseVillager
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -168,7 +168,7 @@ GameObject:
   - component: {fileID: 3155658010717396176}
   m_Layer: 5
   m_Name: HouseRichVillager
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -244,7 +244,7 @@ GameObject:
   - component: {fileID: 3155658011228733676}
   m_Layer: 5
   m_Name: HouseNobility
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8579384944027080015}
   m_Layer: 5
   m_Name: Butcher
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 8579384944700390530}
   m_Layer: 5
   m_Name: Mill
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -165,7 +165,7 @@ GameObject:
   - component: {fileID: 8579384944721991426}
   m_Layer: 5
   m_Name: Bakery
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -245,7 +245,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8579384944888300543
 RectTransform:
   m_ObjectHideFlags: 0
@@ -321,7 +321,7 @@ GameObject:
   - component: {fileID: 8579384944963598474}
   m_Layer: 5
   m_Name: Brewery
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -141,9 +141,9 @@ public class SaveLoadUtility : MonoBehaviour
 		string directory = @"E:\Dokumenty\Studia\Praca inżynierska\Gra\Zaścianek\Assets\Resources\Prefabs";
 		string[] folders = System.IO.Directory.GetDirectories(directory, "*", System.IO.SearchOption.AllDirectories);
 		folders = Array.ConvertAll(folders, folder => folder.Replace($"{directory}\\", ""));
-		foreach (string folder in folders)
+		//foreach (string folder in folders)
 		{
-			ObjectIdentifier[] prefabs_oi = Resources.LoadAll<ObjectIdentifier>("Prefabs/" + folder);
+			ObjectIdentifier[] prefabs_oi = Resources.LoadAll<ObjectIdentifier>("Prefabs/");
 			//print("P");
 			/*UnityEngine.Object[] temp = AssetDatabase.LoadAllAssetsAtPath("Assets/Resources/Prefabs/Units");
 			ObjectIdentifier[] prefabs_oi = Array.ConvertAll(temp, item => (ObjectIdentifier)item);*/

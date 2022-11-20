@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6157024908771917705}
   m_Layer: 5
   m_Name: Lumberjack
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 6157024908862463148}
   m_Layer: 5
   m_Name: MineIron
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 6157024910283732251}
   m_Layer: 5
   m_Name: MineGold
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -321,7 +321,7 @@ GameObject:
   - component: {fileID: 6157024910877317362}
   m_Layer: 5
   m_Name: MineClay
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

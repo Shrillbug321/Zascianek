@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 public class GameplayControllerInitializer : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class GameplayControllerInitializer : MonoBehaviour
 	public string lastClicked;
 	public bool unitIsChoosen;
 	public Mode mode = Mode.nothing;
+	public Tilemap tilemap;
 
 	public virtual void Start()
 	{
@@ -33,22 +35,23 @@ public class GameplayControllerInitializer : MonoBehaviour
 		{
 			["Meat"] = 0,
 			["Leather"] = 0,
-			["Apple"] = 0,
+			["Apple"] = 5,
 			["Bread"] = 0,
 			["Beer"] = 0,
 			["Sausage"] = 0,
 			["Iron"] = 0,
 			["Clay"] = 0,
-			["Wood"] = 4,
+			["Wood"] = 40,
 			["Gold"] = 0,
 			["Money"] = 0,
-			["Wheat"] = 0,
+			["Wheat"] = 10,
 			["Flour"] = 0,
 			["Hop"] = 0,
 			["Sable"] = 0,
 			["Armor"] = 0,
 			["Crossbow"] = 0
 		};
+		tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
 		hud.Start();
 	}
 	public int GetItem(string item)

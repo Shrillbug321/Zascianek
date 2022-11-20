@@ -3,21 +3,17 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class WheatField : FoodBuilding
+public class WheatField : ProductionBuilding
 {
 	public override void Start()
 	{
 		base.Start();
 		dp = maxDp = 20;
-		productionTime = MONTH * 12;
-		stockBuildingName = "Magazine";
-		product = new()
+		productionTime = MONTH * 1;
+		stockBuildingsNames = new() { "Magazine" };
+		products = new()
 		{
 			["Wheat"] = 60
 		};
-	}
-	public override string CanBuild()
-	{
-		return base.CanBuild();
 	}
 }

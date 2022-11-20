@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class Magazine : Building
+public class Magazine : StockBuilding
 {
-	/*public Dictionary<string, int> stocked = new()
-	{
-		["apple"] = 0,
-		["beer"] = 0,
-		["meat"] = 0,
-		["bread"] = 0,
-		["wurst"] = 0
-	};*/
 	public override void Start()
 	{
 		base.Start();
 		dp = maxDp = 50;
-	}
+	stockedItems = new()
+	{
+		["Wood"] = 0,
+		["Wheat"] = 0,
+		["Flour"] = 0,
+		["Hop"] = 0,
+		["Leather"] = 0,
+		["Iron"] = 0,
+		["Gold"] = 0,
+		["Clay"] = 0,
+	};
+}
 }

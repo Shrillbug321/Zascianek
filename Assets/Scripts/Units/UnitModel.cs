@@ -22,18 +22,31 @@ namespace Assets.Scripts
 
 		public Rigidbody2D rb2D;
 		public SpriteRenderer sr;
-		protected Vector2 oldPos = new Vector2();
-		public Vector2 movement = new Vector2();
-		protected Vector2 temp = new Vector2();
+		protected Vector2 oldPos = new();
+		public Vector2 movement = new();
+		public Vector2 directionBeforeAround = new();
+		protected Stack<Vector2> temp = new();
 		public Vector2 direction;
 		public Building workBuilding;
-		public string stockBuildingName;
 		protected bool moveStart = false;
 		protected float movementStatus = 0;
 		//public bool stopped = true;
 		public Collider2D colliderObject;
 		public Image healthBar;
-		private bool touchCollider;
+		private bool around;
+		private float aroundDistance;
+		protected List<Vector2> directions = new()
+		{
+			Vector2.up,
+			new Vector2(1, 1),
+			Vector2.right,
+			new Vector2(1, -1),
+			Vector2.down,
+			new Vector2(-1, -1),
+			Vector2.left,
+			new Vector2(-1, 1),
+		};
+		private int waitCounter = 0;
 
 		public CancellationTokenSource unitTokenSource;
 		public CancellationToken unitToken;
@@ -78,25 +91,39 @@ namespace Assets.Scripts
 			if (moveStart && Vector2.Distance(transform.position, movement) > 0.5)
 			{
 				transform.position = Vector2.MoveTowards(transform.position, movement, speed * Time.deltaTime);
-				direction = (movement - oldPos).normalized;
+				direction = CalcDirection();
 				if (direction.x != 0)
 					sr.flipX = direction.x < 0;
+			}
+			if (around)
+			{
+				//transform.RotateAround(((CircleCollider2D)colliderObject).bounds.center, Vector3.forward, 20 * Time.deltaTime);
+				//around = false;
+				if (Vector2.Distance(transform.position, movement) <= 0.6)
+				{
+						around = false;
+					RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, Mathf.Infinity, LayerMask.GetMask("Buildings"));
+					if (hit.collider == null)
+					{
+						movement = temp.Pop();
+					}
+					else
+					{
+						Vector2 availableDirection = findAvailableDirection(direction);
+						movement = SetMovementForAround(availableDirection);
+					}
+				}
+
+				/*oldPos = transform.position;
+				movement = temp.Pop();*/
+
 			}
 			/*else {
    moveStart = false;
 			}*/
 		}
 
-		public async Task Rotate()
-		{
-			int times = 7;
-			for (int i = 0; i < times; i++)
-			{
-				Quaternion rotation = Quaternion.Euler(0, 0, -90) * (transform.rotation);
-				transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 50 * Time.deltaTime);
-				await Task.Delay(100);
-			}
-		}
+		
 
 		public virtual void DecreaseHP(int HowMany)
 		{
@@ -114,6 +141,24 @@ namespace Assets.Scripts
 				sr.color = Color.white;
 				await Task.Delay(attackSpeed - 500);
 			}
+		}
+
+		private Vector2 CalcDirection()
+		{
+			Vector2 direction = (movement - oldPos).normalized;
+			switch (direction.x)
+			{
+				case < -0.2f: direction.x = -1; break;
+				case >= -0.2f and <= 0.2f: direction.x = 0; break;
+				case > 0.2f: direction.x = 1; break;
+			}
+			switch (direction.y)
+			{
+				case < -0.2f: direction.y = -1; break;
+				case >= -0.2f and <= 0.2f: direction.y = 0; break;
+				case > 0.2f: direction.y = 1; break;
+			}
+			return direction;
 		}
 
 		public void SetCircleCollider(int radius)
@@ -136,57 +181,58 @@ namespace Assets.Scripts
 
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
-				if (collision.tag == "Building")
+				if (collision.tag == "Building" && !around)
 				{
-					Building building = collision.GetComponent<Building>();
+					around = true;
+					oldPos = transform.position;
+					//moveStart = false;
+					temp.Push(movement);
+					//Debug.LogWarning(direction);
+					RaycastHit2D hit;// = Physics2D.Raycast(transform.position, direction, Mathf.Infinity, LayerMask.GetMask("Buildings"));
+									 //Debug.LogWarning(hit.collider);
+					directionBeforeAround = direction;
+					aroundDistance = ((CircleCollider2D)collision).radius / 5;
+					Vector2 availableDirection = findAvailableDirection(direction);
 
-					/*if (building == workBuilding)
+					/*if (hit.collider == null)
 					{
-						moveStart = false;
-						//Hide();
-						sr.color = Color.clear;
-						building.Reset();
-						Dictionary<string, int> product = await building.Production();
 
-						print(product.Keys.First());
-						print(product.Values.First());
-						sr.color = Color.white;
-						movement = building.stockBuilding.transform.position;
-						moveStart = true;
-					}
-					if (collision.name == stockBuildingName)
-					{
-						moveStart = false;
-						await Wait(2000);
-
-						movement = workBuilding.transform.position;
-						moveStart = true;
+						//hit = Physics2D.Raycast(transform.position, movement, 100f, LayerMask.GetMask("Buildings"));
+						Debug.LogWarning(hit.collider);
 					}*/
+					//Debug.LogWarning(transform.position);
+					//Debug.LogWarning(new Vector3(movement.x, movement.y, 0));
+					//collision.isTrigger = false;
+					movement = SetMovementForAround(availableDirection);
+					/*movement.x = (transform.position.x + ((CircleCollider2D)collision).radius * 2) * direction.x;
+					movement.y = (transform.position.y + ((CircleCollider2D)collision).radius * 2) * direction.y;*/
+
+					//moveStart = true;
 				}
 				return;
 			}
 
 			if (GetComponent<BoxCollider2D>().IsTouching(collision))
 			{
-				/*if (tag == "Building")// && !touchCollider)
+				/*if (tag == "Building")// && !around)
 				{
 
 					//else
 					{
-						//touchCollider = true;
+						//around = true;
 						oldPos = transform.position;
 						temp = movement;
 						//todo ruch
-						movement.x = (transform.position.x + ((CircleCollider2D)collision).radius * 2) * direction.x;
-						movement.y = (transform.position.y + ((CircleCollider2D)collision).radius * 2) * direction.y;*//*
-					movement.x = (transform.position.x + ((BoxCollider2D)collision).size.x + 3) * direction.x;
-					movement.y = (transform.position.y + ((BoxCollider2D)collision).size.y + 3) * direction.y;*//*
+						//movement.x = (transform.position.x + ((CircleCollider2D)collision).radius * 2) * direction.x;
+						//movement.y = (transform.position.y + ((CircleCollider2D)collision).radius * 2) * direction.y;
+					//movement.x = (transform.position.x + ((BoxCollider2D)collision).size.x + 3) * direction.x;
+					//movement.y = (transform.position.y + ((BoxCollider2D)collision).size.y + 3) * direction.y;
 						gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
 					}
 
 
 				}*/
-				if (tag == "InBuild")// && !touchCollider)
+				if (tag == "InBuild")// && !around)
 				{
 					Building entered = collision.GetComponent<Building>();
 					entered.isColliding = true;
@@ -200,7 +246,7 @@ namespace Assets.Scripts
 		{
 			string tag = collision.tag;
 			colliderObject = null;
-			if (tag == "InBuild")// && !touchCollider)
+			if (tag == "InBuild")// && !around)
 			{
 				Building entered = collision.GetComponent<Building>();
 				entered.isColliding = false;
@@ -216,22 +262,27 @@ namespace Assets.Scripts
 				}
 
 			}*/
-			/*if (collision.GetType() == typeof(CircleCollider2D))
+			if (collision.GetType() == typeof(CircleCollider2D))
 			{
-				gameObject.GetComponent<CircleCollider2D>().isTrigger = true;
-				oldPos = transform.position;
-				movement = temp;
-			}*/
+				//collision.GetComponent<CircleCollider2D>().isTrigger = true;
+				if (collision.tag == "Building")
+				{
+					around = false;
+					//oldPos = transform.position;
+					//movement = temp.Pop();
+					//moveStart = false;
+				}
+			}
 		}
 		protected async Task Hide()
 		{
 			print("jkjkjk");
 			Color color = sr.color;
 			Color newColor = new Color(1, 1, 1, 0);
-			for (float i = 0; i == 10; i+=0.1f)
+			for (float i = 0; i == 10; i += 0.1f)
 			{
 				//sr.color = new Color(1, 1, 1, 0.1f * i);
-			sr.color = Color.Lerp(color, newColor, i);
+				sr.color = Color.Lerp(color, newColor, i);
 				await Task.Delay(1000);
 			}
 		}
@@ -239,8 +290,89 @@ namespace Assets.Scripts
 		{
 			//for (float i = 0; i == 10; i+=0.1f)
 			//{
-				await Task.Delay(time);
+			/*if (waitCounter++ % 2 == 0)
+				return;*/
+
+			await Task.Delay(time);
+			//Thread.Sleep(time);
 			//}
+		}
+
+		private Vector2 findAvailableDirection(Vector2 direction)
+		{
+			Vector2 availableDirection = new();
+			bool findDirection = false;
+			RaycastHit2D hit;
+
+			int directionIndex = directions.FindIndex(d => d == direction);
+			for (int i = directionIndex + 1; i < directions.Count; i++)
+			{
+				hit = Physics2D.Raycast(transform.position, directions[i], Mathf.Infinity, LayerMask.GetMask("Buildings"));
+				if (hit.collider == null)
+				{
+					Debug.LogWarning(directions[i]);
+					findDirection = true;
+					availableDirection = directions[i];
+					break;
+				}
+			}
+			if (!findDirection)
+			{
+				for (int i = 0; i < directionIndex; i++)
+				{
+					hit = Physics2D.Raycast(transform.position, directions[i], Mathf.Infinity, LayerMask.GetMask("Buildings"));
+					if (hit.collider == null)
+					{
+						Debug.LogWarning(directions[i]);
+						findDirection = true;
+						availableDirection = directions[i];
+						break;
+					}
+				}
+			}
+			return availableDirection;
+		}
+
+		private Vector2 SetMovementForAround(Vector2 direction)
+		{
+			if (direction == Vector2.up)
+			{
+				movement.y = transform.position.y + aroundDistance;
+			}
+			if (direction == new Vector2(1, 1))
+			{
+				movement.x = transform.position.x + aroundDistance;
+				movement.y = transform.position.y + aroundDistance;
+			}
+			if (direction == Vector2.right)
+			{
+				movement.x = transform.position.x + aroundDistance;
+			}
+			if (direction == new Vector2(1, -1))
+			{
+				movement.x = transform.position.x + aroundDistance;
+				movement.y = transform.position.y - aroundDistance;
+			}
+			if (direction == Vector2.down)
+			{
+				movement.y = transform.position.y - aroundDistance;
+			}
+			if (direction == new Vector2(-1, -1))
+			{
+				movement.x = transform.position.x - aroundDistance;
+				movement.y = transform.position.y - aroundDistance;
+			}
+			if (direction == Vector2.left)
+			{
+				movement.x = transform.position.x - aroundDistance;
+			}
+			if (direction == new Vector2(-1, 1))
+			{
+				movement.x = transform.position.x - aroundDistance;
+				movement.y = transform.position.y + aroundDistance;
+			}
+			return movement;
 		}
 	}
 }
+/*344*/

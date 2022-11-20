@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6198142247852393584}
   m_Layer: 5
   m_Name: Smith
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 6198142248127455773}
   m_Layer: 5
   m_Name: Armorer
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -165,7 +165,7 @@ GameObject:
   - component: {fileID: 6198142248203757760}
   m_Layer: 5
   m_Name: Crossbower
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -321,7 +321,7 @@ GameObject:
   - component: {fileID: 6198142249109515741}
   m_Layer: 5
   m_Name: Barracks
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

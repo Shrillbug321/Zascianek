@@ -9,30 +9,42 @@ public class HUDBuildingText : MonoBehaviour
 	{
 		["AppleField"] = new(){
 			["production"] = "Jabłka rosną",
-			["transport"] = "Chłop niesie jabłka do spichlerza"
+			["transport"] = "Jabłka są niesione do spichlerza",
+			["waitingForWorker"] = "Czeka na pracownika"
+		},
+		["WheatField"] = new(){
+			["production"] = "Zboże rośnie",
+			["transport"] = "Zboże jest niesione do składu",
+			["waitingForWorker"] = "Czeka na pracownika"
 		}
 	};
 
 	protected Dictionary<string, string> buildingsNames = new()
 	{
 		["AppleField"] = "Sad",
-		["WheatField"] = "Pole zboża"
+		["WheatField"] = "Pole zboża",
+		["HopField"] = "Pole chmielu",
+		["Pigsty"] = "Chlew"
 	};
 
 	protected Dictionary<string, string> itemInBuilding = new()
 	{
 		["AppleField"] = "apple",
-		["WheatField"] = "wheat"
+		["WheatField"] = "wheat",
+		["HopField"] = "hop",
+		["Pigsty"] = "pig"
 	};
 
 	protected Dictionary<string, string> buildingsImages = new()
 	{
 		["AppleField"] = "apple_field",
-		["WheatField"] = "wheat_field"
+		["WheatField"] = "wheat_field",
+		["HopField"] = "hop_field",
+		["Pigsty"] = "pigsty"
 	};
 
-	protected Dictionary<string, Type> buildingsClasses = new()
+	/*protected Dictionary<string, Type> buildingsClasses = new()
 	{
 		["AppleField"] = typeof(AppleField)
-	};
+	};*/
 }

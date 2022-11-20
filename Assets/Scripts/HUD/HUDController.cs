@@ -29,6 +29,7 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		peopleCounter = GameObject.Find("PeopleCounter").GetComponent<TextMeshProUGUI>();
 		buildingText = GameObject.Find("BuildingText").GetComponent<TextMeshProUGUI>();
 		buildingController.Start();
+		//DontDestroyOnLoad(this);
 	}
 
 	/*private void Awake()

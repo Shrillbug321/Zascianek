@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7144606982975591238}
   m_Layer: 5
   m_Name: Granary
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 7144606984550867400}
   m_Layer: 5
   m_Name: Armory
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -165,7 +165,7 @@ GameObject:
   - component: {fileID: 7144606984865570911}
   m_Layer: 5
   m_Name: Magazine
-  m_TagString: Building
+  m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -164,7 +164,7 @@ GameObject:
   - component: {fileID: 6112224981444323349}
   - component: {fileID: 6112224981444323354}
   m_Layer: 5
-  m_Name: GrainField
+  m_Name: WheatField
   m_TagString: Icon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,7 +218,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: caf25071b4e091a44a302b6770662324, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8106481eecfb58a41a2d3d1cf0f4f288, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

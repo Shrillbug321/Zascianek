@@ -12,6 +12,7 @@ TagManager:
   - InBuild
   - Villager
   - Warrior
+  - Tree
   layers:
   - Default
   - TransparentFX

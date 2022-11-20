@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class GameplayController : GameplayControllerInitializer
@@ -16,6 +17,16 @@ public class GameplayController : GameplayControllerInitializer
 		mainCamera = Resources.Load<GameObject>("Prefabs/Common/MainCamera");
 		Instantiate(mainCamera);
 		MakeMoney();
+		//MakeTree();
+		/*object[] a = Resources.FindObjectsOfTypeAll(typeof(GameObject));
+		foreach (GameObject b in a)
+		{
+			var collider = b.GetComponent<CircleCollider2D>();
+			if (collider != null)
+			{
+				collider.radius += 0.01f;
+			}
+		}*/
 	}
 
 
@@ -54,7 +65,7 @@ public class GameplayController : GameplayControllerInitializer
 		if (hit.collider != null && MouseInRange(mousePos, hit, 0.75f))
 		{
 			string tag = hit.collider.gameObject.tag;
-			//print(tag);
+			print(tag);
 			//print(hit.collider.gameObject.name);
 			switch (WhatIsHit(tag))
 			{
@@ -113,6 +124,11 @@ public class GameplayController : GameplayControllerInitializer
 		if (mode == Mode.placing)
 		{
 			building.transform.position = GetMousePosToWorldPoint();
+			bool inRange = building.GetComponent<Building>().CheckGround(GetMousePosToWorldPoint()) == "";
+			if (!inRange)
+				building.GetComponent<SpriteRenderer>().color = Color.gray;
+			else
+				building.GetComponent<SpriteRenderer>().color = Color.white;
 		}
 		OnMouseLeftClick();
 		OnMouseRightClick();
@@ -124,20 +140,30 @@ public class GameplayController : GameplayControllerInitializer
 		{
 			if (mode == Mode.placing)
 			{
-				if (building.GetComponent<Building>().isColliding)
+				Building newBuilding = building.GetComponent<Building>();
+				if (newBuilding.isColliding)
 				{
 					hud.ShowShortGUIText("Budynek nie mo¿e staæ na innym", time: 4000);
+					return;
+				}
+				string checkResult = newBuilding.CheckItemsNeedToBuilding();
+				if (checkResult != "")
+				{
+					hud.ShowShortGUIText(checkResult, time: 4000);
+					return;
+				}
+				checkResult = newBuilding.CheckGround(GetMousePosToWorldPoint());
+				if (checkResult != "")
+				{
+					hud.ShowShortGUIText(checkResult, time: 4000);
+					return;
 				}
 				else
 				{
-					building.transform.position = GetMousePosToWorldPoint();
-					building.tag = "Building";
-					building.GetComponent<Building>().color = "Green";
-					building.layer = LayerMask.NameToLayer("Buildings");
-					items["Wood"] -= 2;
+					newBuilding.Build(GetMousePosToWorldPoint());
 					mode = Mode.nothing;
 
-					AbstractVillager villager = (AbstractVillager)units.Find(u => u.tag == "Villager" && u.workBuilding == null);
+					AbstractVillager villager = (AbstractVillager)units.Find(u => (u.tag == "Villager" || u.tag == "RichVillager") && u.workBuilding == null);
 					if (villager == null)
 						hud.ShowShortGUIText("Budynek nie ma pracownika", time: 4000);
 					else
@@ -145,6 +171,10 @@ public class GameplayController : GameplayControllerInitializer
 				}
 
 			}
+			/*else
+			{
+				tilemap.TileTypeInRange("grass8", GetMousePosToWorldPoint(), 2);
+			}*/
 		}
 	}
 
@@ -229,6 +259,9 @@ public class GameplayController : GameplayControllerInitializer
 	public async void Load()
 	{
 		slu.LoadGame("n");
+		Start();
+		hud.Start();
+		//Instantiate(hud);
 		Instantiate(mainCamera);
 	}
 
@@ -241,17 +274,36 @@ public class GameplayController : GameplayControllerInitializer
 		}
 	}
 
-	public void LoadBuilding(string buildingName)
+	public void PlaceBuilding(Building building)
 	{
-		building = Instantiate(Resources.Load<GameObject>("Prefabs/Buildings/" + buildingName));
+		//building = Instantiate(Resources.Load<GameObject>("Prefabs/Buildings/" + buildingName));
 		//Vector3 pos = hit.collider.transform.position;
 		building.transform.position = GetMousePosToWorldPoint();
 		building.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-		building.name = buildingName;
+		//building.name = building.buildingName;
 		building.tag = "InBuild";
+		this.building = Instantiate(building.gameObject);
+		this.building.name = building.name;
 		mode = Mode.placing;
 		//print(building);
 		//building.gameObject.name = buildings.Count.ToString();
+	}
+
+	private async Task MakeTree()
+	{
+		GameObject tree = Resources.Load<GameObject>("Prefabs/Outdoor/Tree");
+		int trees = 2;
+		float x, y;
+		while (true)
+		{
+			GameObject newTree = Instantiate(tree);
+			x = UnityEngine.Random.Range(-10, 20);
+			y = UnityEngine.Random.Range(-10, 20);
+			newTree.transform.position = new Vector3(x, y, 0);
+			newTree.GetComponent<Tree>().id = trees++;
+			await Task.Delay(1000);
+		}
+
 	}
 
 	public Vector2 GetMousePosToWorldPoint()
@@ -266,10 +318,8 @@ public class GameplayController : GameplayControllerInitializer
 		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
 		return mousePos;
 	}
-
-	public void OnCollisionStay(Collision col)
+	public async Task Wait(int time)
 	{
-		if (col.gameObject.tag == "Building")
-			print("bgf");
+		await Task.Delay(time);
 	}
 }
