@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 using static GameplayControllerInitializer;
 using static HUDController;
 
-public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPointerEnterHandler
+public class HUDBuildingController : HUDBuildingText, IPointerEnterHandler
 {
 	protected Vector3 groupPos;
 	protected GameObject groupSelected;
@@ -18,6 +19,10 @@ public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPoi
 	protected GameObject list;
 	protected GameObject stocks;
 	protected GameObject stockSelected;
+	protected GameObject houseBar;
+	protected GameObject barracks;
+	protected GameObject market;
+	protected GameObject taxBar;
 	protected TextMeshProUGUI buildingText;
 	protected bool inList;
 	protected TextMeshProUGUI buildingName;
@@ -26,6 +31,8 @@ public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPoi
 	protected TextMeshProUGUI buildingStatus;
 	protected Image buildingItem;
 	protected Image buildingClicked;
+	private const int ITEM_WIDTH = 265;
+	private const int ITEM_HEIGHT = 265;
 
 	public static HUDBuildingController hudBuilding;
 	public void Start()
@@ -43,7 +50,11 @@ public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPoi
 		buildingItem = GameObject.Find("BuildingItem").GetComponent<Image>();
 		productionProgress = GameObject.Find("ProductionProgress").GetComponent<TextMeshProUGUI>();
 		stocks = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "StockBars");
-		//detailsBar.SetActive(false);
+		houseBar = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "HouseBar");
+		barracks = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "Barracks");
+		market = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "MarketBar");
+		taxBar = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "TaxBar");
+		stocks.SetActive(false);
 	}
 
 	private void Awake()
@@ -135,6 +146,25 @@ public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPoi
 				list.SetActive(true);
 				stocks.SetActive(false);
 				return true;
+			case Mode.house:
+				List<UnityEngine.Object> clones = FindObjectsOfType(typeof(GameObject)).Where(go => go.name == "Inhabitan(Clone)").ToList();
+				foreach (UnityEngine.Object item in clones)
+					Destroy(item);
+				list.SetActive(true);
+				houseBar.SetActive(false);
+				return true;
+			case Mode.tax:
+				list.SetActive(true);
+				taxBar.SetActive(false);
+				return true;
+			case Mode.recruit:
+				list.SetActive(true);
+				barracks.SetActive(false);
+				return true;
+			case Mode.market:
+				list.SetActive(true);
+				market.SetActive(false);
+				return true;
 		}
 		return false;
 	}
@@ -184,6 +214,40 @@ public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPoi
 				break;
 		}
 	}
+	public void IconClick(GameObject gameObject)
+	{
+		string name = gameObject.name;
+		string tag = gameObject.tag;
+		Debug.LogWarning(name);
+		GroupClick(name);
+		if (tag == "Icon")
+		{
+			switch (gameplay.mode)
+			{
+				case Mode.nothing:
+					BuildingIconClick(name);
+					break;
+				case Mode.building:
+					ItemClick(name);
+					break;
+				case Mode.tax:
+					Dictionary<string, int> taxes = gameplay.ic.ChangeTax(int.Parse(name));
+					foreach (KeyValuePair<string, int> tax in taxes)
+						GameObject.Find("Tax" + tax.Key).GetComponent<TextMeshProUGUI>().text = tax.Value.ToString();
+					GameObject.Find("TaxHappiness").GetComponent<TextMeshProUGUI>().text = gameplay.ic.CalculateTaxSatisfaction().ToString();
+					break;
+				case Mode.recruit:
+					Recruit(name);
+					break;
+				case Mode.market:
+					MarketIconClick(name);
+					break;
+			}
+		}
+
+		//if (tag == "Building")
+		//BuildingClick(name);
+	}/*
 	public void OnPointerClick(PointerEventData eventData)
 	{
 		string name = eventData.pointerCurrentRaycast.gameObject.name;
@@ -191,10 +255,21 @@ public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPoi
 		Debug.LogWarning(name);
 		GroupClick(name);
 		if (tag == "Icon")
-			BuildingIconClick(name);
+		{
+			switch (GameplayControllerInitializer.gameplay.mode)
+			{
+				case Mode.nothing:
+					BuildingIconClick(name);
+					break;
+				case Mode.recruit:
+					Recruit(name);
+					break;
+			}
+		}
+
 		//if (tag == "Building")
 		//BuildingClick(name);
-	}
+	}*/
 
 	public async Task ShowBuildingText(string text, int time = int.MaxValue)
 	{
@@ -244,18 +319,24 @@ public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPoi
 
 	private void BuildingIconClick(string name)
 	{
-		string groupName = groupSelected.name.Substring(groupSelected.name.IndexOf("Buildings")+ "Buildings".Length);
+		string groupName = groupSelected.name.Substring(groupSelected.name.IndexOf("Buildings") + "Buildings".Length);
 		Building building = Resources.Load<GameObject>("Prefabs/Buildings/" + groupName + "/" + name).GetComponent<Building>();
-
+		building.Start();
 		Debug.ClearDeveloperConsole();
 		//Debug.LogWarning(building.GetType());
-		string result = building.CheckItemsNeedToBuilding();
-		if (result == "")
+		string hasItems = building.CheckItemsNeedToBuilding();
+		string stockWasBuilded = building.CheckStockBuildingWasBuilded();
+		if (hasItems == "" && stockWasBuilded == "")
 			gameplay.PlaceBuilding(building);
 		else
 		{
-			ShowBuildingText(result, 5000);
+			if (hasItems != "")
+				ShowBuildingText(hasItems, 5000);
+			if (stockWasBuilded != "")
+				ShowBuildingText(buildingsNames[stockWasBuilded] + " musi być wybudowany!", 5000);
 		}
+
+
 		/*switch (name)
 		{
 			case "AppleField":
@@ -275,6 +356,25 @@ public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPoi
 		Debug.LogWarning(name);
 		switch (building)
 		{
+			case ProductionBuilding a:
+				detailsBar.SetActive(true);
+				buildingItem.gameObject.SetActive(true);
+				buildingStatus.gameObject.SetActive(true);
+				productionProgress.gameObject.SetActive(true);
+
+				buildingName.text = buildingsNames[name];
+				buildingDP.text = building.dp.ToString() + "/" + building.maxDp.ToString();
+				//refreshStatus(name, building.status.ToString());
+				//buildingStatus.text = statuses[name][building.status.ToString()];
+				refreshProgress(a);
+				buildingClicked.sprite = Resources.Load<Sprite>("Sprites/Buildings/" + buildingsImages[name]);
+				buildingItem.sprite = Resources.Load<Sprite>("HUD/Icons/Items/" + itemInBuilding[name]);
+
+				buildingItem.SetNativeSize();
+				SetSize(buildingItem);
+				Debug.LogWarning("Sprites/Buildings/" + buildingsImages[name]);
+				Debug.LogWarning("HUD/Icons/Items/" + itemInBuilding[name]);
+				break;
 			case StockBuilding:
 				if (building.name == "Granary")
 					ChangeStock("StockFood");
@@ -284,18 +384,106 @@ public class HUDBuildingController : HUDBuildingText, IPointerClickHandler, IPoi
 					ChangeStock("StockArmory");
 				refreshStockCount(stockSelected.transform);
 				break;
-			case ProductionBuilding a:
-		detailsBar.SetActive(true);
+			case Barracks:
+				list.SetActive(false);
+				barracks.SetActive(true);
+				gameplay.mode = Mode.recruit;
+				break;
+			case HouseSettler:
+				list.SetActive(false);
+				taxBar.SetActive(true);
+				gameplay.mode = Mode.tax;
+				break;
+			case AbstractHouse house:
+				list.SetActive(false);
+				detailsBar.SetActive(true);
+
 				buildingName.text = buildingsNames[name];
 				buildingDP.text = building.dp.ToString() + "/" + building.maxDp.ToString();
-				//refreshStatus(name, building.status.ToString());
-				//buildingStatus.text = statuses[name][building.status.ToString()];
-				refreshProgress(a);
 				buildingClicked.sprite = Resources.Load<Sprite>("Sprites/Buildings/" + buildingsImages[name]);
-				buildingItem.sprite = Resources.Load<Sprite>("HUD/Icons/Items/" + itemInBuilding[name]);
-				Debug.LogWarning("Sprites/Buildings/" + buildingsImages[name]);
-				Debug.LogWarning("HUD/Icons/Items/" + itemInBuilding[name]);
+				buildingItem.gameObject.SetActive(false);
+				//buildingStatus.gameObject.SetActive(false);
+				productionProgress.gameObject.SetActive(false);
+				buildingStatus.text = house.inhabitans + "/" + house.maxInhabitans;
+
+				GameObject inhabitan = GameObject.Find("Inhabitan");
+				GameObject inhabitans = GameObject.Find("Inhabitans");
+				for (int i = 0; i < house.inhabitans; i++)
+				{
+					GameObject newInhabitan = Instantiate(inhabitan);
+					Image image = newInhabitan.GetComponent<Image>();
+					image.sprite = Resources.Load<Sprite>("Sprites/Units/" + house.inhabitantType.ToSnakeCase());
+					image.SetNativeSize();
+					image.color = Color.white;
+					newInhabitan.transform.parent = inhabitans.transform;
+					newInhabitan.transform.localScale = new Vector3(1f, 1f, 1f);
+					newInhabitan.transform.localPosition = new Vector2(110 * i - 450, -50);
+					//image.color = Color.black;
+				}
+				gameplay.mode = Mode.house;
 				break;
+			case Market:
+				list.SetActive(false);
+				market.SetActive(true);
+				gameplay.mode = Mode.market;
+				break;
+			case Church:
+				detailsBar.SetActive(true);
+				buildingItem.gameObject.SetActive(true);
+				productionProgress.gameObject.SetActive(false);
+				buildingName.text = buildingsNames[name];
+				buildingDP.text = building.dp.ToString() + "/" + building.maxDp.ToString();
+				buildingClicked.sprite = Resources.Load<Sprite>("Sprites/Buildings/" + buildingsImages[name]);
+				buildingItem.sprite = Resources.Load<Sprite>("Sprites/Units/priest");
+				buildingItem.SetNativeSize();
+
+				buildingStatus.text = "Księży: " + Church.priests;
+				break;
+		}
+	}
+
+	private void Recruit(string unitName)
+	{
+		UnitModel warrior = Instantiate(Resources.Load<UnitModel>("Prefabs/Units/Warriors/Player/" + unitName));
+		Vector3 pos = GameObject.Find("Barracks").transform.position;
+		warrior.transform.position = new Vector3(pos.x, pos.y - 1f, 0);
+		//warrior.gameObject.name = units.Count.ToString();
+	}
+
+	private void MarketIconClick(string item)
+	{
+		if (gameplay.mouse.leftButton.wasReleasedThisFrame)
+			Market.Buy(item);
+
+		if (gameplay.mouse.rightButton.wasReleasedThisFrame)
+			Market.Sell(item);
+	}
+
+	private void ItemClick(string item)
+	{
+		if (buildingsNames.First(n => n.Value == buildingName.text).Key == "Church")
+		{
+			AbstractVillager priest = Instantiate(Resources.Load<AbstractVillager>("Prefabs/Units/Villagers/Priest"));
+			Vector3 pos = GameObject.Find("Church").transform.position;
+			priest.transform.position = new Vector3(pos.x - 2.5f, pos.y - 3f, 0);
+			List<AbstractVillager> villagersList = gameplay.ic.inhabitants["Priest"];
+			villagersList.Add(priest);
+			Church.priests++;
+		}
+	}
+
+	private void SetSize(Image image)
+	{
+		Vector2 size = image.rectTransform.sizeDelta;
+		if (size.x > size.y)
+		{
+			float multiplier = ITEM_WIDTH / size.x * 0.6f;
+			image.rectTransform.localScale = new Vector3(multiplier, multiplier, multiplier);
+		}
+		if (size.x < size.y)
+		{
+			float multiplier = ITEM_HEIGHT / size.y * 0.4f;
+			image.rectTransform.localScale = new Vector3(multiplier, multiplier, multiplier);
 		}
 	}
 

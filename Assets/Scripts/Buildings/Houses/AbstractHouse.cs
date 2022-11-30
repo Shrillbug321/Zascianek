@@ -4,32 +4,60 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static GameplayControllerInitializer;
 
 public class AbstractHouse : Building
 {
-	public int residents { get; set; }
-	public int timeToNextResident { get; set; }
-	public string houseType { get; set; }
+	public int inhabitans { get; set; }
+	public int maxInhabitans { get; set; }
+	public int timeToNextInhabitant { get; set; }
+	public string inhabitantType { get; set; }
 	public void Update()
 	{
-		if (status == BuildingStatus.production)
+		if (CompareTag("Building"))
 		{
-			time += Time.deltaTime;
-			if (time > timeToNextResident)
+			if (gameplay.ic.satisfaction >= 50 && inhabitans < maxInhabitans)
 			{
-				time = 0;
-				//AddResident();
+				time += Time.deltaTime;
+				if (time > timeToNextInhabitant)
+				{
+					time = 0;
+					AddInhabitant();
+				}
 			}
+			if (gameplay.ic.satisfaction < 50 && inhabitans > 0)
+			{
+				time += Time.deltaTime;
+				if (time > timeToNextInhabitant)
+				{
+					time = 0;
+					RemoveInhabitant();
+				}
+			}
+
 		}
 
 	}
 
-	/*public virtual async Task<Dictionary<string, int>> AddResident()
+	protected void AddInhabitant()
 	{
-		AbstractVillager resident = Instantiate(Resources.Load<GameObject>("Prefabs/Units/Villagers/" + name).GetComponent<AbstractVillager>());
-		*//*while (productionProgress < 99)
-			await Task.Delay(100);
+		AbstractVillager inhabitant = Instantiate(Resources.Load<GameObject>("Prefabs/Units/Villagers/" + inhabitantType).GetComponent<AbstractVillager>());
+		inhabitant.transform.position = new Vector2(transform.position.x, transform.position.y - 2);
+		List<AbstractVillager> villagersList = gameplay.ic.inhabitants[inhabitantType];
+		villagersList.Add(inhabitant);
+		inhabitans++;
+		//gameplay.inhabitants.Add(houseType, List. inhabitant);
+	}
 
-		return products;*//*
-	}*/
+	protected void RemoveInhabitant()
+	{
+		List<AbstractVillager> villagersList = gameplay.ic.inhabitants[inhabitantType];
+		AbstractVillager inhabitant = villagersList[0];
+		if (inhabitant.workBuilding != null)
+		inhabitant.workBuilding.hasWorker = false;
+		villagersList.Remove(inhabitant);
+		Destroy(inhabitant.gameObject);
+		inhabitans--;
+		//gameplay.inhabitants.Add(houseType, List. inhabitant);
+	}
 }

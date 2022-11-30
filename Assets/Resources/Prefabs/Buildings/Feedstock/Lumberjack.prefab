@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7244504164144629435}
   - component: {fileID: 7244504164144629380}
   - component: {fileID: 7465840713130694204}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: Lumberjack
   m_TagString: InBuild
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7244504164144629381}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.21798, y: -5.801123, z: 0}
+  m_LocalPosition: {x: -1.9393258, y: -5.747191, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -151,7 +151,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &7244504164144629380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,11 +184,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   stockBuilding: {fileID: 0}
-  stockBuildingsNames: []
-  getItemBuildingsNames: []
+  stockBuildingsNames:
+  - Magazine
+  getItemBuildingsNames:
+  - Tree
   color: 
   status: 3
   grounds: []
-  rb2D: {fileID: 0}
-  sr: {fileID: 0}
+  hasWorker: 0
+  rb2D: {fileID: 7244504164144629435}
+  sr: {fileID: 7244504164144629432}
   isColliding: 0

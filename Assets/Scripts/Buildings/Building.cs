@@ -24,12 +24,11 @@ public class Building : MonoBehaviour
 	public Dictionary<string, int> stockedItems;
 	public string[] getItemBuildingsNames;
 	public string color;
-	//public const int MONTH = 30000;
-	public const int MONTH = 1;
 	public Dictionary<string, int> needToBuild;
 	public Dictionary<string, int> needToProduction;
 	public BuildingStatus status;
 	public string[] grounds;
+	public bool hasWorker;
 
 	public Rigidbody2D rb2D;
 	public SpriteRenderer sr;
@@ -49,8 +48,8 @@ public class Building : MonoBehaviour
 
 		//gameObject.AddComponent<SpriteRenderer>();
 		sr = GetComponent<SpriteRenderer>();
-		sr.sortingLayerName = "Buildings";
-		gameObject.layer = LayerMask.NameToLayer("Buildings");
+		sr.sortingLayerName = "InBuild";
+		gameObject.layer = LayerMask.NameToLayer("InBuild");
 
 		//BoxCollider2D bc2d = gameObject.AddComponent<BoxCollider2D>();
 		//bc2d.isTrigger = true;
@@ -65,7 +64,7 @@ public class Building : MonoBehaviour
 		unitTokenSource = new CancellationTokenSource();
 		unitToken = unitTokenSource.Token;*/
 
-		gameplay.AddBuilding(this);
+		//gameplay.AddBuilding(this);
 		//Production();
 	}
 
@@ -140,6 +139,24 @@ public class Building : MonoBehaviour
 		return result;
 	}
 
+	public bool CheckGroundIsEmpty(Vector2 position)
+	{
+		LayerMask mask = LayerMask.GetMask("Buildings");
+		RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero, Mathf.Infinity, LayerMask.GetMask("Buildings"));
+		//if (hit.collider != null) sr.color = Color.gray;
+		return hit.collider == null;
+	}
+
+	public string CheckStockBuildingWasBuilded()
+	{
+		foreach (string stockName in stockBuildingsNames)
+		{
+			GameObject stock = GameObject.Find(stockName);
+			if (stock == null) return stockName;
+		}
+		return "";
+	}
+
 	/*public string CheckGround(Vector2 position, string groundType)
 	{
 		string result = "";
@@ -175,7 +192,7 @@ public class Building : MonoBehaviour
 		tag = "Building";
 		color = "Green";
 		id = gameplay.buildings.Count;
-		gameplay.buildings.Add(this);
+		gameplay.AddBuilding(this);
 		gameObject.layer = LayerMask.NameToLayer("Buildings");
 		DecreaseItemsToBuild();
 	}
@@ -223,16 +240,17 @@ public class Building : MonoBehaviour
 		string tag = collision.tag;
 		//print(tag);
 		//if (CompareTag(tag)) return;
-		if (GetComponent<CircleCollider2D>().IsTouching(collision))
+		/*if (tag == "Building")// && !around)
 		{
 			Building entered = collision.GetComponent<Building>();
-			if (tag == "InBuild")// && !around)
+			if (GetComponent<CircleCollider2D>().IsTouching(collision))
 			{
-				entered.isColliding = true;
+				//entered.isColliding = true;
+				//if (tag == "InBuild")
 				entered.sr.color = Color.gray;
 				//gameObject.GetComponent<CircleCollider2D>().isTrigger = false;
 			}
-		}
+		}*/
 	}
 	public virtual void OnTriggerExit2D(Collider2D collision)
 	{
@@ -240,12 +258,12 @@ public class Building : MonoBehaviour
 		//print(tag);
 		Building entered = collision.GetComponent<Building>();
 		//if (CompareTag(tag)) return;
-		if (tag == "InBuild")// && !around)
+		/*if (tag == "InBuild")// && !around)
 		{
 			entered.isColliding = false;
 			entered.sr.color = Color.white;
 			//gameObject.GetComponent<CircleCollider2D>().isTrigger = false;
-		}
+		}*/
 	}
 }
 

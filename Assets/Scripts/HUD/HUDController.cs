@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -16,6 +17,13 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 	public TextMeshProUGUI lastText;
 	public TextMeshProUGUI buildingText;
 	public HUDBuildingController buildingController;
+	private List<HouseVillager> housesVillagers;
+	public Dictionary<string, int> inhabitants = new()
+	{
+		["HouseVillager"] = 0,
+		["HouseRichVillager"] = 0,
+		["HouseNobile"] = 0
+	};
 
 	public void Start()
 	{
@@ -28,6 +36,11 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		happinessCounter = GameObject.Find("HappinessCounter").GetComponent<TextMeshProUGUI>();
 		peopleCounter = GameObject.Find("PeopleCounter").GetComponent<TextMeshProUGUI>();
 		buildingText = GameObject.Find("BuildingText").GetComponent<TextMeshProUGUI>();
+
+		housesVillagers = gameplay.buildings["HouseVillager"].Cast<HouseVillager>().ToList();
+		/*housesRichVillagers = gameplay.buildings["HouseRichVillager"].Cast<HouseRichVillager>().ToList();
+		housesNobiles = gameplay.buildings["HouseNobile"].Cast<HouseNobile>().ToList();*/
+
 		buildingController.Start();
 		//DontDestroyOnLoad(this);
 	}
@@ -45,6 +58,13 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		}
 	}*/
 
+	// Update is called once per frame
+	public virtual void Update()
+	{
+		UpdateStats();
+		buildingController.Update();
+	}
+
 	public void UpdateStats()
 	{
 		int money = gameplay.GetItem("Money");
@@ -54,20 +74,40 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		moneyCounter.text = string.Format("{0:D2} z³p {1:D2} gr", money / 30, money % 30);
 		ironCounter.text = gameplay.GetItem("Iron").ToString();
 		goldCounter.text = gameplay.GetItem("Gold").ToString();
-		//peopleCounter.text = gameplay.GetItem("Apple").ToString();
-		/*happinessCounter.text = gameplay.GetItem("happiness").ToString();
-		peopleCounter.text = gameplay.GetItem("people").ToString();*/
+		peopleCounter.text = $"{gameplay.ic.inhabitantsSum} / {gameplay.ic.inhabitantsMax}";
+		happinessCounter.text = gameplay.ic.CalcSatisfaction().ToString();
+		/*peopleCounter.text = gameplay.GetItem("people").ToString();*/
 
 	}
+
+	private string CalculateInhabitants()
+	{
+		List<List<AbstractHouse>> housesOfTypes = new()
+		{
+			gameplay.buildings["HouseVillager"].Cast<AbstractHouse>().ToList(),
+			gameplay.buildings["HouseRichVillager"].Cast<AbstractHouse>().ToList(),
+			gameplay.buildings["HouseNobility"].Cast<AbstractHouse>().ToList()
+		};
+		int max = 0, sum = 0;
+		//housesVillagers = gameplay.buildings["HouseVillager"].Cast<HouseVillager>().ToList();
+		foreach (List<AbstractHouse> houses in housesOfTypes)
+		{
+			if (houses.Count > 0)
+			{
+				string houseType = houses[0].GetType().ToString();
+				inhabitants[houseType] = houses.Sum(h => h.inhabitans);
+				sum += inhabitants[houseType];
+				max += houses.Sum(h => h.maxInhabitans);
+			}
+		}
+		sum += Church.priests;
+		max += Church.priests;
+		return string.Format("{0}/{1}", sum, max);
+	}
+
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		buildingController.OnPointerClick(eventData);
-	}
-	// Update is called once per frame
-	public virtual void Update()
-	{
-		UpdateStats();
-		buildingController.Update();
+		buildingController.IconClick(eventData.pointerCurrentRaycast.gameObject);
 	}
 
 	public void OnPointerEnter(PointerEventData eventData)
@@ -78,7 +118,7 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 	public void OnPointerExit(PointerEventData eventData)
 	{
 		//Destroy(lastText);
-		Debug.LogWarning(lastEntered);
+		//Debug.LogWarning(lastEntered);
 		lastEntered = "";
 		//ShowBuildingText("");
 		/*switch (eventData.pointerCurrentRaycast.gameObject.name)

@@ -24,7 +24,7 @@ namespace Assets.Scripts
 		public SpriteRenderer sr;
 		protected Vector2 oldPos = new();
 		public Vector2 movement = new();
-		public Vector2 directionBeforeAround = new();
+		public Stack<Vector2> directionBeforeAround = new();
 		protected Stack<Vector2> temp = new();
 		public Vector2 direction;
 		public Building workBuilding;
@@ -88,14 +88,37 @@ namespace Assets.Scripts
 
 		public virtual void Update()
 		{
-			if (moveStart && Vector2.Distance(transform.position, movement) > 0.5)
+			//if (GetType().ToString() == "Settler")
 			{
-				transform.position = Vector2.MoveTowards(transform.position, movement, speed * Time.deltaTime);
-				direction = CalcDirection();
-				if (direction.x != 0)
-					sr.flipX = direction.x < 0;
+				if (moveStart && Vector2.Distance(transform.position, movement) > 0.5)
+				{
+					transform.position = Vector2.MoveTowards(transform.position, movement, speed * Time.deltaTime);
+					direction = CalcDirection();
+					if (direction.x != 0)
+						sr.flipX = direction.x < 0;
+				}
+				if (around && Vector2.Distance(transform.position, movement) <= 0.6)
+				{
+					around = false;
+					direction = directionBeforeAround.Pop();
+					movement = temp.Pop();
+				}
+				RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 1, LayerMask.GetMask("Buildings"));
+				if (hit.collider != null && hit.collider is EdgeCollider2D)
+				{
+					around = true;
+					oldPos = transform.position;
+					temp.Push(movement);
+					directionBeforeAround.Push(direction);
+					//aroundDistance = ((EdgeCollider2D)hit.collider).edgeRadius / 5;
+					aroundDistance = 3;
+					direction = findAvailableDirection(direction);
+					movement = SetMovementForAround(direction);
+					//((EdgeCollider2D)hit.collider).isTrigger = false;
+				}
 			}
-			if (around)
+
+			/*if (around)
 			{
 				//transform.RotateAround(((CircleCollider2D)colliderObject).bounds.center, Vector3.forward, 20 * Time.deltaTime);
 				//around = false;
@@ -114,16 +137,16 @@ namespace Assets.Scripts
 					}
 				}
 
-				/*oldPos = transform.position;
-				movement = temp.Pop();*/
+				*//*oldPos = transform.position;
+				movement = temp.Pop();*//*
 
-			}
+			}*/
 			/*else {
    moveStart = false;
 			}*/
 		}
 
-		
+
 
 		public virtual void DecreaseHP(int HowMany)
 		{
@@ -148,15 +171,15 @@ namespace Assets.Scripts
 			Vector2 direction = (movement - oldPos).normalized;
 			switch (direction.x)
 			{
-				case < -0.2f: direction.x = -1; break;
-				case >= -0.2f and <= 0.2f: direction.x = 0; break;
-				case > 0.2f: direction.x = 1; break;
+				case < -0.02f: direction.x = -1; break;
+				case >= -0.02f and <= 0.02f: direction.x = 0; break;
+				case > 0.02f: direction.x = 1; break;
 			}
 			switch (direction.y)
 			{
-				case < -0.2f: direction.y = -1; break;
-				case >= -0.2f and <= 0.2f: direction.y = 0; break;
-				case > 0.2f: direction.y = 1; break;
+				case < -0.02f: direction.y = -1; break;
+				case >= -0.02f and <= 0.02f: direction.y = 0; break;
+				case > 0.02f: direction.y = 1; break;
 			}
 			return direction;
 		}
@@ -179,20 +202,22 @@ namespace Assets.Scripts
 			colliderObject = collision;
 			if (CompareTag(tag)) return;
 
-			if (collision.GetType() == typeof(CircleCollider2D))
+			if (collision.GetType() == typeof(EdgeCollider2D))
 			{
-				if (collision.tag == "Building" && !around)
+				if (collision.tag == "Building")
 				{
 					around = true;
 					oldPos = transform.position;
 					//moveStart = false;
 					temp.Push(movement);
+					temp.Push(movement);
 					//Debug.LogWarning(direction);
 					RaycastHit2D hit;// = Physics2D.Raycast(transform.position, direction, Mathf.Infinity, LayerMask.GetMask("Buildings"));
 									 //Debug.LogWarning(hit.collider);
-					directionBeforeAround = direction;
-					aroundDistance = ((CircleCollider2D)collision).radius / 5;
-					Vector2 availableDirection = findAvailableDirection(direction);
+					directionBeforeAround.Push(direction);
+					//aroundDistance = ((CircleCollider2D)collision).radius / 5;
+					aroundDistance = 3;
+					direction = findAvailableDirection(direction);
 
 					/*if (hit.collider == null)
 					{
@@ -203,11 +228,11 @@ namespace Assets.Scripts
 					//Debug.LogWarning(transform.position);
 					//Debug.LogWarning(new Vector3(movement.x, movement.y, 0));
 					//collision.isTrigger = false;
-					movement = SetMovementForAround(availableDirection);
+					movement = SetMovementForAround(direction);
 					/*movement.x = (transform.position.x + ((CircleCollider2D)collision).radius * 2) * direction.x;
 					movement.y = (transform.position.y + ((CircleCollider2D)collision).radius * 2) * direction.y;*/
 
-					//moveStart = true;
+					moveStart = true;
 				}
 				return;
 			}
@@ -307,10 +332,10 @@ namespace Assets.Scripts
 			int directionIndex = directions.FindIndex(d => d == direction);
 			for (int i = directionIndex + 1; i < directions.Count; i++)
 			{
-				hit = Physics2D.Raycast(transform.position, directions[i], Mathf.Infinity, LayerMask.GetMask("Buildings"));
+				hit = Physics2D.Raycast(transform.position, directions[i], 20, LayerMask.GetMask("Buildings"));
 				if (hit.collider == null)
 				{
-					Debug.LogWarning(directions[i]);
+					//Debug.LogWarning(directions[i]);
 					findDirection = true;
 					availableDirection = directions[i];
 					break;
@@ -320,10 +345,10 @@ namespace Assets.Scripts
 			{
 				for (int i = 0; i < directionIndex; i++)
 				{
-					hit = Physics2D.Raycast(transform.position, directions[i], Mathf.Infinity, LayerMask.GetMask("Buildings"));
+					hit = Physics2D.Raycast(transform.position, directions[i], 2, LayerMask.GetMask("Buildings"));
 					if (hit.collider == null)
 					{
-						Debug.LogWarning(directions[i]);
+						//Debug.LogWarning(directions[i]);
 						findDirection = true;
 						availableDirection = directions[i];
 						break;
@@ -337,6 +362,7 @@ namespace Assets.Scripts
 		{
 			if (direction == Vector2.up)
 			{
+				movement.x = transform.position.x;
 				movement.y = transform.position.y + aroundDistance;
 			}
 			if (direction == new Vector2(1, 1))
@@ -347,6 +373,7 @@ namespace Assets.Scripts
 			if (direction == Vector2.right)
 			{
 				movement.x = transform.position.x + aroundDistance;
+				movement.y = transform.position.y;
 			}
 			if (direction == new Vector2(1, -1))
 			{
@@ -355,6 +382,7 @@ namespace Assets.Scripts
 			}
 			if (direction == Vector2.down)
 			{
+				movement.x = transform.position.x;
 				movement.y = transform.position.y - aroundDistance;
 			}
 			if (direction == new Vector2(-1, -1))
@@ -365,6 +393,7 @@ namespace Assets.Scripts
 			if (direction == Vector2.left)
 			{
 				movement.x = transform.position.x - aroundDistance;
+				movement.y = transform.position.y;
 			}
 			if (direction == new Vector2(-1, 1))
 			{
@@ -373,6 +402,7 @@ namespace Assets.Scripts
 			}
 			return movement;
 		}
+
 	}
 }
 /*344*/

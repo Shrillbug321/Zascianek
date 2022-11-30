@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7232650041583841583}
   - component: {fileID: 3169136117030198870}
   - component: {fileID: 6624373216826380776}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: HopField
   m_TagString: InBuild
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2968118720659963994}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.6651696, y: -6.0168533, z: 0}
+  m_LocalPosition: {x: 11.894391, y: -4.74382, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -151,7 +151,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &3169136117030198870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,13 +166,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   stockBuilding: {fileID: 0}
-  stockBuildingsNames: []
+  stockBuildingsNames:
+  - Magazine
   getItemBuildingsNames: []
   color: 
-  status: 0
-  ground: 
-  rb2D: {fileID: 0}
-  sr: {fileID: 0}
+  status: 3
+  grounds: []
+  rb2D: {fileID: 7232650041583841583}
+  sr: {fileID: 3269246721792780915}
   isColliding: 0
 --- !u!114 &6624373216826380776
 MonoBehaviour:

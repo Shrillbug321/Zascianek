@@ -24,7 +24,14 @@ public class HUDBuildingText : MonoBehaviour
 		["AppleField"] = "Sad",
 		["WheatField"] = "Pole zboża",
 		["HopField"] = "Pole chmielu",
-		["Pigsty"] = "Chlew"
+		["Pigsty"] = "Chlew",
+		["HouseVillager"] = "Dom chłopa",
+		["HouseRichVillager"] = "Dom kmiecia",
+		["HouseNobility"] = "Dworek",
+		["Granary"] = "Spichlerz",
+		["Magazine"] = "Skład",
+		["Armory"] = "Zbrojownia",
+		["Church"] = "Kościół"
 	};
 
 	protected Dictionary<string, string> itemInBuilding = new()
@@ -32,7 +39,8 @@ public class HUDBuildingText : MonoBehaviour
 		["AppleField"] = "apple",
 		["WheatField"] = "wheat",
 		["HopField"] = "hop",
-		["Pigsty"] = "pig"
+		["Pigsty"] = "pig",
+		["Church"] = "priest"
 	};
 
 	protected Dictionary<string, string> buildingsImages = new()
@@ -40,7 +48,11 @@ public class HUDBuildingText : MonoBehaviour
 		["AppleField"] = "apple_field",
 		["WheatField"] = "wheat_field",
 		["HopField"] = "hop_field",
-		["Pigsty"] = "pigsty"
+		["Pigsty"] = "pigsty",
+		["HouseVillager"] = "house_villager",
+		["HouseRichVillager"] = "house_rich_villager",
+		["HouseNobility"] = "house_nobility",
+		["Church"] = "church"
 	};
 
 	/*protected Dictionary<string, Type> buildingsClasses = new()

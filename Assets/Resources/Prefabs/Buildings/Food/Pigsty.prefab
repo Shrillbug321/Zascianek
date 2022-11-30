@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2762745591203355424}
   - component: {fileID: 2762745591203355425}
   - component: {fileID: 4483622246485004977}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: Pigsty
   m_TagString: InBuild
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2762745591203355430}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.491016, y: -5.935955, z: 0}
+  m_LocalPosition: {x: 1.7393253, y: -6.205618, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -135,7 +135,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &2762745591203355424
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -184,10 +184,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   stockBuilding: {fileID: 0}
-  stockBuildingsNames: []
-  getItemBuildingsNames: []
+  stockBuildingsNames:
+  - Granary
+  - Magazine
+  getItemBuildingsNames:
+  - Granary
   color: 
-  status: 0
-  rb2D: {fileID: 0}
-  sr: {fileID: 0}
+  status: 3
+  grounds: []
+  rb2D: {fileID: 2762745591203355427}
+  sr: {fileID: 2762745591203355421}
   isColliding: 0

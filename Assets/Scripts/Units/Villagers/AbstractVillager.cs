@@ -38,6 +38,7 @@ public class AbstractVillager : UnitModel
 			buildingActions.Add("stock");
 		}
 		workBuilding = building;
+		workBuilding.hasWorker = true;
 		//stockBuildingName = building.stockBuildingName;
 		//building.stockBuilding = GameObject.Find(building.stockBuildingName).GetComponent<Building>();
 		GameObject next = route[0];

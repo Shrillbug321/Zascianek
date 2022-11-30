@@ -8,6 +8,7 @@ public class Warrior : AbstractWarrior
 	{
 		base.Start();
 		color = "Green";
+		gameplay.AddWarrior(this);
 	}
 
 	public override void Update()

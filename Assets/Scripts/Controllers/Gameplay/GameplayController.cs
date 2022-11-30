@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -16,7 +17,7 @@ public class GameplayController : GameplayControllerInitializer
 		slu = gameObject.AddComponent<SaveLoadUtility>();
 		mainCamera = Resources.Load<GameObject>("Prefabs/Common/MainCamera");
 		Instantiate(mainCamera);
-		MakeMoney();
+		//MakeMoney();
 		//MakeTree();
 		/*object[] a = Resources.FindObjectsOfTypeAll(typeof(GameObject));
 		foreach (GameObject b in a)
@@ -48,19 +49,47 @@ public class GameplayController : GameplayControllerInitializer
 		units.Remove(unit);
 	}
 
+	public void AddWarrior(Warrior warrior)
+	{
+		warriors[warrior.GetType().ToString()].Add(warrior);
+	}
+
+	public void RemoveWarrior(Warrior warrior)
+	{
+		warriors[warrior.GetType().ToString()].Remove(warrior);
+	}
+
 	public void AddBuilding(Building building)
 	{
-		buildings.Add(building);
+		buildings[building.GetType().ToString()].Add(building);
 	}
 
 	public void RemoveBuilding(Building building)
 	{
-		buildings.Remove(building);
+		buildings[building.GetType().ToString()].Remove(building);
 	}
 
 	void Update()
 	{
+		ic.Update();
 		mousePos = GetMousePosToWorldPoint();
+
+		foreach (KeyValuePair<string, List<Building>> slot in buildings)
+		{
+			if (slot.Value.Count > 0)
+			{
+				foreach (Building building in slot.Value)
+				{
+					if (building is ProductionBuilding && !building.hasWorker)
+					{
+						AbstractVillager villager = FindUnemployedVillager();
+						if (villager != null)
+							villager.AssignToBuilding(building);
+					}
+				}
+			}
+		}
+
 		RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
 		if (hit.collider != null && MouseInRange(mousePos, hit, 0.75f))
 		{
@@ -106,12 +135,18 @@ public class GameplayController : GameplayControllerInitializer
 					//units.Add(a);
 					break;
 				case "Building":
-					if (mouse.leftButton.wasPressedThisFrame && !unitIsChoosen)
+					if (mouse.leftButton.wasPressedThisFrame && mode == Mode.nothing)
 					//	print(hit.collider.gameObject.name);
 					//hud.SendMessage("BuildingClick", "AppleField");
 					{
 						mode = Mode.building;
 						hud.buildingController.BuildingClick(hit.collider.gameObject.GetComponent<Building>());
+					}
+					break;
+				case "Icon":
+					if (mouse.leftButton.wasPressedThisFrame)
+					{
+						hud.buildingController.IconClick(hit.collider.gameObject);
 					}
 					break;
 				default:
@@ -124,11 +159,11 @@ public class GameplayController : GameplayControllerInitializer
 		if (mode == Mode.placing)
 		{
 			building.transform.position = GetMousePosToWorldPoint();
-			bool inRange = building.GetComponent<Building>().CheckGround(GetMousePosToWorldPoint()) == "";
+			/*bool inRange = building.GetComponent<Building>().CheckGround(GetMousePosToWorldPoint()) == "";
 			if (!inRange)
 				building.GetComponent<SpriteRenderer>().color = Color.gray;
 			else
-				building.GetComponent<SpriteRenderer>().color = Color.white;
+				building.GetComponent<SpriteRenderer>().color = Color.white;*/
 		}
 		OnMouseLeftClick();
 		OnMouseRightClick();
@@ -158,16 +193,25 @@ public class GameplayController : GameplayControllerInitializer
 					hud.ShowShortGUIText(checkResult, time: 4000);
 					return;
 				}
+				if (!newBuilding.CheckGroundIsEmpty(GetMousePosToWorldPoint()))
+				{
+					hud.ShowShortGUIText("Budynek nie mo¿e staæ na innym", time: 4000);
+					return;
+				}
 				else
 				{
 					newBuilding.Build(GetMousePosToWorldPoint());
 					mode = Mode.nothing;
 
-					AbstractVillager villager = (AbstractVillager)units.Find(u => (u.tag == "Villager" || u.tag == "RichVillager") && u.workBuilding == null);
-					if (villager == null)
-						hud.ShowShortGUIText("Budynek nie ma pracownika", time: 4000);
-					else
-						villager.AssignToBuilding(building.GetComponent<Building>());
+					if (newBuilding is ProductionBuilding productionBuilding)
+					{
+						AbstractVillager villager = FindUnemployedVillager();
+						if (villager == null)
+							hud.ShowShortGUIText("Budynek nie ma pracownika", time: 4000);
+						else
+							villager.AssignToBuilding(building.GetComponent<Building>());
+					}
+
 				}
 
 			}
@@ -248,6 +292,8 @@ public class GameplayController : GameplayControllerInitializer
 			return "Granary";
 		if (tag == "Building")
 			return "Building";
+		if (tag == "Icon")
+			return "Icon";
 		return "";
 	}
 
@@ -282,11 +328,21 @@ public class GameplayController : GameplayControllerInitializer
 		building.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 		//building.name = building.buildingName;
 		building.tag = "InBuild";
+		building.gameObject.layer = LayerMask.NameToLayer("InBuild");
 		this.building = Instantiate(building.gameObject);
 		this.building.name = building.name;
+		this.building.layer = LayerMask.NameToLayer("InBuild");
 		mode = Mode.placing;
 		//print(building);
 		//building.gameObject.name = buildings.Count.ToString();
+	}
+
+	private AbstractVillager FindUnemployedVillager()
+	{
+		AbstractVillager villager = ic.inhabitants["Villager"].Find(u => u.workBuilding == null);
+		if (villager == null)
+			villager = ic.inhabitants["RichVillager"].Find(u => u.workBuilding == null);
+		return villager;
 	}
 
 	private async Task MakeTree()
@@ -301,7 +357,7 @@ public class GameplayController : GameplayControllerInitializer
 			y = UnityEngine.Random.Range(-10, 20);
 			newTree.transform.position = new Vector3(x, y, 0);
 			newTree.GetComponent<Tree>().id = trees++;
-			await Task.Delay(1000);
+			await Task.Delay(100000);
 		}
 
 	}
@@ -323,3 +379,5 @@ public class GameplayController : GameplayControllerInitializer
 		await Task.Delay(time);
 	}
 }
+//354
+//381

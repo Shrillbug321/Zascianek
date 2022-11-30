@@ -51,7 +51,7 @@ public class AbstractWarrior : UnitModel
 		if (token.IsCancellationRequested)
 			return;
 
-		await enemy.gameObject.Rotate();
+		//await enemy.gameObject.Rotate();
 		Destroy(enemy.gameObject);
 	}
 
@@ -82,7 +82,7 @@ public class AbstractWarrior : UnitModel
 		base.OnTriggerEnter2D(collision);
 		string tag = collision.tag;
 		if (tag == this.tag) return;
-		Debug.LogWarning("lllll");
+		//Debug.LogWarning("lllll");
 		if ((playerTags.Contains(tag) || enemyTags.Contains(tag)))// && !seenEnemy)
 		{
 			enemy = collision.GetComponent<AbstractWarrior>();
@@ -135,14 +135,14 @@ public class AbstractWarrior : UnitModel
 		if (tag == "Building")
 		{
 			building = collision.GetComponent<Building>();
-			string color = building.GetComponent<Building>().color;
-			if (collision.GetType() == typeof(CircleCollider2D) &&
+			//string color = building.GetComponent<Building>().color;
+			/*if (collision.GetType() == typeof(CircleCollider2D) &&
 			this.color != color) 
 			{
 				moveStart = false;
 				await AttackBuilding(buildingToken);
 				moveStart = true;
-			}
+			}*/
 		}
 	}
 

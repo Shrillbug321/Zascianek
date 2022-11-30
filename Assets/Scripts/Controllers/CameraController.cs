@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour
 	private float rightScroll = 0.8f * Screen.width;
 	private float leftScroll = 0.2f * Screen.width;
 	private float upScroll = 0.8f * Screen.height;
-	private float downScroll = 0.2f * Screen.height;
+	private float downScroll = 0.1f * Screen.height;
 
 	//Im mniejsze tym bli¿ej
 	private readonly float zoomMin = 10;
@@ -45,7 +45,7 @@ public class CameraController : MonoBehaviour
 		float scroll = mouse.scroll.ReadValue().y;
 		float zoom = Camera.main.orthographicSize;
 		xMin = zoom * 1.45f - zoomStart * 1.75f;
-		xMax = 25 - zoom * 1.15f - zoomStart * 1.15f;
+		xMax = 50 - zoom * 1.15f - zoomStart * 1.15f;
 		yMin = zoom - zoomStart * 1.25f;
 		yMax = 16 - zoom; //17-7=10
 

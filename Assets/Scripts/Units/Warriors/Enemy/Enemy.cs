@@ -7,8 +7,8 @@ public class Enemy : AbstractWarrior
 		base.Start();
 		type = "Enemy";
 		color = "Brown";
-		/*movement = new Vector2(-10, -20);
-		moveStart = true;*/
+		movement = new Vector2(-10, -20);
+		moveStart = true;
 	}
 
 	// Update is called once per frame

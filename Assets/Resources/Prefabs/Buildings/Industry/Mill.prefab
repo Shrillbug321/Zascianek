@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8370101179053236989}
   - component: {fileID: 4493425920311603494}
   - component: {fileID: 8277384261838224760}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: Mill
   m_TagString: InBuild
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6290429830735598986}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.0449505, y: -5.423596, z: 0}
+  m_LocalPosition: {x: 5.864041, y: -6.259551, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -151,7 +151,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &4493425920311603494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,10 +184,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   stockBuilding: {fileID: 0}
-  stockBuildingsNames: []
-  getItemBuildingsNames: []
+  stockBuildingsNames:
+  - Magazine
+  getItemBuildingsNames:
+  - Magazine
   color: 
-  status: 0
-  rb2D: {fileID: 0}
-  sr: {fileID: 0}
+  status: 3
+  grounds: []
+  hasWorker: 0
+  rb2D: {fileID: 8370101179053236989}
+  sr: {fileID: 8300023165824727218}
   isColliding: 0

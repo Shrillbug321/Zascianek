@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2439187614315399494}
   - component: {fileID: 2439187614315399495}
   - component: {fileID: 2439187614315399489}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: MineIron
   m_TagString: InBuild
   m_Icon: {fileID: 0}
@@ -151,7 +151,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &2439187614315399495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,11 +184,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   stockBuilding: {fileID: 0}
-  stockBuildingsNames: []
+  stockBuildingsNames:
+  - Magazine
   getItemBuildingsNames: []
   color: 
   status: 3
-  grounds: []
-  rb2D: {fileID: 0}
-  sr: {fileID: 0}
+  grounds:
+  - iron_dirt
+  - iron_grass
+  rb2D: {fileID: 2439187614315399494}
+  sr: {fileID: 2439187614315399491}
   isColliding: 0
