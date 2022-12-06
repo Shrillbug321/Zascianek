@@ -10,7 +10,7 @@ public class Mill : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 20;
-		productionTime = MONTH * 1;
+		productionTime = MONTH_DURATION * 1;
 		stockBuildingsNames = new() { "Magazine" };
 		getItemBuildingsNames = new string[] { "Magazine" };
 		needToBuild = new()

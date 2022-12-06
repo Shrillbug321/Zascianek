@@ -13,6 +13,8 @@ TagManager:
   - Villager
   - Warrior
   - Tree
+  - GroupIcon
+  - ActionBarIcon
   layers:
   - Default
   - TransparentFX

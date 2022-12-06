@@ -15,6 +15,7 @@ namespace Assets.Scripts
 		public string unitName { get; set; }
 		public float speed { get; set; }
 		public int hp { get; set; } = 100;
+		public int maxHp { get; set; } = 100;
 		public string type { get; set; }
 		public int armor { get; set; }
 		public bool isChoosen { get; set; } = false;
@@ -104,7 +105,7 @@ namespace Assets.Scripts
 					movement = temp.Pop();
 				}
 				RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 1, LayerMask.GetMask("Buildings"));
-				if (hit.collider != null && hit.collider is EdgeCollider2D)
+				/*if (hit.collider != null && hit.collider is EdgeCollider2D)
 				{
 					around = true;
 					oldPos = transform.position;
@@ -115,7 +116,7 @@ namespace Assets.Scripts
 					direction = findAvailableDirection(direction);
 					movement = SetMovementForAround(direction);
 					//((EdgeCollider2D)hit.collider).isTrigger = false;
-				}
+				}*/
 			}
 
 			/*if (around)
@@ -152,6 +153,18 @@ namespace Assets.Scripts
 		{
 			print(HowMany);
 			hp = HowMany > 0 ? hp - HowMany : hp;
+		}
+
+		public virtual void IncreaseHP(int HowMany)
+		{
+			hp = maxHp;
+			//hp = HowMany > 0 ? hp - HowMany : hp;
+		}
+
+		public virtual void FullHP()
+		{
+			hp = maxHp;
+			//hp = HowMany > 0 ? hp - HowMany : hp;
 		}
 
 		public async Task Blinking(int attackSpeed, CancellationToken token)

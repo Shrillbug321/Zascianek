@@ -10,7 +10,7 @@ public class MineIron : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 50;
-		productionTime = MONTH * 1;
+		productionTime = MONTH_DURATION * 1;
 		stockBuildingsNames = new() { "Magazine" };
 		needToBuild = new()
 		{

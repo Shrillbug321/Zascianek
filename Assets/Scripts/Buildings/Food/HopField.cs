@@ -10,7 +10,7 @@ public class HopField : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 20;
-		productionTime = MONTH * 1;
+		productionTime = MONTH_DURATION * 1;
 		stockBuildingsNames = new() { "Magazine" };
 		products = new()
 		{

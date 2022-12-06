@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,37 +12,80 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 {
 	//public GameObject hud;
 	//public static HUDController hud;
-	protected TextMeshProUGUI woodCounter, clayCounter, moneyCounter, ironCounter, goldCounter;
-	protected TextMeshProUGUI happinessCounter, peopleCounter;
 	public string lastEntered;
 	public TextMeshProUGUI lastText;
 	public TextMeshProUGUI buildingText;
 	public HUDBuildingController buildingController;
 	private List<HouseVillager> housesVillagers;
+	private Image gameOver;
+	public Dictionary<int, string> monthNames = new()
+	{
+		[1] = "styczeñ",
+		[2] = "luty",
+		[3] = "marzec",
+		[4] = "kwiecieñ",
+		[5] = "maj",
+		[6] = "czerwiec",
+		[7] = "lipiec",
+		[8] = "sierpieñ",
+		[9] = "wrzesieñ",
+		[10] = "paŸdziernik",
+		[11] = "listopad",
+		[12] = "grudzieñ",
+	};
+	public Image undo;
+	public TextMeshProUGUI date;
 	public Dictionary<string, int> inhabitants = new()
 	{
 		["HouseVillager"] = 0,
 		["HouseRichVillager"] = 0,
 		["HouseNobile"] = 0
 	};
+	public Dictionary<string, string> unitNames = new()
+	{
+		["Infrantry"] = "Piechur",
+		["HeavyInfrantry"] = "Ciê¿ki piechur",
+		["Crossbower"] = "Kusznik",
+		["Settler"] = "Za³o¿yciel",
+
+		["EnemyInfrantry"] = "Wrogi piechur",
+		["EnemyAxer"] = "Topornik",
+		["EnemyBower"] = "£ucznik",
+
+		["Villager"] = "Ch³op",
+		["RichVillager"] = "Kmieæ",
+		["Nobility"] = "Szlachcic",
+		["Priest"] = "Ksi¹dz",
+	};
+	public HUDStatsController stats = new();
+
+	public GameObject unitBar;
+	private TextMeshProUGUI unitName;
+	private TextMeshProUGUI unitHP;
+	private Image unitChoosen;
 
 	public void Start()
 	{
 		buildingController = new();
-		woodCounter = GameObject.Find("WoodCounter").GetComponent<TextMeshProUGUI>();
-		clayCounter = GameObject.Find("ClayCounter").GetComponent<TextMeshProUGUI>();
-		moneyCounter = GameObject.Find("MoneyCounter").GetComponent<TextMeshProUGUI>();
-		ironCounter = GameObject.Find("IronCounter").GetComponent<TextMeshProUGUI>();
-		goldCounter = GameObject.Find("GoldCounter").GetComponent<TextMeshProUGUI>();
-		happinessCounter = GameObject.Find("HappinessCounter").GetComponent<TextMeshProUGUI>();
-		peopleCounter = GameObject.Find("PeopleCounter").GetComponent<TextMeshProUGUI>();
+		stats.Start();
 		buildingText = GameObject.Find("BuildingText").GetComponent<TextMeshProUGUI>();
-
+		//stats.UpdateStats();
 		housesVillagers = gameplay.buildings["HouseVillager"].Cast<HouseVillager>().ToList();
 		/*housesRichVillagers = gameplay.buildings["HouseRichVillager"].Cast<HouseRichVillager>().ToList();
 		housesNobiles = gameplay.buildings["HouseNobile"].Cast<HouseNobile>().ToList();*/
 
 		buildingController.Start();
+		gameOver = GameObject.Find("GameOver").GetComponent<Image>();
+		gameOver.color = Color.clear;
+		undo = GameObject.Find("Undo").GetComponent<Image>();
+		undo.color = new Color(1, 1, 1, 0.5f);
+		date = GameObject.Find("DateText").GetComponent<TextMeshProUGUI>();
+
+		unitBar = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitBar");
+		unitName = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitName")).GetComponent<TextMeshProUGUI>();
+		unitHP = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitHP")).GetComponent<TextMeshProUGUI>();
+		unitChoosen = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitChoosen")).GetComponent<Image>();
+
 		//DontDestroyOnLoad(this);
 	}
 
@@ -61,23 +105,39 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 	// Update is called once per frame
 	public virtual void Update()
 	{
-		UpdateStats();
+		stats.UpdateStats();
 		buildingController.Update();
 	}
 
-	public void UpdateStats()
-	{
-		int money = gameplay.GetItem("Money");
-		//print(money);
-		woodCounter.text = gameplay.GetItem("Wood").ToString();
-		clayCounter.text = gameplay.GetItem("Clay").ToString();
-		moneyCounter.text = string.Format("{0:D2} z³p {1:D2} gr", money / 30, money % 30);
-		ironCounter.text = gameplay.GetItem("Iron").ToString();
-		goldCounter.text = gameplay.GetItem("Gold").ToString();
-		peopleCounter.text = $"{gameplay.ic.inhabitantsSum} / {gameplay.ic.inhabitantsMax}";
-		happinessCounter.text = gameplay.ic.CalcSatisfaction().ToString();
-		/*peopleCounter.text = gameplay.GetItem("people").ToString();*/
 
+	public void ShowGameOverScreen()
+	{
+		gameOver.color = Color.white;
+		Time.timeScale = 0;
+		//Application.Quit();
+	}
+
+	public void IconClick(GameObject gameObject)
+	{
+		string name = gameObject.name;
+		string tag = gameObject.tag;
+		if (tag == "Icon")
+		{
+			switch (gameplay.mode)
+			{
+				default:
+					buildingController.IconClick(gameObject);
+					break;
+			}
+		}
+		if (tag == "ActionBarIcon")
+		{
+			ActionBarIconClick(name);
+		}
+		if (tag == "GroupIcon")
+		{
+			buildingController.GroupClick(name);
+		}
 	}
 
 	private string CalculateInhabitants()
@@ -105,10 +165,60 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		return string.Format("{0}/{1}", sum, max);
 	}
 
+	private void ActionBarIconClick(string name)
+	{
+		switch (name)
+		{
+			case "OpenMenu":
+				Application.Quit();
+				break;
+			case "Destroy":
+				gameplay.SetCursor("HUD/Icons/destroy");
+				gameplay.mode = Mode.destroy;
+				break;
+			case "Cut":
+				gameplay.SetCursor("HUD/Icons/cut");
+				gameplay.mode = Mode.cut;
+				break;
+			case "Undo":
+				Building lastBuilding = gameplay.lastBuilding;
+				if (lastBuilding == null) return;
+				if (lastBuilding.needToBuild != null)
+					foreach (KeyValuePair<string, int> item in lastBuilding.needToBuild)
+						gameplay.items[item.Key] += item.Value;
+				Destroy(lastBuilding.gameObject);
+				undo.color = new Color(1, 1, 1, 0.5f);
+				gameplay.lastBuilding = null;
+				break;
+		}
+	}
+
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		buildingController.IconClick(eventData.pointerCurrentRaycast.gameObject);
+		switch (gameplay.mode)
+		{
+			case Mode.unit:
+				UnitModel unit = eventData.pointerCurrentRaycast.gameObject.GetComponent<UnitModel>();
+				buildingController.list.SetActive(false);
+				unitName.text = unitNames[unit.name];
+				unitHP.text = unit.hp.ToString() + "/" + unit.maxHp.ToString();
+				break;
+			default:
+				hud.IconClick(eventData.pointerCurrentRaycast.gameObject);
+				break;
+		}
 	}
+
+	public void SwitchUnitBar(UnitModel unit)
+	{
+		string name = unit.GetType().ToString();
+		buildingController.list.SetActive(false);
+		unitBar.SetActive(true);
+		unitName.text = unitNames[name];
+		unitHP.text = unit.hp.ToString() + "/" + unit.maxHp.ToString();
+		unitChoosen.sprite = Resources.Load<Sprite>("Sprites/Units/" + name.ToSnakeCase());
+		//unitChoosen.sprite.SetNa
+		}
 
 	public void OnPointerEnter(PointerEventData eventData)
 	{

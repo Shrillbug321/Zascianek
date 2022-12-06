@@ -171,7 +171,7 @@ public class InhabitantController
 		["Crossbower"] = 0
 	};
 
-	public int inhabitantsMax, inhabitantsSum, warriorsSum;
+	public int inhabitantsMax, placesInHouses, inhabitantsSum, warriorsSum;
 	public int taxLevel = 1;
 	public int satisfaction = 0;
 	private int updates;
@@ -232,7 +232,7 @@ public class InhabitantController
 			gameplay.buildings["HouseRichVillager"].Cast<AbstractHouse>().ToList(),
 			gameplay.buildings["HouseNobility"].Cast<AbstractHouse>().ToList()
 		};
-		inhabitantsMax = 0; inhabitantsSum = 0;
+		placesInHouses = 0; inhabitantsSum = 0;
 		foreach (List<AbstractHouse> houses in housesOfTypes)
 		{
 			if (houses.Count > 0)
@@ -240,11 +240,13 @@ public class InhabitantController
 				string houseType = houses[0].GetType().ToString();
 				inhabitantsInHouse[houseType] = houses.Sum(h => h.inhabitans);
 				inhabitantsSum += inhabitantsInHouse[houseType];
-				inhabitantsMax += houses.Sum(h => h.maxInhabitans);
+				placesInHouses += houses.Sum(h => h.maxInhabitans);
 			}
 		}
 		inhabitantsSum += Church.priests;
-		inhabitantsMax += Church.priests;
+		placesInHouses += Church.priests;
+		inhabitantsMax = placesInHouses;
+		//inhabitantsMax = placesInHouses > inhabitantsMax ? placesInHouses : inhabitantsMax;
 	}
 
 	public Dictionary<string, int> ChangeTax(int level)
@@ -363,9 +365,9 @@ public class InhabitantController
 	private int CalculateCrowdSatisfaction()
 	{
 		int satisfaction = 0;
-		if (inhabitantsMax == 0)
+		if (placesInHouses == 0)
 			return points["Many"];
-		float crowd = (float)inhabitantsSum / inhabitantsMax;
+		float crowd = (float)inhabitantsSum / placesInHouses;
 		if (crowd > crowdRequirements["Little"])
 			satisfaction = points["Zero"];
 		if (crowd <= crowdRequirements["Little"])

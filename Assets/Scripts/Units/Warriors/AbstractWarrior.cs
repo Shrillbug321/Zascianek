@@ -94,6 +94,7 @@ public class AbstractWarrior : UnitModel
 					enemyPos = collision.gameObject.transform.position;
 					float offx = direction.x > 0.0f ? -0.35f : 0.35f;
 
+					temp.Push(movement);
 					movement.x = enemyPos.x + offx;
 					movement.y = enemyPos.y;
 
@@ -114,6 +115,7 @@ public class AbstractWarrior : UnitModel
 				if (enemy.weaponType == WeaponType.Distance)
 				{
 					//movement = enemy.gameObject.transform.position;
+					temp.Push(movement);
 					moveStart = true;
 				}
 				//movement = enemy.gameObject.transform.position;
@@ -136,13 +138,13 @@ public class AbstractWarrior : UnitModel
 		{
 			building = collision.GetComponent<Building>();
 			//string color = building.GetComponent<Building>().color;
-			/*if (collision.GetType() == typeof(CircleCollider2D) &&
-			this.color != color) 
+			if (collision.GetType() == typeof(CircleCollider2D) &&
+			color != building.color)
 			{
 				moveStart = false;
 				await AttackBuilding(buildingToken);
 				moveStart = true;
-			}*/
+			}
 		}
 	}
 
@@ -155,7 +157,10 @@ public class AbstractWarrior : UnitModel
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
 				if (seenEnemy)
+				{
 					seenEnemy = false;
+					movement = temp.Pop();
+				}
 				if (weaponType == WeaponType.Distance)
 				{
 					CreateToken();

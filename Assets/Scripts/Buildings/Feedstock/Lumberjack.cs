@@ -10,7 +10,7 @@ public class Lumberjack : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 50;
-		productionTime = MONTH * 1;
+		productionTime = MONTH_DURATION * 1;
 		stockBuildingsNames = new() { "Magazine" };
 		getItemBuildingsNames = new string[] { "Tree" };
 		needToBuild = new()

@@ -7,7 +7,8 @@ public class Enemy : AbstractWarrior
 		base.Start();
 		type = "Enemy";
 		color = "Brown";
-		movement = new Vector2(-10, -20);
+		//movement = new Vector2(-10, -20);
+		movement = GameObject.Find("HouseSettler").transform.position;
 		moveStart = true;
 	}
 

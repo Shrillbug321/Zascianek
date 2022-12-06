@@ -39,6 +39,7 @@ public class Warrior : AbstractWarrior
 				{
 					isChoosen = true;
 					gameplay.unitIsChoosen = true;
+					gameplay.mode = Mode.unit;
 				}
 			}
 		}
@@ -66,5 +67,16 @@ public class Warrior : AbstractWarrior
 		isChoosen = false;
 		gameplay.unitIsChoosen = false;
 		gameplay.SetCursor("Assets/HUD/cursor.png");
+	}
+
+	public override async void OnTriggerEnter2D(Collider2D collision)
+	{
+		base.OnTriggerEnter2D(collision);
+		string tag = collision.tag;
+		if (tag == this.tag) return;
+		if (collision.name == "Church")
+		{
+			FullHP();
+		}
 	}
 }

@@ -29,6 +29,7 @@ public class Building : MonoBehaviour
 	public BuildingStatus status;
 	public string[] grounds;
 	public bool hasWorker;
+	public static int buildingsNumber;
 
 	public Rigidbody2D rb2D;
 	public SpriteRenderer sr;
@@ -191,7 +192,7 @@ public class Building : MonoBehaviour
 		transform.position = pos;
 		tag = "Building";
 		color = "Green";
-		id = gameplay.buildings.Count;
+		id = buildingsNumber++;
 		gameplay.AddBuilding(this);
 		gameObject.layer = LayerMask.NameToLayer("Buildings");
 		DecreaseItemsToBuild();

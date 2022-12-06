@@ -10,7 +10,7 @@ public class MineGold : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 50;
-		productionTime = MONTH * 2;
+		productionTime = MONTH_DURATION * 2;
 		stockBuildingsNames = new() { "Magazine" };
 		needToBuild = new()
 		{

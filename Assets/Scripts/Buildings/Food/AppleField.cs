@@ -11,7 +11,7 @@ public class AppleField : ProductionBuilding
 		base.Start();
 		dp = maxDp = 10;
 		buildingName = "AppleField";
-		productionTime = MONTH * 3;
+		productionTime = MONTH_DURATION * 3;
 		needToBuild = new()
 		{
 			["Wood"] = 2

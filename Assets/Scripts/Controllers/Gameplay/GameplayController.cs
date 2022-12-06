@@ -39,40 +39,23 @@ public class GameplayController : GameplayControllerInitializer
 			gameplay = this;
 	}
 
-	public void AddUnit(UnitModel unit)
-	{
-		units.Add(unit);
-	}
-
-	public void RemoveUnit(UnitModel unit)
-	{
-		units.Remove(unit);
-	}
-
-	public void AddWarrior(Warrior warrior)
-	{
-		warriors[warrior.GetType().ToString()].Add(warrior);
-	}
-
-	public void RemoveWarrior(Warrior warrior)
-	{
-		warriors[warrior.GetType().ToString()].Remove(warrior);
-	}
-
-	public void AddBuilding(Building building)
-	{
-		buildings[building.GetType().ToString()].Add(building);
-	}
-
-	public void RemoveBuilding(Building building)
-	{
-		buildings[building.GetType().ToString()].Remove(building);
-	}
-
 	void Update()
 	{
+		if (paused) return;
 		ic.Update();
 		mousePos = GetMousePosToWorldPoint();
+
+		actualMonthPassed += Time.deltaTime;
+		if (actualMonthPassed > MONTH_DURATION)
+		{
+			actualMonthPassed = 0;
+			if (++month > 12)
+			{
+				month = 1;
+				year++;
+			}
+			hud.date.text = $"{hud.monthNames[gameplay.month]} A.D. {gameplay.year}";
+		}
 
 		foreach (KeyValuePair<string, List<Building>> slot in buildings)
 		{
@@ -94,8 +77,7 @@ public class GameplayController : GameplayControllerInitializer
 		if (hit.collider != null && MouseInRange(mousePos, hit, 0.75f))
 		{
 			string tag = hit.collider.gameObject.tag;
-			print(tag);
-			//print(hit.collider.gameObject.name);
+
 			switch (WhatIsHit(tag))
 			{
 				case "Warrior":
@@ -104,18 +86,34 @@ public class GameplayController : GameplayControllerInitializer
 				case "Enemy":
 					OnMouseEnter("Enemy");
 					break;
-				case "Save":
-					if (mouse.leftButton.wasPressedThisFrame)
-						Save();
-					break;
-				case "Load":
-					if (mouse.leftButton.wasPressedThisFrame)
-						Load();
-					break;
-				case "Granary":
-					if (mouse.leftButton.wasPressedThisFrame)
+				case "Building":
+					if (mode == Mode.unit)
 					{
-
+						if (hit.collider.gameObject.name == "Church")
+						{
+							SetCursor(pathToCursors + "/heal");
+						}
+					}
+					break;
+				default:
+					OnMouseExit();
+					break;
+			}
+			if (mouse.leftButton.wasPressedThisFrame)
+			{
+				switch (WhatIsHit(tag))
+				{
+					case "Warrior" or "Villager" or "Enemy":
+						mode = Mode.unit;
+						hud.SwitchUnitBar(hit.collider.gameObject.GetComponent<UnitModel>());
+						break;
+					case "Save":
+						Save();
+						break;
+					case "Load":
+						Load();
+						break;
+					case "Granary":
 						if (items["Money"] < 15)
 						{
 							//ShowGUIImage("Prefabs/HUD/Image");
@@ -129,31 +127,38 @@ public class GameplayController : GameplayControllerInitializer
 							a.transform.position = new Vector3(pos.x, pos.y - 1f, 0);
 							a.gameObject.name = units.Count.ToString();
 						}
-					}
-					print("p");
+						break;
+					case "Building":
+						if (mode == Mode.nothing)
+						{
+							mode = Mode.building;
+							hud.buildingController.BuildingClick(hit.collider.gameObject.GetComponent<Building>());
+						}
+						if (mode == Mode.destroy)
+						{
+							Building building = hit.collider.GetComponent<Building>();
+							if (building.needToBuild != null)
+								foreach (KeyValuePair<string, int> item in building.needToBuild)
+									gameplay.items[item.Key] += (int)Math.Round(item.Value * 0.9f);
+							//if (building is AbstractHouse)
+							RemoveBuilding(building);
+							Destroy(building.gameObject);
+						}
+						break;
+					case "Tree":
+						if (mode == Mode.cut)
+						{
+							Destroy(hit.collider.gameObject);
+						}
+						break;
+					case "Icon" or "GroupIcon":
+						hud.IconClick(hit.collider.gameObject);
+						break;
 
-					//units.Add(a);
-					break;
-				case "Building":
-					if (mouse.leftButton.wasPressedThisFrame && mode == Mode.nothing)
-					//	print(hit.collider.gameObject.name);
-					//hud.SendMessage("BuildingClick", "AppleField");
-					{
-						mode = Mode.building;
-						hud.buildingController.BuildingClick(hit.collider.gameObject.GetComponent<Building>());
-					}
-					break;
-				case "Icon":
-					if (mouse.leftButton.wasPressedThisFrame)
-					{
-						hud.buildingController.IconClick(hit.collider.gameObject);
-					}
-					break;
-				default:
-					OnMouseExit();
-					break;
+				}
 			}
 		}
+
 		else OnMouseExit();
 		//print(mode);
 		if (mode == Mode.placing)
@@ -201,8 +206,6 @@ public class GameplayController : GameplayControllerInitializer
 				else
 				{
 					newBuilding.Build(GetMousePosToWorldPoint());
-					mode = Mode.nothing;
-
 					if (newBuilding is ProductionBuilding productionBuilding)
 					{
 						AbstractVillager villager = FindUnemployedVillager();
@@ -212,7 +215,14 @@ public class GameplayController : GameplayControllerInitializer
 							villager.AssignToBuilding(building.GetComponent<Building>());
 					}
 
+					mode = Mode.nothing;
+					lastBuilding = newBuilding;
+					hud.undo.color = new Color(1, 1, 1, 1);
 				}
+
+			}
+			else
+			{
 
 			}
 			/*else
@@ -239,30 +249,41 @@ public class GameplayController : GameplayControllerInitializer
 
 	private void OnMouseEnter(string type)
 	{
-		if (type == "Warrior")
+		if (mode == Mode.nothing)
 		{
-			if (units.Any(u => u.isChoosen))
+			if (type == "Warrior")
 			{
-				SetCursor(pathToCursors + "/cursor_go_to");
+				if (units.Any(u => u.isChoosen))
+				{
+					SetCursor(pathToCursors + "/cursor_go_to");
+				}
+				else
+				{
+					SetCursor(pathToCursors + "/cursor_highlighted");
+				}
 			}
-			else
+			if (type == "Enemy" && units.Any(u => u.isChoosen))
 			{
-				SetCursor(pathToCursors + "/cursor_highlighted");
+				SetCursor(pathToCursors + "/sable_cursor2");
 			}
 		}
-		if (type == "Enemy" && units.Any(u => u.isChoosen))
+
+		/*if (mode == Mode.unit)
 		{
-			SetCursor(pathToCursors + "/sable_cursor2");
-		}
+			if (hit.collider.gameObject.GetType().ToString() == "Church")
+			{
+				SetCursor(pathToCursors + "/heal");
+			}
+		}*/
 	}
 
 	private void OnMouseExit()
 	{
-		if (units.Any(u => u.isChoosen))
+		/*if (units.Any(u => u.isChoosen))
 		{
 			SetCursor(pathToCursors + "/cursor_go_to");
 		}
-		else SetCursor(pathToCursors + "/cursor");
+		else SetCursor(pathToCursors + "/cursor");*/
 	}
 
 	public bool MouseInRange(Vector2 mousePos, RaycastHit2D hit, float range)
@@ -294,6 +315,10 @@ public class GameplayController : GameplayControllerInitializer
 			return "Building";
 		if (tag == "Icon")
 			return "Icon";
+		if (tag == "Tree")
+			return "Tree";
+		if (tag == "Villager")
+			return "Villager";
 		return "";
 	}
 
@@ -362,6 +387,12 @@ public class GameplayController : GameplayControllerInitializer
 
 	}
 
+	public void GameOver()
+	{
+		hud.ShowGameOverScreen();
+		paused = true;
+	}
+
 	public Vector2 GetMousePosToWorldPoint()
 	{
 		Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
@@ -377,6 +408,36 @@ public class GameplayController : GameplayControllerInitializer
 	public async Task Wait(int time)
 	{
 		await Task.Delay(time);
+	}
+
+	public void AddUnit(UnitModel unit)
+	{
+		units.Add(unit);
+	}
+
+	public void RemoveUnit(UnitModel unit)
+	{
+		units.Remove(unit);
+	}
+
+	public void AddWarrior(Warrior warrior)
+	{
+		warriors[warrior.GetType().ToString()].Add(warrior);
+	}
+
+	public void RemoveWarrior(Warrior warrior)
+	{
+		warriors[warrior.GetType().ToString()].Remove(warrior);
+	}
+
+	public void AddBuilding(Building building)
+	{
+		buildings[building.GetType().ToString()].Add(building);
+	}
+
+	public void RemoveBuilding(Building building)
+	{
+		buildings[building.GetType().ToString()].Remove(building);
 	}
 }
 //354

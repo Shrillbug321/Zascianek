@@ -10,7 +10,7 @@ public class Bakery : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 20;
-		productionTime = MONTH * 1;
+		productionTime = MONTH_DURATION * 1;
 		stockBuildingsNames = new() { "Granary" };
 		getItemBuildingsNames = new string[] { "Magazine" };
 		needToBuild = new()

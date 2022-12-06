@@ -192,6 +192,7 @@ MonoBehaviour:
   grounds:
   - clay_dirt
   - clay_grass
+  hasWorker: 0
   rb2D: {fileID: 8973467927652729118}
   sr: {fileID: 8973467927652729117}
   isColliding: 0

@@ -32,8 +32,14 @@ public class GameplayControllerInitializer : MonoBehaviour
 	public string[] foods = { "Meat", "Apple", "Bread", "Beer", "Sausage" };
 	public InhabitantController ic = new();
 	public AttackController attackController;
-	//public const int MONTH = 30000;
-	public const int MONTH = 1;
+	public UnitController unitController = new();
+	//public const int MONTH_DURATION = 30000;
+	public const int MONTH_DURATION = 1;
+	public GameObject settler, houseSettler;
+	public bool paused = false;
+	public Building lastBuilding;
+	public int month = 1, year = 1500;
+	public float actualMonthPassed = 0;
 
 	public virtual void Start()
 	{
@@ -53,7 +59,7 @@ public class GameplayControllerInitializer : MonoBehaviour
 			["Clay"] = 0,
 			["Wood"] = 100,
 			["Gold"] = 0,
-			["Money"] = 0,
+			["Money"] = 100,
 			["Wheat"] = 10,
 			["Flour"] = 0,
 			["Hop"] = 0,
@@ -78,7 +84,7 @@ public class GameplayControllerInitializer : MonoBehaviour
 			["HouseVillager"] = new(),
 			["HouseRichVillager"] = new(),
 			["HouseNobility"] = new(),
-			["Crossbower"] = new(),
+			["CrossbowMaker"] = new(),
 			["Armorer"] = new(),
 			["Smith"] = new(),
 			["Barracks"] = new(),
@@ -99,6 +105,9 @@ public class GameplayControllerInitializer : MonoBehaviour
 		};
 		hud.Start();
 		gameObject.AddComponent<AttackController>();
+		houseSettler = GameObject.Find("HouseSettler");
+		year = 1500;
+		settler = GameObject.Find("Settler");
 		//attackController.Start();
 	}
 	public int GetItem(string item)
@@ -107,5 +116,6 @@ public class GameplayControllerInitializer : MonoBehaviour
 	}
 }
 public enum Mode{
-	nothing, placing, unit, building, house, tax, recruit, market
+	nothing, placing, unit, building, house, tax, recruit, market,
+	destroy, cut
 }

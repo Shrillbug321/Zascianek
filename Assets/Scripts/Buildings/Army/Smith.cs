@@ -10,7 +10,7 @@ public class Smith : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 20;
-		productionTime = MONTH * 2;
+		productionTime = MONTH_DURATION * 2;
 		stockBuildingsNames = new() { "Armory" };
 		getItemBuildingsNames = new string[]{ "Magazine" };
 		products = new()
