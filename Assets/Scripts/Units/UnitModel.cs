@@ -11,7 +11,7 @@ namespace Assets.Scripts
 	public class UnitModel : MonoBehaviour
 	{
 		public int unitId { get; set; }
-		public int workBuildingId { get; set; }
+		//public int workBuildingId { get; set; }
 		public string unitName { get; set; }
 		public float speed { get; set; }
 		public int hp { get; set; } = 100;

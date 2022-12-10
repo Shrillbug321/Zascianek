@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
@@ -15,9 +16,10 @@ public class GameplayControllerInitializer : MonoBehaviour
 	public Camera camera;
 	public Mouse mouse;
 	public GameObject mainCamera;
-	public List<UnitModel> units = new List<UnitModel>();
+	public GameObject minimapCamera;
+	public Dictionary<string, List<UnitModel>> units;
 	public Dictionary<string, List<Building>> buildings;
-	public Dictionary<string, List<Warrior>> warriors;
+	public List<Enemy> enemies;
 	protected string pathToCursors = "Prefabs/HUD/Cursors";
 	protected SaveLoadUtility slu;
 	protected GameObject building;
@@ -30,9 +32,6 @@ public class GameplayControllerInitializer : MonoBehaviour
 	public float mapWidth = 20;
 	public float mapHeight = 10;
 	public string[] foods = { "Meat", "Apple", "Bread", "Beer", "Sausage" };
-	public InhabitantController ic = new();
-	public AttackController attackController;
-	public UnitController unitController = new();
 	//public const int MONTH_DURATION = 30000;
 	public const int MONTH_DURATION = 1;
 	public GameObject settler, houseSettler;
@@ -40,10 +39,23 @@ public class GameplayControllerInitializer : MonoBehaviour
 	public Building lastBuilding;
 	public int month = 1, year = 1500;
 	public float actualMonthPassed = 0;
+	public Building clickedBuilding;
+	public bool runningInhabitansTextIsShowed = false;
+	public bool isGameOver = false;
+	public float timeScale = 1;
+	public bool attack = false;
+	public Vector2 settlerHousePos;
+	public System.Random random = new();
+	public CameraController cameraController;
+	public InhabitantController ic = new();
+	public AttackController attackController;
+	public UnitController unitController = new();
+	public SaveGameController saveGameController;
+	public MusicController musicController;
 
 	public virtual void Start()
 	{
-		hud = new();
+		//hud = new();
 		attackController = new();
 		mode = Mode.nothing;
 		tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
@@ -56,7 +68,7 @@ public class GameplayControllerInitializer : MonoBehaviour
 			["Beer"] = 0,
 			["Sausage"] = 0,
 			["Iron"] = 50,
-			["Clay"] = 0,
+			["Clay"] = 10,
 			["Wood"] = 100,
 			["Gold"] = 0,
 			["Money"] = 100,
@@ -84,6 +96,7 @@ public class GameplayControllerInitializer : MonoBehaviour
 			["HouseVillager"] = new(),
 			["HouseRichVillager"] = new(),
 			["HouseNobility"] = new(),
+			["HouseSettler"] = new(),
 			["CrossbowMaker"] = new(),
 			["Armorer"] = new(),
 			["Smith"] = new(),
@@ -96,18 +109,31 @@ public class GameplayControllerInitializer : MonoBehaviour
 			["Church"] = new()
 		};
 
-		warriors = new()
+		units = new()
 		{
+			["Villager"] = new(),
+			["RichVillager"] = new(),
+			["Nobility"] = new(),
+			["Priest"] = new(),
 			["Infrantry"] = new(),
 			["HeavyInfrantry"] = new(),
 			["Crossbower"] = new(),
 			["Settler"] = new(),
+			["EnemyInfrantry"] = new(),
+			["Axer"] = new(),
+			["Bower"] = new(),
 		};
-		hud.Start();
+		gameObject.AddComponent<HUDController>();
+		hud = GetComponent<HUDController>();
 		gameObject.AddComponent<AttackController>();
+		gameObject.AddComponent<SaveGameController>();
+		saveGameController = gameObject.GetComponent<SaveGameController>();
 		houseSettler = GameObject.Find("HouseSettler");
+		musicController = GameObject.Find("MusicPlayer").GetComponent<MusicController>();
 		year = 1500;
 		settler = GameObject.Find("Settler");
+		enemies = new();
+		//camera = GameObject.Find("MainCamera(Clone)").GetComponent<Camera>();
 		//attackController.Start();
 	}
 	public int GetItem(string item)
@@ -117,5 +143,5 @@ public class GameplayControllerInitializer : MonoBehaviour
 }
 public enum Mode{
 	nothing, placing, unit, building, house, tax, recruit, market,
-	destroy, cut
+	repair, destroy, cut
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Random = System.Random;
+using static GameplayControllerInitializer;
 
 public class AttackController : MonoBehaviour
 {
@@ -14,11 +15,11 @@ public class AttackController : MonoBehaviour
 	private string[] enemiesNames = { "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
 	private float time;
 	private int timeToNextAttack;
-	private int enemies;
+	//private int enemies;
 	public void Start()
 	{
 		time = Time.time;
-		//MakeAttack();
+		MakeAttack();
 	}
 
 	public void Update()
@@ -36,16 +37,16 @@ public class AttackController : MonoBehaviour
 	{
 		//while (true)
 		{
-			int units = random.Next(1, 10);
+			//int units = random.Next(1, 10);
+			int units = 2;
 			for (int i = 0; i < units; i++)
 			{
 				int enemyTypeIndex = random.Next(0, 2);
 				string enemyType = enemiesNames[enemyTypeIndex];
-				GameObject enemy = Resources.Load<GameObject>("Prefabs/Units/Warriors/Enemy/" + enemyType);
+				Enemy enemy = Resources.Load<Enemy>("Prefabs/Units/Warriors/Enemy/" + enemyType);
 				Instantiate(enemy);
-				enemies++;
+				//enemies++;
 			}
-			Debug.LogWarning(enemies);
 		}
 	}
 }

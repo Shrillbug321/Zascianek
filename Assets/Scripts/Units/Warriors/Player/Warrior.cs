@@ -8,7 +8,7 @@ public class Warrior : AbstractWarrior
 	{
 		base.Start();
 		color = "Green";
-		gameplay.AddWarrior(this);
+		//gameplay.AddWarrior(this);
 	}
 
 	public override void Update()
@@ -74,7 +74,7 @@ public class Warrior : AbstractWarrior
 		base.OnTriggerEnter2D(collision);
 		string tag = collision.tag;
 		if (tag == this.tag) return;
-		if (collision.name == "Church")
+		if (collision.name == "Church" && collision.tag == "Building")
 		{
 			FullHP();
 		}

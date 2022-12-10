@@ -11,7 +11,8 @@
 			//["Clay"] = 5
 		};
 		maxInhabitans = 4;
-		timeToNextInhabitant = 1;
+		timeToAddInhabitant = 1;
+		timeToRemoveInhabitant = 10;
 		inhabitantType = "RichVillager";
 	}
 }

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 9055459782156228401}
   - component: {fileID: 9055459782156228400}
   - component: {fileID: 9055459782156228403}
+  - component: {fileID: 7624009874046527387}
   m_Layer: 9
   m_Name: Armory
   m_TagString: InBuild
@@ -174,3 +175,21 @@ MonoBehaviour:
   rb2D: {fileID: 9055459782156228400}
   sr: {fileID: 9055459782156228399}
   isColliding: 0
+--- !u!114 &7624009874046527387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9055459782156228402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c19f3e134862e74dbc98cb514a82ef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabName: Armory
+  id: B_23
+  idParent: 
+  dontSave: 0
+  componentSaveMode: 3
+  componentTypesToSave: []

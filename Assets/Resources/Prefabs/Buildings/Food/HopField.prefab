@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2968118720659963994}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 36.29377, y: -5.598214, z: 0}
+  m_LocalPosition: {x: 10.246877, y: -6.374999, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -171,8 +171,12 @@ MonoBehaviour:
   getItemBuildingsNames: []
   color: 
   status: 3
+  initStatus: 3
+  statuses: 
   grounds: []
-  hasWorker: 0
+  worker: {fileID: 0}
+  stopped: 0
+  stopping: 0
   rb2D: {fileID: 7232650041583841583}
   sr: {fileID: 3269246721792780915}
   isColliding: 0
@@ -188,7 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c19f3e134862e74dbc98cb514a82ef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabName: 
+  prefabName: HopField
   id: B_3
   idParent: 
   dontSave: 0

@@ -5,18 +5,33 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using static MouseController;
 
 public class GameplayController : GameplayControllerInitializer
 {
 	public override void Start()
 	{
 		base.Start();
-		mouse = Mouse.current;
-		slu = gameObject.AddComponent<SaveLoadUtility>();
-		mainCamera = Resources.Load<GameObject>("Prefabs/Common/MainCamera");
-		Instantiate(mainCamera);
+		if (SceneController.buttonClicked == "LoadGame")
+		{
+			SceneController.buttonClicked = "";
+			saveGameController.Load();
+			//return;
+		}
+		//Time.timeScale = 3;
+		//gameObject.AddComponent<SceneController>();
+		mouse = MouseController.mouse;
+		//slu = gameObject.AddComponent<SaveLoadUtility>();
+		Instantiate(Resources.Load<GameObject>("Prefabs/Common/MainCamera"));
+		mainCamera = GameObject.Find("MainCamera(Clone)");
+		//mainCamera.name = "MainCamera";
+		Instantiate(Resources.Load<GameObject>("Prefabs/Common/MinimapCamera"));
+		minimapCamera = GameObject.Find("MinimapCamera(Clone)");
+		cameraController = mainCamera.GetComponent<CameraController>();
+		settlerHousePos = GameObject.Find("HouseSettler").transform.position;
 		//MakeMoney();
 		//MakeTree();
 		/*object[] a = Resources.FindObjectsOfTypeAll(typeof(GameObject));
@@ -28,6 +43,8 @@ public class GameplayController : GameplayControllerInitializer
 				collider.radius += 0.01f;
 			}
 		}*/
+		if (SceneController.buttonClicked == "NewGamel")
+			NewGame();
 	}
 
 
@@ -41,7 +58,24 @@ public class GameplayController : GameplayControllerInitializer
 
 	void Update()
 	{
+		if (isGameOver)
+			musicController.ChangeState("GameOver");
+		if (isGameOver && mouse.leftButton.wasPressedThisFrame)
+			SceneManager.LoadScene("MainMenu");
 		if (paused) return;
+
+		if (attack && enemies.Count < 2)
+		{
+			musicController.ChangeState("Ambient");
+			attack = false;
+		}
+
+		if (!attack && enemies.Count > 1)
+		{
+			attack = true;
+			musicController.ChangeState("Battle");
+		}
+
 		ic.Update();
 		mousePos = GetMousePosToWorldPoint();
 
@@ -63,7 +97,7 @@ public class GameplayController : GameplayControllerInitializer
 			{
 				foreach (Building building in slot.Value)
 				{
-					if (building is ProductionBuilding && !building.hasWorker)
+					if (building is ProductionBuilding && building.worker == null)
 					{
 						AbstractVillager villager = FindUnemployedVillager();
 						if (villager != null)
@@ -108,12 +142,12 @@ public class GameplayController : GameplayControllerInitializer
 						hud.SwitchUnitBar(hit.collider.gameObject.GetComponent<UnitModel>());
 						break;
 					case "Save":
-						Save();
+						saveGameController.Save();
 						break;
 					case "Load":
-						Load();
+						saveGameController.Load();
 						break;
-					case "Granary":
+					/*case "Granary":
 						if (items["Money"] < 15)
 						{
 							//ShowGUIImage("Prefabs/HUD/Image");
@@ -127,12 +161,19 @@ public class GameplayController : GameplayControllerInitializer
 							a.transform.position = new Vector3(pos.x, pos.y - 1f, 0);
 							a.gameObject.name = units.Count.ToString();
 						}
-						break;
+						break;*/
 					case "Building":
 						if (mode == Mode.nothing)
 						{
 							mode = Mode.building;
+							clickedBuilding = hit.collider.gameObject.GetComponent<Building>();
 							hud.buildingController.BuildingClick(hit.collider.gameObject.GetComponent<Building>());
+						}
+						if (mode == Mode.repair)
+						{
+							Building building = hit.collider.GetComponent<Building>();
+							building.Repair();
+
 						}
 						if (mode == Mode.destroy)
 						{
@@ -141,6 +182,10 @@ public class GameplayController : GameplayControllerInitializer
 								foreach (KeyValuePair<string, int> item in building.needToBuild)
 									gameplay.items[item.Key] += (int)Math.Round(item.Value * 0.9f);
 							//if (building is AbstractHouse)
+							if (building is ProductionBuilding pb)
+							{
+								pb.worker.RemoveFromBuilding();
+							}
 							RemoveBuilding(building);
 							Destroy(building.gameObject);
 						}
@@ -172,6 +217,23 @@ public class GameplayController : GameplayControllerInitializer
 		}
 		OnMouseLeftClick();
 		OnMouseRightClick();
+	}
+
+	async void NewGame()
+	{
+		SceneController.buttonClicked = "";
+		string[] buildings = { "Houses/HouseSettler", "Stock/Granary", "Stock/Magazine" };
+		string[] texts = { "Wybierz siedzibê za³o¿yciela", "Wybierz miejsce na spichlerz", "Wybierz miejsce na sk³ad" };
+		UnitModel settler = Instantiate(Resources.Load<UnitModel>("Prefabs/Units/Warriors/Player/Settler"));
+		for (int i = 0; i < buildings.Length; i++)
+		{
+			Building building = Resources.Load<GameObject>("Prefabs/Buildings/" + buildings[i]).GetComponent<Building>();
+			building.Start();
+			PlaceBuilding(building);
+			//hud.buildingController.ShowBuildingText(texts[i], 5000);
+			while (mode == Mode.placing) await Wait(1000);
+		}
+		settler.transform.position = GameObject.Find("HouseSettler").transform.position;
 	}
 
 	private void OnMouseLeftClick()
@@ -253,7 +315,7 @@ public class GameplayController : GameplayControllerInitializer
 		{
 			if (type == "Warrior")
 			{
-				if (units.Any(u => u.isChoosen))
+				if (mode == Mode.unit)
 				{
 					SetCursor(pathToCursors + "/cursor_go_to");
 				}
@@ -262,11 +324,11 @@ public class GameplayController : GameplayControllerInitializer
 					SetCursor(pathToCursors + "/cursor_highlighted");
 				}
 			}
-			if (type == "Enemy" && units.Any(u => u.isChoosen))
+		}
+			if (type == "Enemy" && mode == Mode.unit)
 			{
 				SetCursor(pathToCursors + "/sable_cursor2");
 			}
-		}
 
 		/*if (mode == Mode.unit)
 		{
@@ -279,11 +341,12 @@ public class GameplayController : GameplayControllerInitializer
 
 	private void OnMouseExit()
 	{
-		/*if (units.Any(u => u.isChoosen))
+		if (mode == Mode.unit)
 		{
 			SetCursor(pathToCursors + "/cursor_go_to");
 		}
-		else SetCursor(pathToCursors + "/cursor");*/
+		if (mode == Mode.nothing)
+		 SetCursor(pathToCursors + "/cursor");
 	}
 
 	public bool MouseInRange(Vector2 mousePos, RaycastHit2D hit, float range)
@@ -322,7 +385,7 @@ public class GameplayController : GameplayControllerInitializer
 		return "";
 	}
 
-	public async void Save()
+	/*public async void Save()
 	{
 		slu.SaveGame("n");
 	}
@@ -334,16 +397,16 @@ public class GameplayController : GameplayControllerInitializer
 		hud.Start();
 		//Instantiate(hud);
 		Instantiate(mainCamera);
-	}
+	}*/
 
-	public async Task MakeMoney()
+	/*public async Task MakeMoney()
 	{
 		while (true)
 		{
 			items["Money"]++;
 			await Task.Delay(300);
 		}
-	}
+	}*/
 
 	public void PlaceBuilding(Building building)
 	{
@@ -362,11 +425,11 @@ public class GameplayController : GameplayControllerInitializer
 		//building.gameObject.name = buildings.Count.ToString();
 	}
 
-	private AbstractVillager FindUnemployedVillager()
+	public AbstractVillager FindUnemployedVillager()
 	{
-		AbstractVillager villager = ic.inhabitants["Villager"].Find(u => u.workBuilding == null);
+		AbstractVillager villager = ic.inhabitants["Villager"].Find(u => !u.employed);
 		if (villager == null)
-			villager = ic.inhabitants["RichVillager"].Find(u => u.workBuilding == null);
+			villager = ic.inhabitants["RichVillager"].Find(u => !u.employed);
 		return villager;
 	}
 
@@ -391,20 +454,9 @@ public class GameplayController : GameplayControllerInitializer
 	{
 		hud.ShowGameOverScreen();
 		paused = true;
+		isGameOver = true;
 	}
 
-	public Vector2 GetMousePosToWorldPoint()
-	{
-		Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
-		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
-		return mousePos;
-	}
-	public Vector2 GetMousePos()
-	{
-		Vector3 mousePos3D = mouse.position.ReadValue();
-		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
-		return mousePos;
-	}
 	public async Task Wait(int time)
 	{
 		await Task.Delay(time);
@@ -412,22 +464,22 @@ public class GameplayController : GameplayControllerInitializer
 
 	public void AddUnit(UnitModel unit)
 	{
-		units.Add(unit);
+		units[unit.GetType().ToString()].Add(unit);
 	}
 
 	public void RemoveUnit(UnitModel unit)
 	{
-		units.Remove(unit);
+		units[unit.GetType().ToString()].Remove(unit);
 	}
 
-	public void AddWarrior(Warrior warrior)
+	public void AddEnemy(Enemy enemy)
 	{
-		warriors[warrior.GetType().ToString()].Add(warrior);
+		enemies.Add(enemy);
 	}
 
-	public void RemoveWarrior(Warrior warrior)
+	public void RemoveEnemy(Enemy enemy)
 	{
-		warriors[warrior.GetType().ToString()].Remove(warrior);
+		enemies.Remove(enemy);
 	}
 
 	public void AddBuilding(Building building)

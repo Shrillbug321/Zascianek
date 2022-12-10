@@ -109,6 +109,7 @@ public class AbstractWarrior : UnitModel
 				if (weaponType == WeaponType.Distance)
 				{
 					moveStart = false;
+					temp.Push(movement);
 					await Attack(unitToken);
 					moveStart = true;
 				}

@@ -8,7 +8,7 @@ public class Settler : Warrior
 	public override void Start()
 	{
 		base.Start();
-		hp = 150;
+		hp = 50;
 		speed = 3f;
 		attackSpeed = 1000;
 		damageMin = 35;
@@ -46,4 +46,8 @@ public class Settler : Warrior
 		movement.x = x; movement.y = y;
 	}
 
+	private void OnDestroy()
+	{
+		gameplay.GameOver();
+	}
 }

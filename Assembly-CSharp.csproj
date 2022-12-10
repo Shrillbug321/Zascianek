@@ -98,7 +98,8 @@
     <Compile Include="Assets\Scripts\Units\Villagers\RichVillager.cs" />
     <Compile Include="Assets\Scripts\Buildings\Stock\Armory.cs" />
     <Compile Include="Assets\Scripts\Buildings\Army\CrossbowMaker.cs" />
-    <Compile Include="Assets\Scripts\Controllers\HUD\HUDBuildingText.cs" />
+    <Compile Include="Assets\Scripts\Controllers\SaveGameController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\HUD\Texts.cs" />
     <Compile Include="Assets\Scripts\Controllers\CameraController.cs" />
     <Compile Include="Assets\Scripts\Buildings\Stock\StockBuilding.cs" />
     <Compile Include="Assets\Scripts\Buildings\Food\Pigsty.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Assets\Scripts\Controllers\Gameplay\GameplayController.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Player\HeavyInfrantry.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Surrogates\Vector2Surrogate.cs" />
+    <Compile Include="Assets\Scripts\Controllers\SceneController.cs" />
     <Compile Include="Assets\Scripts\Controllers\HUD\HUDBuildingController.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Attributes\USLUAttributes.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Enemy\Bower.cs" />
@@ -119,10 +121,12 @@
     <Compile Include="Assets\Scripts\Buildings\Industry\Butcher.cs" />
     <Compile Include="Assets\Scripts\Buildings\Stock\Magazine.cs" />
     <Compile Include="Assets\Scripts\Buildings\BuildingFactory.cs" />
+    <Compile Include="Assets\Scripts\Buildings\Other\Well.cs" />
     <Compile Include="Assets\Scripts\Buildings\Feedstock\MineIron.cs" />
     <Compile Include="Assets\Scripts\Buildings\Industry\Mill.cs" />
     <Compile Include="Assets\Scripts\Units\UnitModel.cs" />
     <Compile Include="Assets\Scripts\Buildings\Food\ProductionBuilding.cs" />
+    <Compile Include="Assets\Scripts\Controllers\MouseController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Gameplay\GameplayControllerInitializer.cs" />
     <Compile Include="Assets\Unity Save Load Utility\Non-Mono Classes\ObjectComponent.cs" />
     <Compile Include="Assets\Scripts\Units\Warriors\Player\Crossbower.cs" />
@@ -133,9 +137,11 @@
     <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Scripts\Buildings\Industry\Bakery.cs" />
     <Compile Include="Assets\Scripts\Buildings\Army\Armorer.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Menu.cs" />
     <Compile Include="Assets\Scripts\CharacterMove — kopia.cs" />
     <Compile Include="Assets\Scripts\Helpers.cs" />
     <Compile Include="Assets\Scripts\Controllers\HUD\HealthBar.cs" />
+    <Compile Include="Assets\Scripts\Controllers\MusicController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

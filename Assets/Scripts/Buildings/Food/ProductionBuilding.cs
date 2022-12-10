@@ -10,6 +10,13 @@ public class ProductionBuilding : Building
 	public int productionProgress { get; set; }
 	public void Update()
 	{
+		if (stopped)
+		{
+			time = 0;
+			status = BuildingStatus.waitingForWorker;
+			productionProgress = 0;
+			return;
+		}
 		if (status == BuildingStatus.production)
 		{
 			time += Time.deltaTime;
@@ -18,9 +25,9 @@ public class ProductionBuilding : Building
 			{
 				time = 0;
 				status = BuildingStatus.transport;
+				//NextStatus();
 			}
 		}
-
 	}
 
 	public virtual async Task<Dictionary<string, int>> Production()

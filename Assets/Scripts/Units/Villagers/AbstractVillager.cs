@@ -8,7 +8,7 @@ public class AbstractVillager : UnitModel
 {
 	Dictionary<string, int> items = new();
 	public string workBuildingName;
-	public int workBuildingId;
+	public int workBuildingId = -1;
 	public List<string> stockBuildingsNames;
 	public List<string> getItemBuildingsNames;
 	public List<string> buildingActions;
@@ -16,6 +16,17 @@ public class AbstractVillager : UnitModel
 	private Dictionary<string, int> needToProduction;
 	private int buildingInRoute = 0;
 	private bool hitTree;
+	private GameObject nextBuilding;
+	public Vector2 HousePos { get; set; }
+	private string lastEntered = "";
+	public bool haveHome;
+	public bool employed = false;
+
+	public override void Start()
+	{
+		base.Start();
+		workBuildingId = -1;
+	}
 	public void AssignToBuilding(Building building)
 	{
 		route = new();
@@ -38,14 +49,54 @@ public class AbstractVillager : UnitModel
 			buildingActions.Add("stock");
 		}
 		workBuilding = building;
-		workBuilding.hasWorker = true;
+		workBuilding.worker = this;
+		workBuilding.status = workBuilding.initStatus;
 		//stockBuildingName = building.stockBuildingName;
 		//building.stockBuilding = GameObject.Find(building.stockBuildingName).GetComponent<Building>();
-		GameObject next = route[0];
-		movement = next.transform.position;
+		nextBuilding = route[0];
+		movement = nextBuilding.transform.position;
 		moveStart = true;
+		employed = true;
 		/*movement = building.transform.position;
 		moveStart = true;*/
+	}
+
+	public void RemoveFromBuilding()
+	{
+		moveStart = false;
+		route.Clear();
+		GoToHouse();
+		sr.color = Color.white;
+		employed = false;
+		moveStart = true;
+	}
+
+	public void BuildingStopped()
+	{
+		moveStart = false;
+		//workBuilding = null;
+		//lastWorkBuildingId = workBuildingId;
+		employed = false;
+		GoToHouse();
+		sr.color = Color.white;
+		moveStart = true;
+	}
+
+	public void BuildingResumed()
+	{
+		moveStart = false;
+		nextBuilding = route[0];
+		movement = nextBuilding.transform.position;
+		buildingInRoute = 0;
+		items = new();
+		employed = true;
+		moveStart = true;
+	}
+
+	public void GoToHouse()
+	{
+		moveStart = true;
+		movement = HousePos;
 	}
 
 	public override async void OnTriggerEnter2D(Collider2D collision)
@@ -53,15 +104,16 @@ public class AbstractVillager : UnitModel
 
 		if (collision.GetType() == typeof(CircleCollider2D))
 		{
-			if (route.Count == 0) return;
+			/*if (route.Count == 0) return;
+			if (lastEntered == collision.name) return;*/
 			bool reachedGoal = false;
-			GameObject gameObject = route[buildingInRoute];
-			if (gameObject.GetComponent<Building>() != null)
+			//GameObject gameObject = route[buildingInRoute];
+			if (nextBuilding.GetComponent<Building>() != null)
 			{
 				//Building building = collision.GetComponent<Building>();
-				Building building = gameObject.GetComponent<Building>();
+				Building building = nextBuilding.GetComponent<Building>();
 				Debug.LogWarning(name);
-				if (collision.name == workBuildingName)
+				if (lastEntered != building.name && building.name == collision.name && collision.name == workBuildingName)
 				{
 					if (building.id == workBuildingId)
 					{
@@ -72,15 +124,19 @@ public class AbstractVillager : UnitModel
 						if (building is ProductionBuilding productionBuilding)
 						{
 							if (productionBuilding.CanProduction(items))
+							{
 								items = await productionBuilding.Production();
+								//building.status = BuildingStatus.transport;
+							}
 						}
 
+						//workBuilding.NextStatus();
 						sr.color = Color.white;
 						reachedGoal = true;
 					}
 					else
 					{
-						base.OnTriggerEnter2D(collision);
+						//base.OnTriggerEnter2D(collision);
 						return;
 					}
 				}
@@ -100,7 +156,9 @@ public class AbstractVillager : UnitModel
 						{
 							items[item.Key] = item.Value;
 						}
+						workBuilding.status = BuildingStatus.workerReturnWithItem;
 					}
+					//workBuilding.NextStatus();
 					reachedGoal = true;
 					/*if (buildingActions[buildingInRoute] == "get")
 
@@ -132,6 +190,7 @@ public class AbstractVillager : UnitModel
 							items[item.Key] = item.Value;
 						}*/
 
+						workBuilding.status = BuildingStatus.workerReturnFromStock;
 					}
 					reachedGoal = true;
 					//building.GetItems(items);
@@ -173,13 +232,23 @@ public class AbstractVillager : UnitModel
 			if (reachedGoal)
 			{
 				if (++buildingInRoute >= route.Count)
+				{
 					buildingInRoute = 0;
-				GameObject next = route[buildingInRoute];
-				movement = next.transform.position;
+					/*if (workBuilding.stopping)
+					{
+						workBuilding.stopped = true;
+						BuildingStopped();
+						return;
+					}*/
+					//workBuilding.status = workBuilding.initStatus;
+				}
+				lastEntered = gameObject.name;
+				nextBuilding = route[buildingInRoute];
+				movement = nextBuilding.transform.position;
 				moveStart = true;
 			}
-			else
-				base.OnTriggerEnter2D(collision);
+			/*else
+				base.OnTriggerEnter2D(collision);*/
 			return;
 		}
 

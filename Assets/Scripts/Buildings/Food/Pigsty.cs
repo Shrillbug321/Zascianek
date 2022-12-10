@@ -22,5 +22,6 @@ public class Pigsty : ProductionBuilding
 		{
 			["Apple"] = 5
 		};
+		initStatus = BuildingStatus.goForItem;
 	}
 }

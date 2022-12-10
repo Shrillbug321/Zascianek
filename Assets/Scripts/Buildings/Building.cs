@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,9 +28,14 @@ public class Building : MonoBehaviour
 	public Dictionary<string, int> needToBuild;
 	public Dictionary<string, int> needToProduction;
 	public BuildingStatus status;
+	public BuildingStatus initStatus = BuildingStatus.waitingForWorker;
+	public List<BuildingStatus> statuses;
+	private int nextStatusIndex=0;
 	public string[] grounds;
-	public bool hasWorker;
+	public AbstractVillager worker = null;
 	public static int buildingsNumber;
+	public bool stopped = false;
+	public bool stopping = false;
 
 	public Rigidbody2D rb2D;
 	public SpriteRenderer sr;
@@ -42,6 +48,7 @@ public class Building : MonoBehaviour
 		buildingName = name;
 		//WorkBuildingId = 1;
 		status = BuildingStatus.waitingForWorker;
+		initStatus = BuildingStatus.waitingForWorker;
 
 		gameObject.AddComponent<Rigidbody2D>();
 		rb2D = GetComponent<Rigidbody2D>();
@@ -120,7 +127,7 @@ public class Building : MonoBehaviour
 			Debug.LogWarning(gameplay.items[item.Key]);
 			if (gameplay.items[item.Key] < item.Value)
 			{
-				result += item.Value + " " + item.Key;
+				result += item.Value + " " + Texts.itemsNames[item.Key] + " ";
 			}
 		}
 		return result;
@@ -174,7 +181,11 @@ public class Building : MonoBehaviour
 	}*/
 	public bool CanProduction(Dictionary<string, int> items = null)
 	{
-		//if (needToProduction == null) return true;
+		if (needToProduction == null)
+		{
+			status = BuildingStatus.production;
+			return true;
+		}
 		if (needToProduction != null && items == null) return false;
 		foreach (var item in items)
 		{
@@ -184,6 +195,7 @@ public class Building : MonoBehaviour
 			}
 		}
 		status = BuildingStatus.production;
+		//NextStatus();
 		return true;
 	}
 
@@ -196,6 +208,15 @@ public class Building : MonoBehaviour
 		gameplay.AddBuilding(this);
 		gameObject.layer = LayerMask.NameToLayer("Buildings");
 		DecreaseItemsToBuild();
+	}
+
+	public void Repair()
+	{
+		if (needToBuild != null)
+			foreach (KeyValuePair<string, int> item in needToBuild)
+				gameplay.items[item.Key] -= (int)Math.Round(item.Value * 0.1f);
+		gameplay.items["Money"] -= 30;
+		dp = maxDp;
 	}
 
 	public virtual void DecreaseItemsToBuild()
@@ -214,6 +235,7 @@ public class Building : MonoBehaviour
 			gameplay.items[item.Key] += item.Value;
 		}
 	}
+
 	public async Task<Dictionary<string, int>> GetItems(Dictionary<string, int> items)
 	{
 		Dictionary<string, int> result = new Dictionary<string, int>();
@@ -235,6 +257,15 @@ public class Building : MonoBehaviour
 		}
 		return result;
 	}
+
+
+
+	/*public void NextStatus()
+	{
+		status = statuses[nextStatusIndex];
+		if (++nextStatusIndex >= statuses.Count)
+			nextStatusIndex = 0;
+	}*/
 
 	public virtual void OnTriggerEnter2D(Collider2D collision)
 	{
@@ -270,5 +301,5 @@ public class Building : MonoBehaviour
 
 public enum BuildingStatus
 {
-	production, transport, waitingForProduct, waitingForWorker, isStock
+	production, transport, waitingForProduct, waitingForWorker, isStock, goForItem, workerReturnFromStock, workerReturnWithItem
 }

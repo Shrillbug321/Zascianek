@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3475289870741276898}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.240172, y: -5.8125005, z: 0}
+  m_LocalPosition: {x: 26.334887, y: -5.785714, z: 0}
   m_LocalScale: {x: 0.10000001, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -164,8 +164,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c19f3e134862e74dbc98cb514a82ef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabName: AppleField
-  id: B_1
+  prefabName: HouseNobility
+  id: B_15
   idParent: 
   dontSave: 0
   componentSaveMode: 3
@@ -188,8 +188,11 @@ MonoBehaviour:
   getItemBuildingsNames: []
   color: 
   status: 3
+  initStatus: 3
+  statuses: 
   grounds: []
-  hasWorker: 0
+  worker: {fileID: 0}
+  stopped: 0
   rb2D: {fileID: 3475289870741276909}
   sr: {fileID: 3475289870741276904}
   isColliding: 0

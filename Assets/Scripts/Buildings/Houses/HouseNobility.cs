@@ -12,7 +12,8 @@
 			//["Money"] = 10
 		};
 		maxInhabitans = 2;
-		timeToNextInhabitant = 1;
+		timeToAddInhabitant = 1;
+		timeToRemoveInhabitant = 10;
 		inhabitantType = "Nobility";
 	}
 }

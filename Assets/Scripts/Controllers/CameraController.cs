@@ -18,7 +18,7 @@ public class CameraController : MonoBehaviour
 	private float yMin = 0;
 	private float yMax = 10;
 	private float rightScroll = 0.8f * Screen.width;
-	private float leftScroll = 0.2f * Screen.width;
+	private float leftScroll = 0.1f * Screen.width;
 	private float upScroll = 0.8f * Screen.height;
 	private float downScroll = 0.1f * Screen.height;
 
@@ -30,7 +30,8 @@ public class CameraController : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-		camera = Camera.main;
+		cameraTransform = gameObject.transform;
+		camera = gameObject.GetComponent<Camera>();
 		cameraMove.x = transform.position.x;
 		cameraMove.y = transform.position.y;
 		cameraMove.z = transform.position.z;
@@ -52,12 +53,10 @@ public class CameraController : MonoBehaviour
 		switch (scroll)
 		{
 			case > 0:
-				if (Camera.main.orthographicSize > zoomMax)
-					Camera.main.orthographicSize -= 0.2f;
+				ZoomPlus();
 				break;
 			case < 0:
-				if (Camera.main.orthographicSize < zoomMin)
-					Camera.main.orthographicSize += 0.2f;
+				ZoomMinus();
 				break;
 		}
 
@@ -90,5 +89,17 @@ public class CameraController : MonoBehaviour
 			}
 		}
 
+	}
+
+	public void ZoomMinus()
+	{
+		if (camera.orthographicSize < zoomMin)
+			camera.orthographicSize += 0.2f;
+	}
+
+	public void ZoomPlus()
+	{
+		if (camera.orthographicSize > zoomMax)
+			camera.orthographicSize -= 0.2f;
 	}
 }

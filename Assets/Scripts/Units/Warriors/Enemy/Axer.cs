@@ -5,7 +5,7 @@
 		base.Start();
 		hp = 110;
 		speed = 3.5f;
-		attackSpeed = 1000;
+		attackSpeed = 2500;
 		damageMin = 25;
 		damageMax = 27;
 		armor = 12;

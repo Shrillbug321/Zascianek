@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameplayControllerInitializer;
 
@@ -35,6 +36,7 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 	};
 	public Image undo;
 	public TextMeshProUGUI date;
+	public GameObject startButton, pauseButton;
 	public Dictionary<string, int> inhabitants = new()
 	{
 		["HouseVillager"] = 0,
@@ -86,6 +88,9 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		unitHP = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitHP")).GetComponent<TextMeshProUGUI>();
 		unitChoosen = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitChoosen")).GetComponent<Image>();
 
+		startButton = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "StartButton");
+		pauseButton = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "PauseButton");
+		startButton.SetActive(false);
 		//DontDestroyOnLoad(this);
 	}
 
@@ -117,18 +122,64 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		//Application.Quit();
 	}
 
+	public void HideGameOverScreen()
+	{
+		gameOver.color = Color.clear;
+		Time.timeScale = 1;
+		//Application.Quit();
+	}
+
 	public void IconClick(GameObject gameObject)
 	{
 		string name = gameObject.name;
 		string tag = gameObject.tag;
 		if (tag == "Icon")
 		{
-			switch (gameplay.mode)
+			switch (name)
 			{
+				case "ZoomPlus":
+					gameplay.cameraController.ZoomPlus();
+					gameplay.minimapCamera.GetComponent<CameraController>().ZoomPlus();
+					break;
+				case "ZoomMinus":
+					gameplay.cameraController.ZoomMinus();
+					gameplay.minimapCamera.GetComponent<CameraController>().ZoomMinus();
+					break;
+				case "SlowForward":
+					gameplay.timeScale -= 0.1f;
+					if (!gameplay.paused)
+						Time.timeScale = gameplay.timeScale;
+					break;
+				case "PauseButton":
+					Time.timeScale = 0;
+					gameplay.paused = true;
+					pauseButton.SetActive(false);
+					startButton.SetActive(true);
+					break;
+				case "StartButton":
+					Time.timeScale = gameplay.timeScale;
+					gameplay.paused = false;
+					startButton.SetActive(false);
+					pauseButton.SetActive(true);
+					break;
+				case "FastForward":
+					gameplay.timeScale += 0.1f;
+					if (!gameplay.paused)
+						Time.timeScale = gameplay.timeScale;
+					break;
+				case "GoToStatsMain" or "GoToStatsUnits":
+					stats.SwitchStats(name);
+					break;
 				default:
 					buildingController.IconClick(gameObject);
 					break;
 			}
+			/*switch (gameplay.mode)
+			{
+				default:
+					buildingController.IconClick(gameObject);
+					break;
+			}*/
 		}
 		if (tag == "ActionBarIcon")
 		{
@@ -170,7 +221,12 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		switch (name)
 		{
 			case "OpenMenu":
-				Application.Quit();
+				SceneManager.LoadScene("MainMenu");
+				//Application.Quit();
+				break;
+			case "Repair":
+				gameplay.SetCursor("HUD/Icons/hammer");
+				gameplay.mode = Mode.repair;
 				break;
 			case "Destroy":
 				gameplay.SetCursor("HUD/Icons/destroy");

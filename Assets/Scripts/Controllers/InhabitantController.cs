@@ -171,10 +171,10 @@ public class InhabitantController
 		["Crossbower"] = 0
 	};
 
-	public int inhabitantsMax, placesInHouses, inhabitantsSum, warriorsSum;
+	public int inhabitantsMax, placesInHouses, inhabitantsSum, warriorsSum, homelessInhabitans;
 	public int taxLevel = 1;
 	public int satisfaction = 0;
-	private int updates;
+	private float time;
 	private Random random = new();
 
 	private Dictionary<string, int> foodCount = new()
@@ -200,13 +200,15 @@ public class InhabitantController
 
 	public void Update()
 	{
-		CalcSatisfaction();
-		if (updates % 400 == 0)
+		//if (gameplay.paused) return;
+		time += Time.deltaTime;
+		if (time > MONTH_DURATION)
 		{
 			EatFood();
 			PayTax();
+			time = 0;
 		}
-		updates++;
+		CalcSatisfaction();
 	}
 
 	public int CalcSatisfaction()
@@ -226,13 +228,30 @@ public class InhabitantController
 
 	public void CalculateInhabitants()
 	{
-		List<List<AbstractHouse>> housesOfTypes = new()
+		List<string> inhabitants = new() { "Villager", "RichVillager", "Nobility", "Priest" };
+		List<string> houses = new()
+		{
+			"HouseVillager",
+			"HouseRichVillager",
+			"HouseNobility"
+		};
+		placesInHouses = 0; inhabitantsSum = 0; inhabitantsMax = 0;
+
+		foreach (string house in houses)
+		{
+
+			//inhabitantsInHouse[houseType] = houses.Sum(h => h.inhabitans);
+			List<AbstractHouse> abstractHouses = gameplay.buildings[house].Cast<AbstractHouse>().ToList();
+			inhabitantsSum += abstractHouses.Sum(h => h.inhabitans);
+			placesInHouses += abstractHouses.Sum(h => h.maxInhabitans);
+		}
+
+		/*List<List<AbstractHouse>> housesOfTypes = new()
 		{
 			gameplay.buildings["HouseVillager"].Cast<AbstractHouse>().ToList(),
 			gameplay.buildings["HouseRichVillager"].Cast<AbstractHouse>().ToList(),
 			gameplay.buildings["HouseNobility"].Cast<AbstractHouse>().ToList()
 		};
-		placesInHouses = 0; inhabitantsSum = 0;
 		foreach (List<AbstractHouse> houses in housesOfTypes)
 		{
 			if (houses.Count > 0)
@@ -242,10 +261,17 @@ public class InhabitantController
 				inhabitantsSum += inhabitantsInHouse[houseType];
 				placesInHouses += houses.Sum(h => h.maxInhabitans);
 			}
-		}
+		}*/
 		inhabitantsSum += Church.priests;
 		placesInHouses += Church.priests;
-		inhabitantsMax = placesInHouses;
+
+		foreach (string inhabitant in inhabitants)
+		{
+			inhabitantsMax += gameplay.units[inhabitant].Count;
+		}
+
+		homelessInhabitans = inhabitantsMax - placesInHouses;
+		//inhabitantsMax = placesInHouses;
 		//inhabitantsMax = placesInHouses > inhabitantsMax ? placesInHouses : inhabitantsMax;
 	}
 
@@ -287,7 +313,7 @@ public class InhabitantController
 
 	private void DecreaseFoodByInhabitant(List<string> availableFoods, string type)
 	{
-		for (int i = 0; i <foodCount[type]; i++)
+		for (int i = 0; i < foodCount[type]; i++)
 		{
 			int foodIndex = random.Next(0, availableFoods.Count);
 			if (gameplay.items[availableFoods[foodIndex]] == 0)
@@ -300,9 +326,9 @@ public class InhabitantController
 
 	private void CalculateWarriors()
 	{
-		warriorsSum = GameplayControllerInitializer.gameplay.warriors["Infrantry"].Count;
-		warriorsSum += GameplayControllerInitializer.gameplay.warriors["HeavyInfrantry"].Count;
-		warriorsSum += GameplayControllerInitializer.gameplay.warriors["Crossbower"].Count;
+		warriorsSum = GameplayControllerInitializer.gameplay.units["Infrantry"].Count;
+		warriorsSum += GameplayControllerInitializer.gameplay.units["HeavyInfrantry"].Count;
+		warriorsSum += GameplayControllerInitializer.gameplay.units["Crossbower"].Count;
 	}
 
 	private int CalculateFoodSatisfaction()
@@ -365,9 +391,9 @@ public class InhabitantController
 	private int CalculateCrowdSatisfaction()
 	{
 		int satisfaction = 0;
-		if (placesInHouses == 0)
+		if (placesInHouses == 0 && inhabitantsMax == 0)
 			return points["Many"];
-		float crowd = (float)inhabitantsSum / placesInHouses;
+		float crowd = (float)inhabitantsMax / placesInHouses;
 		if (crowd > crowdRequirements["Little"])
 			satisfaction = points["Zero"];
 		if (crowd <= crowdRequirements["Little"])
@@ -405,5 +431,19 @@ public class InhabitantController
 			3 or 4 => points["Little"],
 			_ => points["Zero"],
 		};
+	}
+
+	public void ChangeNobilityToPriest()
+	{
+		if (gameplay.units["Nobility"].Count == 0) return;
+		Nobility nobility = (Nobility)gameplay.units["Nobility"][0];
+		Vector2 pos = nobility.transform.position;
+		gameplay.units["Nobility"].Remove(nobility);
+		/*AbstractVillager priest = Instantiate(Resources.Load<AbstractVillager>("Prefabs/Units/Villagers/Priest"));
+		Vector3 pos = GameObject.Find("Church").transform.position;
+		priest.transform.position = new Vector3(pos.x - 2.5f, pos.y - 3f, 0);
+		List<AbstractVillager> villagersList = gameplay.ic.inhabitants["Priest"];
+		villagersList.Add(priest);
+		Church.priests++;*/
 	}
 }

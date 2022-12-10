@@ -6,11 +6,13 @@ public class HouseSettler : AbstractHouse
 	public override void Start()
 	{
 		base.Start();
-		dp = maxDp = 1400;
+		maxDp = 1400;
+		dp = 14;
 		buildingName = "HouseSettler";
 		inhabitantType = "Settler";
 		color = "Green";
-		gameObject.layer = LayerMask.NameToLayer("Buildings");
+		//gameObject.layer = LayerMask.NameToLayer("Buildings");
+		//hud.HideGameOverScreen();
 	}
 
 	private void OnDestroy()
