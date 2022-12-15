@@ -9,7 +9,7 @@ public class Butcher : ProductionBuilding
 	public override void Start()
 	{
 		base.Start();
-		dp = maxDp = 20;
+		dp = maxDp = 50;
 		productionTime = MONTH_DURATION * 1;
 		stockBuildingsNames = new() { "Granary" };
 		getItemBuildingsNames = new string[]{"Magazine", "Granary"};
@@ -19,8 +19,8 @@ public class Butcher : ProductionBuilding
 		};
 		needToProduction = new()
 		{
-			["Meat"] = 15,
-			["Leather"] = 2
+			["Meat"] = 2,
+			["Leather"] = 1
 		};
 	}
 }

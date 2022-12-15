@@ -9,7 +9,7 @@ public class Mill : ProductionBuilding
 	public override void Start()
 	{
 		base.Start();
-		dp = maxDp = 20;
+		dp = maxDp = 60;
 		productionTime = MONTH_DURATION * 1;
 		stockBuildingsNames = new() { "Magazine" };
 		getItemBuildingsNames = new string[] { "Magazine" };

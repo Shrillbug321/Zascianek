@@ -10,7 +10,7 @@ public class WheatField : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 20;
-		productionTime = MONTH_DURATION * 1;
+		productionTime = MONTH_DURATION * 12;
 		stockBuildingsNames = new() { "Magazine" };
 		products = new()
 		{

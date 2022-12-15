@@ -9,6 +9,10 @@ public class Magazine : StockBuilding
 	{
 		base.Start();
 		dp = maxDp = 50;
+		needToBuild = new()
+		{
+			["Wood"] = 5
+		};
 		stockedItems = new()
 		{
 			["Wood"] = 0,

@@ -16,7 +16,11 @@ public class Granary : StockBuilding
 	public override void Start()
 	{
 		base.Start();
-		dp = maxDp = 50;
+		dp = maxDp = 60;
+		needToBuild = new()
+		{
+			["Wood"] = 10
+		};
 		stockedItems = new()
 		{
 			["Apple"] = 0,

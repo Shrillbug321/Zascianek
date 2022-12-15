@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1136002164662888964}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.921377, y: -5.8280897, z: 0}
+  m_LocalPosition: {x: 32.863018, y: -5.6625, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -130,7 +130,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 8.5
+  m_Radius: 12
 --- !u!50 &7085818770956299173
 Rigidbody2D:
   serializedVersion: 4
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabName: Smith
-  id: B_20
+  id: 
   idParent: 
   dontSave: 0
   componentSaveMode: 3
@@ -190,8 +190,12 @@ MonoBehaviour:
   - Magazine
   color: 
   status: 3
+  initStatus: 3
+  statuses: 
   grounds: []
-  hasWorker: 0
+  worker: {fileID: 0}
+  stopped: 0
+  stopping: 0
   rb2D: {fileID: 7085818770956299173}
   sr: {fileID: 3156413678514865331}
   isColliding: 0

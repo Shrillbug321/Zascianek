@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6903063234045773161}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.3205357, y: -5.919644, z: 0}
+  m_LocalPosition: {x: 2.1705322, y: -5.7321434, z: 0}
   m_LocalScale: {x: 0.10000001, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -188,8 +188,12 @@ MonoBehaviour:
   getItemBuildingsNames: []
   color: 
   status: 3
+  initStatus: 3
+  statuses: 
   grounds: []
-  hasWorker: 0
+  worker: {fileID: 0}
+  stopped: 0
+  stopping: 0
   rb2D: {fileID: 6903063234045773175}
   sr: {fileID: 6903063234045773170}
   isColliding: 0

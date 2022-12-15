@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1040786377646226358}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.6901765, y: -3.385714, z: 0}
+  m_LocalPosition: {x: 14.215188, y: 6.035716, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -128,9 +128,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 5.6, y: 0}
   serializedVersion: 2
-  m_Radius: 8.5
+  m_Radius: 11
 --- !u!50 &1040786377646226353
 Rigidbody2D:
   serializedVersion: 4
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabName: MineGold
-  id: B_11
+  id: 
   idParent: 
   dontSave: 0
   componentSaveMode: 3
@@ -197,6 +197,7 @@ MonoBehaviour:
   - gold_stone_small
   worker: {fileID: 0}
   stopped: 0
+  stopping: 0
   rb2D: {fileID: 1040786377646226353}
   sr: {fileID: 1040786377646226364}
   isColliding: 0

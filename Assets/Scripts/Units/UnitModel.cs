@@ -48,6 +48,7 @@ namespace Assets.Scripts
 			new Vector2(-1, 1),
 		};
 		private int waitCounter = 0;
+		public static int units = 0;
 
 		public CancellationTokenSource unitTokenSource;
 		public CancellationToken unitToken;
@@ -55,7 +56,7 @@ namespace Assets.Scripts
 		public CancellationToken buildingToken;
 		public virtual void Start()
 		{
-			//UnitId = Units.Count;
+			unitId = units++;
 			unitName = name;
 			//WorkBuildingId = 1;
 
@@ -73,7 +74,7 @@ namespace Assets.Scripts
 			bc2d.size = new Vector2(1.17f, 2.27f);*/
 
 			oldPos = rb2D.position;
-			movement = rb2D.position;
+			//movement = rb2D.position;
 			healthBar = Instantiate(Resources.Load<Image>("Prefabs/HUD/HealthBar"));
 			healthBar.transform.position = Camera.main.WorldToScreenPoint(transform.position);
 			//healthBar.SetActive(false);
@@ -213,7 +214,7 @@ namespace Assets.Scripts
 		{
 			string tag = collision.tag;
 			colliderObject = collision;
-			if (CompareTag(tag)) return;
+			//if (CompareTag(tag)) return;
 
 			if (collision.GetType() == typeof(EdgeCollider2D))
 			{
@@ -278,6 +279,15 @@ namespace Assets.Scripts
 				}
 			}
 
+		}
+
+		public void StartMove()
+		{
+			moveStart = true;
+		}
+		public void EndMove()
+		{
+			moveStart = false;
 		}
 
 		public virtual void OnTriggerExit2D(Collider2D collision)

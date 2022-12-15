@@ -8,32 +8,33 @@ public class Market : Building
 {
 	private static Dictionary<string, int> prices = new()
 	{
-		["Meat"] = 10,
-		["Leather"] = 10,
-		["Apple"] = 5,
-		["Bread"] = 10,
+		["Meat"] = 8,
+		["Leather"] = 5,
+		["Apple"] = 3,
+		["Bread"] = 5,
 		["Beer"] = 10,
-		["Sausage"] = 10,
-		["Iron"] = 10,
-		["Clay"] = 10,
-		["Wood"] = 40,
-		["Gold"] = 10,
-		["Money"] = 10,
-		["Wheat"] = 10,
-		["Flour"] = 10,
-		["Hop"] = 10,
-		["Sable"] = 10,
-		["Armor"] = 10,
-		["Crossbow"] = 10
+		["Sausage"] = 12,
+		["Iron"] = 20,
+		["Clay"] = 20,
+		["Wood"] = 10,
+		["Gold"] = 40,
+		["Wheat"] = 5,
+		["Flour"] = 7,
+		["Hop"] = 5,
+		["Sable"] = 12,
+		["Armor"] = 12,
+		["Crossbow"] = 12
 	};
 	public override void Start()
 	{
 		base.Start();
-		dp = maxDp = 10;
+		dp = maxDp = 50;
 		buildingName = "Market";
 		needToBuild = new()
 		{
-			["Wood"] = 2
+			["Wood"] = 5,
+			["Clay"] = 5,
+			["Money"] = 10,
 		};
 	}
 

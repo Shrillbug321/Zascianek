@@ -6,8 +6,7 @@ public class HouseSettler : AbstractHouse
 	public override void Start()
 	{
 		base.Start();
-		maxDp = 1400;
-		dp = 14;
+		dp = maxDp = 210;
 		buildingName = "HouseSettler";
 		inhabitantType = "Settler";
 		color = "Green";

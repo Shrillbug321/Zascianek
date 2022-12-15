@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6633365974704676057}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 22.418814, y: -5.919644, z: 0}
+  m_LocalPosition: {x: 13.145563, y: -4.6071434, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -130,7 +130,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 8.5
+  m_Radius: 12
 --- !u!50 &6958848551639550575
 Rigidbody2D:
   serializedVersion: 4
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabName: HouseVillager
-  id: B_13
+  id: 
   idParent: 
   dontSave: 0
   componentSaveMode: 3

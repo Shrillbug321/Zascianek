@@ -172,7 +172,7 @@ public class InhabitantController
 	};
 
 	public int inhabitantsMax, placesInHouses, inhabitantsSum, warriorsSum, homelessInhabitans;
-	public int taxLevel = 1;
+	public int taxLevel = 0;
 	public int satisfaction = 0;
 	private float time;
 	private Random random = new();
@@ -304,16 +304,18 @@ public class InhabitantController
 		foreach (var slot in inhabitants)
 		{
 			List<AbstractVillager> villagers = slot.Value;
-			foreach (var villager in villagers)
+			if (villagers.Count > 0)
+				DecreaseFoodByInhabitant(availableFoods, slot.Key);
+			/*foreach (var villager in villagers)
 			{
 				DecreaseFoodByInhabitant(availableFoods, villager.GetType().ToString());
-			}
+			}*/
 		}
 	}
 
-	private void DecreaseFoodByInhabitant(List<string> availableFoods, string type)
+	private void DecreaseFoodByInhabitant(List<string> availableFoods, string villagerType)
 	{
-		for (int i = 0; i < foodCount[type]; i++)
+		for (int i = 0; i < foodCount[villagerType]; i++)
 		{
 			int foodIndex = random.Next(0, availableFoods.Count);
 			if (gameplay.items[availableFoods[foodIndex]] == 0)

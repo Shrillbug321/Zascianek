@@ -21,10 +21,7 @@ public class Lumberjack : ProductionBuilding
 		{
 			["Wood"] = 10
 		};
-		/*needToProduction = new()
-		{
-			["Tree"] = 1
-		};*/
+		initStatus = BuildingStatus.workerGoForItem;
 	}
 
 	public static GameObject FindNearestTree(Vector3 pos)

@@ -10,11 +10,11 @@ public class HopField : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 20;
-		productionTime = MONTH_DURATION * 1;
+		productionTime = MONTH_DURATION * 6;
 		stockBuildingsNames = new() { "Magazine" };
 		products = new()
 		{
-			["Hop"] = 10
+			["Hop"] = 25
 		};
 	}
 }

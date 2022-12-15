@@ -8,7 +8,7 @@ using UnityEngine.Tilemaps;
 public class GameplayControllerInitializer : MonoBehaviour
 {
 	protected string Type;
-	protected Vector2 mousePos;
+	protected Vector2 mousePos, mousePosInWorld;
 	public readonly string[] playerTags = { "Warrior", "PlayerInfrantry", "PlayerCrossbower", "PlayerHeavyInfrantry" };
 	public readonly string[] enemyTags = { "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
 	public Dictionary<string, int> items;
@@ -29,12 +29,14 @@ public class GameplayControllerInitializer : MonoBehaviour
 	public bool unitIsChoosen;
 	public Mode mode = Mode.nothing;
 	public Tilemap tilemap;
-	public float mapWidth = 20;
-	public float mapHeight = 10;
+	public float mapWidth = 40;
+	public float mapHeight =40;
 	public string[] foods = { "Meat", "Apple", "Bread", "Beer", "Sausage" };
-	//public const int MONTH_DURATION = 30000;
+	//public const int MONTH_DURATION = 30;
 	public const int MONTH_DURATION = 1;
 	public GameObject settler, houseSettler;
+	public GameObject roadSign;
+	public Vector2 startPath, endPath;
 	public bool paused = false;
 	public Building lastBuilding;
 	public int month = 1, year = 1500;
@@ -62,22 +64,22 @@ public class GameplayControllerInitializer : MonoBehaviour
 		items = new Dictionary<string, int>()
 		{
 			["Meat"] = 100,
-			["Leather"] = 0,
+			["Leather"] = 100,
 			["Apple"] = 200,
-			["Bread"] = 0,
-			["Beer"] = 0,
-			["Sausage"] = 0,
+			["Bread"] = 10,
+			["Beer"] = 10,
+			["Sausage"] = 10,
 			["Iron"] = 50,
-			["Clay"] = 10,
+			["Clay"] = 100,
 			["Wood"] = 100,
-			["Gold"] = 0,
+			["Gold"] = 100,
 			["Money"] = 100,
-			["Wheat"] = 10,
-			["Flour"] = 0,
-			["Hop"] = 0,
-			["Sable"] = 0,
-			["Armor"] = 0,
-			["Crossbow"] = 0
+			["Wheat"] = 100,
+			["Flour"] = 100,
+			["Hop"] = 10,
+			["Sable"] = 10,
+			["Armor"] = 10,
+			["Crossbow"] = 10
 		};
 
 		buildings = new() {

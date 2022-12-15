@@ -3,8 +3,7 @@
 	public override void Start()
 	{
 		base.Start();
-		maxDp = 50;
-		dp = 40;
+		dp = maxDp = 50;
 		buildingName = "HouseVillager";
 		needToBuild = new()
 		{

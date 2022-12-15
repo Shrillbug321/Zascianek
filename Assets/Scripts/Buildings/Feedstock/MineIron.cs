@@ -18,7 +18,7 @@ public class MineIron : ProductionBuilding
 		};
 		products = new()
 		{
-			["Iron"] = 10
+			["Iron"] = 5
 		};
 		grounds = new string[] { "iron_dirt", "iron_grass" };
 	}

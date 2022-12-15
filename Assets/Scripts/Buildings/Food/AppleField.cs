@@ -9,17 +9,13 @@ public class AppleField : ProductionBuilding
 	public override void Start()
 	{
 		base.Start();
-		dp = maxDp = 10;
+		dp = maxDp = 20;
 		buildingName = "AppleField";
 		productionTime = MONTH_DURATION * 3;
-		needToBuild = new()
-		{
-			["Wood"] = 2
-		};
 		stockBuildingsNames = new() { "Granary" };
 		products = new()
 		{
-			["Apple"] = 2
+			["Apple"] = 10
 		};
 	}
 }

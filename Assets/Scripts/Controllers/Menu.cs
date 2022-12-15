@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Menu : MonoBehaviour, IPointerClickHandler
 {
 	SaveGameController saveGameController;
-	GameObject mainMenu, optionsMenu;
+	private GameObject mainMenu, optionsMenu;
+	private Image musicButton, fullScreenButton;
+	private Sprite shortButton, checkedButton;
+
 	public void Start()
 	{
 		gameObject.AddComponent<SaveGameController>();
@@ -19,7 +23,12 @@ public class Menu : MonoBehaviour, IPointerClickHandler
 
 		mainMenu = GameObject.Find("MainMenu");
 		optionsMenu = GameObject.Find("OptionsMenu");
-		optionsMenu.SetActive(false);
+
+		musicButton = GameObject.Find("MusicButton").GetComponent<Image>();
+		fullScreenButton = GameObject.Find("FullScreenButton").GetComponent<Image>();
+
+		shortButton = Resources.Load<Sprite>("HUD/Menu/button_short");
+		checkedButton = Resources.Load<Sprite>("HUD/Menu/button_checked");
 
 		if (!PlayerPrefs.HasKey("music"))
 		{
@@ -31,6 +40,17 @@ public class Menu : MonoBehaviour, IPointerClickHandler
 			PlayerPrefs.SetString("fullScreen", "true");
 			PlayerPrefs.Save();
 		}
+		if (!PlayerPrefs.HasKey("hudScale"))
+		{
+			PlayerPrefs.SetFloat("hudScale", 1);
+			PlayerPrefs.Save();
+		}
+		SetScale();
+
+		musicButton.sprite = PlayerPrefs.GetString("music") == "true" ? checkedButton : shortButton;
+		fullScreenButton.sprite = PlayerPrefs.GetString("fullScreen") == "true" ? checkedButton : shortButton;
+
+		optionsMenu.SetActive(false);
 		Screen.fullScreen = PlayerPrefs.GetString("fullScreen") == "true";
 	}
 	public void OnPointerClick(PointerEventData eventData)
@@ -42,7 +62,7 @@ public class Menu : MonoBehaviour, IPointerClickHandler
 				//SceneManager.LoadScene("Gameplay");
 				SceneManager.LoadScene("Gameplay");
 				break;
-			case "Load":
+			case "LoadGame":
 				SceneController.buttonClicked = "LoadGame";
 				SceneManager.LoadScene("Gameplay");
 				//saveGameController.Load();
@@ -54,14 +74,20 @@ public class Menu : MonoBehaviour, IPointerClickHandler
 			case "Quit":
 				Application.Quit();
 				break;
-			case "Music":
+			case "MusicButton":
 				PlayerPrefs.SetString("music", (PlayerPrefs.GetString("music") == "true" ? "false" : "true").ToString());
 				PlayerPrefs.Save();
+				musicButton.sprite = PlayerPrefs.GetString("music") == "true" ? checkedButton : shortButton;
 				break;
-			case "FullScreen":
+			case "FullScreenButton":
 				Screen.fullScreen = !Screen.fullScreen;
-				PlayerPrefs.SetString("fullScreen", Screen.fullScreen.ToString());
+				PlayerPrefs.SetString("fullScreen", (PlayerPrefs.GetString("fullScreen") == "true" ? "false" : "true").ToString());
 				PlayerPrefs.Save();
+				fullScreenButton.sprite = PlayerPrefs.GetString("fullScreen") == "true" ? checkedButton : shortButton;
+				break;
+			case string button when button.Contains("Scale"):
+				PlayerPrefs.SetFloat("hudScale", float.Parse(button[5..]) / 100);
+				SetScale();
 				break;
 			case "ReturnToMainMenu":
 				optionsMenu.SetActive(false);
@@ -77,5 +103,14 @@ public class Menu : MonoBehaviour, IPointerClickHandler
 		{
 			string tag = hit.collider.gameObject.tag;
 		}
+	}
+
+	private void SetScale()
+	{
+		float scale = PlayerPrefs.GetFloat("hudScale");
+		Vector2 scaleVector = new(scale, scale);
+		mainMenu.GetComponent<RectTransform>().localScale = scaleVector;
+		optionsMenu.GetComponent<RectTransform>().localScale = scaleVector;
+
 	}
 }

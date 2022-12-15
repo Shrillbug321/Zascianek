@@ -56,7 +56,7 @@ public class HUDStatsController
 		//print(money);
 		woodCounter.text = gameplay.GetItem("Wood").ToString();
 		clayCounter.text = gameplay.GetItem("Clay").ToString();
-		moneyCounter.text = string.Format("{0:D2} złp {1:D2} gr", money / 30, money % 30);
+		moneyCounter.text = string.Format("{0:D2} gr", money);
 		ironCounter.text = gameplay.GetItem("Iron").ToString();
 		goldCounter.text = gameplay.GetItem("Gold").ToString();
 		peopleCounter.text = $"{gameplay.ic.inhabitantsMax} / {gameplay.ic.placesInHouses}";

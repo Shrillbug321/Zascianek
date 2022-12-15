@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1562110075929092028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 30.940256, y: -5.8660717, z: 0}
+  m_LocalPosition: {x: 13.663858, y: -6.1330357, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -128,9 +128,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -2.36}
   serializedVersion: 2
-  m_Radius: 8.5
+  m_Radius: 10.8
 --- !u!50 &1562110075929092025
 Rigidbody2D:
   serializedVersion: 4
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabName: Brewery
-  id: B_7
+  id: 
   idParent: 
   dontSave: 0
   componentSaveMode: 3
@@ -190,8 +190,12 @@ MonoBehaviour:
   - Magazine
   color: 
   status: 3
+  initStatus: 3
+  statuses: 
   grounds: []
-  hasWorker: 0
+  worker: {fileID: 0}
+  stopped: 0
+  stopping: 0
   rb2D: {fileID: 1562110075929092025}
   sr: {fileID: 1562110075929092026}
   isColliding: 0

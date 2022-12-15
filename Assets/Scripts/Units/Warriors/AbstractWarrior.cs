@@ -83,7 +83,7 @@ public class AbstractWarrior : UnitModel
 		string tag = collision.tag;
 		if (tag == this.tag) return;
 		//Debug.LogWarning("lllll");
-		if ((playerTags.Contains(tag) || enemyTags.Contains(tag)))// && !seenEnemy)
+		if (playerTags.Contains(tag) || enemyTags.Contains(tag))
 		{
 			enemy = collision.GetComponent<AbstractWarrior>();
 			if (collision.GetType() == typeof(CircleCollider2D))

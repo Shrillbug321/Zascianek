@@ -9,6 +9,7 @@ public class Enemy : AbstractWarrior
 		type = "Enemy";
 		color = "Brown";
 		//movement = new Vector2(-10, -20);
+		transform.position = gameplay.roadSign.transform.position;
 		movement = new Vector2(gameplay.settlerHousePos.x + gameplay.random.Next(-5,5), gameplay.settlerHousePos.y + gameplay.random.Next(-5, 5));
 		moveStart = true;
 		gameplay.AddEnemy(this);

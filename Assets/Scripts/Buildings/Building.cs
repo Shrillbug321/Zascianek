@@ -301,5 +301,6 @@ public class Building : MonoBehaviour
 
 public enum BuildingStatus
 {
-	production, transport, waitingForProduct, waitingForWorker, isStock, goForItem, workerReturnFromStock, workerReturnWithItem
+	production, transport, waitingForProduct, waitingForWorker, isStock,
+	workerGoForItem, workerReturnFromStock, workerReturnWithItem
 }

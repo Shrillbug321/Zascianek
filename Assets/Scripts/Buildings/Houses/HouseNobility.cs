@@ -8,8 +8,8 @@
 		needToBuild = new()
 		{
 			["Wood"] = 10,
-			//["Clay"] = 30
-			//["Money"] = 10
+			["Clay"] = 30,
+			["Money"] = 10
 		};
 		maxInhabitans = 2;
 		timeToAddInhabitant = 1;

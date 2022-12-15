@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2310881284906936051}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.062929, y: -5.6662917, z: 0}
+  m_LocalPosition: {x: 21.57593, y: -4.151786, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabName: Barracks
-  id: B_18
+  id: 
   idParent: 
   dontSave: 0
   componentSaveMode: 3
@@ -188,8 +188,14 @@ MonoBehaviour:
   getItemBuildingsNames: []
   color: 
   status: 3
+  initStatus: 3
+  statuses: 
   grounds: []
-  hasWorker: 0
+  worker: {fileID: 0}
+  stopped: 0
+  stopping: 0
   rb2D: {fileID: 2310881284906936013}
   sr: {fileID: 2310881284906936008}
   isColliding: 0
+  unitTypes: []
+  unitIds: 

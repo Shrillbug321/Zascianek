@@ -19,7 +19,7 @@ public class AttackController : MonoBehaviour
 	public void Start()
 	{
 		time = Time.time;
-		MakeAttack();
+		//MakeAttack();
 	}
 
 	public void Update()

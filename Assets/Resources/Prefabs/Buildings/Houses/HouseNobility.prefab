@@ -30,8 +30,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3475289870741276898}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 26.334887, y: -5.785714, z: 0}
-  m_LocalScale: {x: 0.10000001, y: 0.1, z: 0.1}
+  m_LocalPosition: {x: 26.300955, y: -4.205357, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 50.666668, y: 44.633335}
+  m_Size: {x: 60.800003, y: 53.56001}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -107,7 +107,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 15.2, y: 13.39}
-    newSize: {x: 50.666668, y: 44.633335}
+    newSize: {x: 60.800003, y: 53.56001}
     adaptiveTilingThreshold: 0.5
     drawMode: 1
     adaptiveTiling: 0
@@ -128,9 +128,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -4.1, y: -1.54}
   serializedVersion: 2
-  m_Radius: 8.5
+  m_Radius: 18
 --- !u!50 &3475289870741276909
 Rigidbody2D:
   serializedVersion: 4
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabName: HouseNobility
-  id: B_15
+  id: 
   idParent: 
   dontSave: 0
   componentSaveMode: 3
@@ -193,6 +193,7 @@ MonoBehaviour:
   grounds: []
   worker: {fileID: 0}
   stopped: 0
+  stopping: 0
   rb2D: {fileID: 3475289870741276909}
   sr: {fileID: 3475289870741276904}
   isColliding: 0

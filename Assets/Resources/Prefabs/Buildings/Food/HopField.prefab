@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2968118720659963994}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.246877, y: -6.374999, z: 0}
+  m_LocalPosition: {x: 6.6008887, y: -5.3035717, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -128,9 +128,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.42}
   serializedVersion: 2
-  m_Radius: 2.5
+  m_Radius: 9.48
 --- !u!50 &7232650041583841583
 Rigidbody2D:
   serializedVersion: 4
@@ -193,7 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabName: HopField
-  id: B_3
+  id: 
   idParent: 
   dontSave: 0
   componentSaveMode: 3

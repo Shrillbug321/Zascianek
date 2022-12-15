@@ -21,6 +21,8 @@ public class AbstractVillager : UnitModel
 	private string lastEntered = "";
 	public bool haveHome;
 	public bool employed = false;
+	public bool goToBarracks = false;
+	public AbstractHouse house;
 
 	public override void Start()
 	{
@@ -179,9 +181,9 @@ public class AbstractVillager : UnitModel
 				if (building.name == collision.name && stockBuildingsNames.Contains(building.name))
 				{
 					moveStart = false;
-					await Wait(2000);
 					if (buildingActions[buildingInRoute] == "stock")
 					{
+					await Wait(2000);
 						building.AddItems(items);
 						items = new();
 						/*var itemsFromBuilding = building.GetItems(needToProduction);
@@ -208,7 +210,7 @@ public class AbstractVillager : UnitModel
 					moveStart = true;*/
 				}
 			}
-			if (gameObject.tag == "Tree" && collision.tag == "Tree" && !hitTree)
+			if (collision.tag == "Tree" && !hitTree)
 			{
 				GameObject tree = route[buildingInRoute];
 				if (collision.GetComponent<Tree>().id == tree.GetComponent<Tree>().id)
@@ -240,7 +242,7 @@ public class AbstractVillager : UnitModel
 						BuildingStopped();
 						return;
 					}*/
-					//workBuilding.status = workBuilding.initStatus;
+					workBuilding.status = workBuilding.initStatus;
 				}
 				lastEntered = gameObject.name;
 				nextBuilding = route[buildingInRoute];
@@ -251,12 +253,22 @@ public class AbstractVillager : UnitModel
 				base.OnTriggerEnter2D(collision);*/
 			return;
 		}
-
+		if (collision.GetType() == typeof(EdgeCollider2D))
+		{
+			GoToHouse();
+		}
 	}
 
 	public override async void OnTriggerExit2D(Collider2D collision)
 	{
 		string name = collision.name;
 		if (!stockBuildingsNames.Contains(name) && getItemBuildingsNames.Contains(name) && workBuildingName != name) base.OnTriggerExit2D(collision);
+	}
+
+	public void MoveFromStartPathToHome()
+	{
+		transform.position = GameplayControllerInitializer.gameplay.startPath;
+		movement = GameplayControllerInitializer.gameplay.endPath;
+		moveStart = true;
 	}
 }

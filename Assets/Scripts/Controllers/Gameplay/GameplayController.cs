@@ -12,6 +12,7 @@ using static MouseController;
 
 public class GameplayController : GameplayControllerInitializer
 {
+	private bool leftClicked;
 	public override void Start()
 	{
 		base.Start();
@@ -31,7 +32,11 @@ public class GameplayController : GameplayControllerInitializer
 		Instantiate(Resources.Load<GameObject>("Prefabs/Common/MinimapCamera"));
 		minimapCamera = GameObject.Find("MinimapCamera(Clone)");
 		cameraController = mainCamera.GetComponent<CameraController>();
-		settlerHousePos = GameObject.Find("HouseSettler").transform.position;
+		roadSign = GameObject.Find("RoadSign");
+		startPath = GameObject.Find("StartPath").transform.position;
+		endPath = GameObject.Find("EndPath").transform.position;
+		GameObject hudObject = GameObject.Find("HUD");
+		float vector2 = hudObject.GetComponent<RectTransform>().sizeDelta.x;
 		//MakeMoney();
 		//MakeTree();
 		/*object[] a = Resources.FindObjectsOfTypeAll(typeof(GameObject));
@@ -45,6 +50,8 @@ public class GameplayController : GameplayControllerInitializer
 		}*/
 		if (SceneController.buttonClicked == "NewGamel")
 			NewGame();
+		else
+			settlerHousePos = GameObject.Find("HouseSettler").transform.position;
 	}
 
 
@@ -58,6 +65,7 @@ public class GameplayController : GameplayControllerInitializer
 
 	void Update()
 	{
+		leftClicked = false;
 		if (isGameOver)
 			musicController.ChangeState("GameOver");
 		if (isGameOver && mouse.leftButton.wasPressedThisFrame)
@@ -77,7 +85,8 @@ public class GameplayController : GameplayControllerInitializer
 		}
 
 		ic.Update();
-		mousePos = GetMousePosToWorldPoint();
+		mousePos = GetMousePos();
+		mousePosInWorld = GetMousePosToWorldPoint();
 
 		actualMonthPassed += Time.deltaTime;
 		if (actualMonthPassed > MONTH_DURATION)
@@ -87,6 +96,11 @@ public class GameplayController : GameplayControllerInitializer
 			{
 				month = 1;
 				year++;
+			}
+			if (month == 9)
+			{
+				if (buildings["Church"].Count > 0)
+					((Church)buildings["Church"][0]).GetTax();
 			}
 			hud.date.text = $"{hud.monthNames[gameplay.month]} A.D. {gameplay.year}";
 		}
@@ -106,9 +120,19 @@ public class GameplayController : GameplayControllerInitializer
 				}
 			}
 		}
-
-		RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
-		if (hit.collider != null && MouseInRange(mousePos, hit, 0.75f))
+		if (mode == Mode.placing)
+		{
+			building.transform.position = GetMousePosToWorldPoint();
+			/*bool inRange = building.GetComponent<Building>().CheckGround(GetMousePosToWorldPoint()) == "";
+			if (!inRange)
+				building.GetComponent<SpriteRenderer>().color = Color.gray;
+			else
+				building.GetComponent<SpriteRenderer>().color = Color.white;*/
+		}
+		if (leftClicked) return;
+		OnMouseRightClick();
+		RaycastHit2D hit = Physics2D.Raycast(mousePosInWorld, Vector2.zero, 1f);
+		if (hit.collider != null && MouseInRange(mousePosInWorld, hit, 0.75f))
 		{
 			string tag = hit.collider.gameObject.tag;
 
@@ -130,93 +154,94 @@ public class GameplayController : GameplayControllerInitializer
 					}
 					break;
 				default:
-					OnMouseExit();
+					//OnMouseExit();
 					break;
 			}
 			if (mouse.leftButton.wasPressedThisFrame)
 			{
-				switch (WhatIsHit(tag))
+				if (mousePos.y > 270)
 				{
-					case "Warrior" or "Villager" or "Enemy":
-						mode = Mode.unit;
-						hud.SwitchUnitBar(hit.collider.gameObject.GetComponent<UnitModel>());
-						break;
-					case "Save":
-						saveGameController.Save();
-						break;
-					case "Load":
-						saveGameController.Load();
-						break;
-					/*case "Granary":
-						if (items["Money"] < 15)
-						{
-							//ShowGUIImage("Prefabs/HUD/Image");
-							hud.ShowGUIText("Potrzeba 15 monet!");
-							return;
-						}
-						else
-						{
-							var a = Instantiate(Resources.Load<UnitModel>("Prefabs/Units/infrantry"));
-							Vector3 pos = hit.collider.transform.position;
-							a.transform.position = new Vector3(pos.x, pos.y - 1f, 0);
-							a.gameObject.name = units.Count.ToString();
-						}
-						break;*/
-					case "Building":
-						if (mode == Mode.nothing)
-						{
-							mode = Mode.building;
-							clickedBuilding = hit.collider.gameObject.GetComponent<Building>();
-							hud.buildingController.BuildingClick(hit.collider.gameObject.GetComponent<Building>());
-						}
-						if (mode == Mode.repair)
-						{
-							Building building = hit.collider.GetComponent<Building>();
-							building.Repair();
-
-						}
-						if (mode == Mode.destroy)
-						{
-							Building building = hit.collider.GetComponent<Building>();
-							if (building.needToBuild != null)
-								foreach (KeyValuePair<string, int> item in building.needToBuild)
-									gameplay.items[item.Key] += (int)Math.Round(item.Value * 0.9f);
-							//if (building is AbstractHouse)
-							if (building is ProductionBuilding pb)
+					switch (WhatIsHit(tag))
+					{
+						case "Warrior" or "Villager" or "Enemy":
+							mode = Mode.unit;
+							hud.SwitchUnitBar(hit.collider.gameObject.GetComponent<UnitModel>());
+							break;
+						case "Save":
+							saveGameController.Save();
+							break;
+						case "Load":
+							saveGameController.Load();
+							break;
+						/*case "Granary":
+							if (items["Money"] < 15)
 							{
-								pb.worker.RemoveFromBuilding();
+								//ShowGUIImage("Prefabs/HUD/Image");
+								hud.ShowGUIText("Potrzeba 15 monet!");
+								return;
 							}
-							RemoveBuilding(building);
-							Destroy(building.gameObject);
-						}
-						break;
-					case "Tree":
-						if (mode == Mode.cut)
-						{
-							Destroy(hit.collider.gameObject);
-						}
-						break;
-					case "Icon" or "GroupIcon":
-						hud.IconClick(hit.collider.gameObject);
-						break;
+							else
+							{
+								var a = Instantiate(Resources.Load<UnitModel>("Prefabs/Units/infrantry"));
+								Vector3 pos = hit.collider.transform.position;
+								a.transform.position = new Vector3(pos.x, pos.y - 1f, 0);
+								a.gameObject.name = units.Count.ToString();
+							}
+							break;*/
+						case "Building":
+							//if (mode == Mode.nothing || mode == Mode.building)
+							//todo prze³¹czanie w ró¿nych wariantach
+							if (mode != Mode.repair && mode != Mode.destroy)
+							{
+								mode = Mode.building;
+								clickedBuilding = hit.collider.gameObject.GetComponent<Building>();
+								hud.buildingController.BuildingClick(hit.collider.gameObject.GetComponent<Building>());
+							}
+							if (mode == Mode.repair)
+							{
+								Building building = hit.collider.GetComponent<Building>();
+								building.Repair();
 
+							}
+							if (mode == Mode.destroy)
+							{
+								Building building = hit.collider.GetComponent<Building>();
+								if (building.needToBuild != null)
+									foreach (KeyValuePair<string, int> item in building.needToBuild)
+										gameplay.items[item.Key] += (int)Math.Round(item.Value * 0.9f);
+								//if (building is AbstractHouse)
+								if (building is ProductionBuilding pb)
+								{
+									pb.worker.RemoveFromBuilding();
+								}
+								RemoveBuilding(building);
+								Destroy(building.gameObject);
+							}
+							break;
+						case "Tree":
+							if (mode == Mode.cut)
+							{
+								Destroy(hit.collider.gameObject);
+							}
+							break;
+					}
+				}
+				else
+				{
+					switch (WhatIsHit(tag))
+					{
+						case "Icon" or "GroupIcon":
+							hud.IconClick(hit.collider.gameObject);
+							break;
+					}
 				}
 			}
-		}
 
-		else OnMouseExit();
-		//print(mode);
-		if (mode == Mode.placing)
-		{
-			building.transform.position = GetMousePosToWorldPoint();
-			/*bool inRange = building.GetComponent<Building>().CheckGround(GetMousePosToWorldPoint()) == "";
-			if (!inRange)
-				building.GetComponent<SpriteRenderer>().color = Color.gray;
-			else
-				building.GetComponent<SpriteRenderer>().color = Color.white;*/
+			//print(mode);
+
 		}
+		//else OnMouseExit();
 		OnMouseLeftClick();
-		OnMouseRightClick();
 	}
 
 	async void NewGame()
@@ -233,7 +258,9 @@ public class GameplayController : GameplayControllerInitializer
 			//hud.buildingController.ShowBuildingText(texts[i], 5000);
 			while (mode == Mode.placing) await Wait(1000);
 		}
-		settler.transform.position = GameObject.Find("HouseSettler").transform.position;
+		settlerHousePos = GameObject.Find("HouseSettler").transform.position;
+		settler.transform.position = settlerHousePos;
+
 	}
 
 	private void OnMouseLeftClick()
@@ -268,7 +295,7 @@ public class GameplayController : GameplayControllerInitializer
 				else
 				{
 					newBuilding.Build(GetMousePosToWorldPoint());
-					if (newBuilding is ProductionBuilding productionBuilding)
+					if (newBuilding is ProductionBuilding)
 					{
 						AbstractVillager villager = FindUnemployedVillager();
 						if (villager == null)
@@ -281,7 +308,6 @@ public class GameplayController : GameplayControllerInitializer
 					lastBuilding = newBuilding;
 					hud.undo.color = new Color(1, 1, 1, 1);
 				}
-
 			}
 			else
 			{
@@ -291,6 +317,7 @@ public class GameplayController : GameplayControllerInitializer
 			{
 				tilemap.TileTypeInRange("grass8", GetMousePosToWorldPoint(), 2);
 			}*/
+			leftClicked = true;
 		}
 	}
 
@@ -325,10 +352,10 @@ public class GameplayController : GameplayControllerInitializer
 				}
 			}
 		}
-			if (type == "Enemy" && mode == Mode.unit)
-			{
-				SetCursor(pathToCursors + "/sable_cursor2");
-			}
+		if (type == "Enemy" && mode == Mode.unit)
+		{
+			SetCursor(pathToCursors + "/sable_cursor2");
+		}
 
 		/*if (mode == Mode.unit)
 		{
@@ -346,13 +373,13 @@ public class GameplayController : GameplayControllerInitializer
 			SetCursor(pathToCursors + "/cursor_go_to");
 		}
 		if (mode == Mode.nothing)
-		 SetCursor(pathToCursors + "/cursor");
+			SetCursor(pathToCursors + "/cursor");
 	}
 
-	public bool MouseInRange(Vector2 mousePos, RaycastHit2D hit, float range)
+	public bool MouseInRange(Vector2 mousePosInWorld, RaycastHit2D hit, float range)
 	{
-		return Math.Abs(hit.collider.transform.position.x - mousePos.x) < range &&
-		 Math.Abs(hit.collider.transform.position.y - mousePos.y) < range;
+		return Math.Abs(hit.collider.transform.position.x - mousePosInWorld.x) < range &&
+		 Math.Abs(hit.collider.transform.position.y - mousePosInWorld.y) < range;
 	}
 
 	public void SetCursor(string path)

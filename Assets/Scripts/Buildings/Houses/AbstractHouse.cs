@@ -58,12 +58,31 @@ public class AbstractHouse : Building
 	{
 		AbstractVillager inhabitant = Instantiate(Resources.Load<GameObject>("Prefabs/Units/Villagers/" + inhabitantType).GetComponent<AbstractVillager>());
 		inhabitant.haveHome = true;
+		inhabitant.house = this;
+		//inhabitant.transform.position = gameplay.startPath;
 		inhabitant.transform.position = new Vector2(transform.position.x, transform.position.y - 2);
 		List<AbstractVillager> villagersList = gameplay.ic.inhabitants[inhabitantType];
 		villagersList.Add(inhabitant);
 		inhabitant.HousePos = new Vector2(transform.position.x, transform.position.y - 2);
 		inhabitansList.Add(inhabitant);
 		inhabitans++;
+		inhabitant.MoveFromStartPathToHome();
+		//gameplay.inhabitants.Add(houseType, List. inhabitant);
+	}
+
+	public void AddInhabitantFromWarrior()
+	{
+		AbstractVillager inhabitant = Instantiate(Resources.Load<GameObject>("Prefabs/Units/Villagers/" + inhabitantType).GetComponent<AbstractVillager>());
+		inhabitant.haveHome = true;
+		inhabitant.house = this;
+		//inhabitant.transform.position = gameplay.startPath;
+		inhabitant.transform.position = new Vector2(transform.position.x, transform.position.y - 2);
+		List<AbstractVillager> villagersList = gameplay.ic.inhabitants[inhabitantType];
+		villagersList.Add(inhabitant);
+		inhabitant.HousePos = new Vector2(transform.position.x, transform.position.y - 2);
+		inhabitansList.Add(inhabitant);
+		inhabitans++;
+		inhabitant.MoveFromStartPathToHome();
 		//gameplay.inhabitants.Add(houseType, List. inhabitant);
 	}
 
@@ -77,6 +96,19 @@ public class AbstractHouse : Building
 		inhabitansList.Remove(inhabitant);
 		Destroy(inhabitant.gameObject);
 		inhabitans--;
+		//gameplay.inhabitants.Add(houseType, List. inhabitant);
+	}
+
+	public void RemoveInhabitantForWarrior()
+	{
+		List<AbstractVillager> villagersList = gameplay.ic.inhabitants[inhabitantType];
+		AbstractVillager inhabitant = villagersList.First(i=>!i.employed);
+		if (inhabitant == null)
+			return;
+		villagersList.Remove(inhabitant);
+		inhabitansList.Remove(inhabitant);
+		inhabitans--;
+		Destroy(inhabitant.gameObject);
 		//gameplay.inhabitants.Add(houseType, List. inhabitant);
 	}
 

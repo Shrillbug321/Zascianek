@@ -11,7 +11,7 @@ using static GameplayControllerInitializer;
 
 public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
-	//public GameObject hud;
+	private GameObject hudObject;
 	//public static HUDController hud;
 	public string lastEntered;
 	public TextMeshProUGUI lastText;
@@ -37,6 +37,7 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 	public Image undo;
 	public TextMeshProUGUI date;
 	public GameObject startButton, pauseButton;
+	private float forwardDelta = 0.5f;
 	public Dictionary<string, int> inhabitants = new()
 	{
 		["HouseVillager"] = 0,
@@ -51,8 +52,8 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		["Settler"] = "Za³o¿yciel",
 
 		["EnemyInfrantry"] = "Wrogi piechur",
-		["EnemyAxer"] = "Topornik",
-		["EnemyBower"] = "£ucznik",
+		["Axer"] = "Topornik",
+		["Bower"] = "£ucznik",
 
 		["Villager"] = "Ch³op",
 		["RichVillager"] = "Kmieæ",
@@ -68,7 +69,9 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 
 	public void Start()
 	{
-		buildingController = new();
+		hudObject = GameObject.Find("HUD");
+		hudObject.GetComponent<CanvasScaler>().scaleFactor = PlayerPrefs.GetFloat("hudScale");
+		   buildingController = new();
 		stats.Start();
 		buildingText = GameObject.Find("BuildingText").GetComponent<TextMeshProUGUI>();
 		//stats.UpdateStats();
@@ -146,7 +149,7 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 					gameplay.minimapCamera.GetComponent<CameraController>().ZoomMinus();
 					break;
 				case "SlowForward":
-					gameplay.timeScale -= 0.1f;
+					gameplay.timeScale -= forwardDelta;
 					if (!gameplay.paused)
 						Time.timeScale = gameplay.timeScale;
 					break;
@@ -163,12 +166,17 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 					pauseButton.SetActive(true);
 					break;
 				case "FastForward":
-					gameplay.timeScale += 0.1f;
+					gameplay.timeScale += forwardDelta;
 					if (!gameplay.paused)
 						Time.timeScale = gameplay.timeScale;
 					break;
 				case "GoToStatsMain" or "GoToStatsUnits":
 					stats.SwitchStats(name);
+					break;
+				case "UnitChoosen":
+					var inh = Instantiate(Resources.Load<GameObject>("Prefabs/Units/Villagers/Villager"));
+					inh.transform.position = gameObject.transform.position;
+					Destroy(gameObject);
 					break;
 				default:
 					buildingController.IconClick(gameObject);

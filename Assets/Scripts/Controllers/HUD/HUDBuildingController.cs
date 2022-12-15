@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -30,7 +31,10 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 	protected Image buildingClicked;
 	private const int ITEM_WIDTH = 265;
 	private const int ITEM_HEIGHT = 265;
-	private string status, lastStatus;
+	private string status, lastStatus, lastBuildingName;
+	private bool buildingChanged;
+	private CancellationTokenSource refreshTokenSource;
+	private CancellationToken refreshToken;
 
 	public static HUDBuildingController hudBuilding;
 	public void Start()
@@ -53,6 +57,8 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 		barracks = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "BarracksBar");
 		market = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "MarketBar");
 		taxBar = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "TaxBar");
+		refreshTokenSource = new();
+		refreshToken = refreshTokenSource.Token;
 		stocks.SetActive(false);
 	}
 
@@ -129,6 +135,10 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 			case Mode.building:
 				list.SetActive(true);
 				stocks.SetActive(false);
+				refreshTokenSource.Cancel();
+				refreshTokenSource.Dispose();
+				refreshTokenSource = new CancellationTokenSource();
+				refreshToken = refreshTokenSource.Token;
 				return true;
 			case Mode.house:
 				List<Object> clones = FindObjectsOfType(typeof(GameObject)).Where(go => go.name == "Inhabitan(Clone)").ToList();
@@ -298,9 +308,19 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 	{
 		string name = building.name;
 		list.SetActive(false);
+		if (lastBuildingName != name)
+		{
+			buildingChanged = true;
+			lastBuildingName = name;
+		}
+		else
+
+			buildingChanged = false;
 		switch (building)
 		{
 			case ProductionBuilding a:
+				//OnMouseRightClick(gameplay.mode);
+				refreshToken = refreshTokenSource.Token;
 				detailsBar.SetActive(true);
 				buildingItem.gameObject.SetActive(true);
 				buildingStatus.gameObject.SetActive(true);
@@ -312,15 +332,28 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 
 				buildingName.text = Texts.buildingsNames[name];
 				buildingDP.text = building.dp.ToString() + "/" + building.maxDp.ToString();
-				refreshProgress(a);
+				refreshProgress(a, refreshToken);
 				//refreshStatus(a.name, a.status.ToString());
-				lastStatus = status = a.status.ToString();
-				buildingStatus.text = Texts.statuses[name][lastStatus];
 				buildingClicked.sprite = Resources.Load<Sprite>("Sprites/Buildings/" + name.ToSnakeCase());
 				buildingItem.sprite = Resources.Load<Sprite>("HUD/Icons/Items/" + Texts.itemInBuilding[name]);
+				//buildingClicked.SetNativeSize();
+				if (building.stopped)
+				{
+					lastStatus = status = "stopped";
+					buildingStatus.text = Texts.other["stopped"];
+					buildingItem.color = new Color(1, 1, 1, 0.5f);
+				}
+				else
+				{
+					lastStatus = status = a.status.ToString();
+					buildingStatus.text = Texts.statuses[name][lastStatus];
+					buildingItem.color = new Color(1, 1, 1, 1f);
+				}
 
 				buildingItem.SetNativeSize();
 				SetSize(buildingItem);
+				SetSize(buildingClicked);
+				gameplay.mode = Mode.building;
 				Debug.LogWarning("Sprites/Buildings/" + name.ToSnakeCase());
 				Debug.LogWarning("HUD/Icons/Items/" + Texts.itemInBuilding[name]);
 				break;
@@ -396,7 +429,15 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 	private void Recruit(string unitName)
 	{
 		bool hasItems = true;
-		foreach (var item in gameplay.unitController.needToRecruits[unitName])
+		AbstractVillager villager = gameplay.FindUnemployedVillager();
+		if (villager == null)
+		{ ShowBuildingText("Brak ludzi", 5000); return; }
+		villager.goToBarracks = true;
+		villager.movement = GameObject.Find("Barracks").transform.position;
+		villager.StartMove();
+		GameObject.Find("Barracks").GetComponent<Barracks>().unitTypes.Add(unitName);
+		//GameObject.Find("Barracks").GetComponent<Barracks>().unitIds.Add(villager.unitId);
+		/*foreach (var item in gameplay.unitController.needToRecruits[unitName])
 		{
 			if (gameplay.items[item.Key] == 0)
 			{
@@ -417,7 +458,7 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 		else
 		{
 			ShowBuildingText("Brak wymaganych przedmiotów", 5000);
-		}
+		}*/
 	}
 
 	public void MarketIconClick(string item)
@@ -459,11 +500,13 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 					villager.AssignToBuilding(pb);
 				pb.stopping = false;
 				pb.stopped = false;
+				buildingItem.color = new Color(1, 1, 1, 1f);
 			}
 			else
 			{
 				pb.worker.BuildingStopped();
 				pb.stopped = true;
+				buildingItem.color = new Color(1, 1, 1, 0.5f);
 				//pb.stopping = true;
 			}
 		}
@@ -484,9 +527,9 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 		}
 	}
 
-	private async Task refreshProgress(ProductionBuilding building)
+	private async Task refreshProgress(ProductionBuilding building, CancellationToken token)
 	{
-		while (true)
+		while (!token.IsCancellationRequested)
 		{
 			productionProgress.text = building.productionProgress.ToString() + "%";
 			await Task.Delay(100);

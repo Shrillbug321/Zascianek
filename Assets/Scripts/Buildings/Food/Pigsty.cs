@@ -10,7 +10,7 @@ public class Pigsty : ProductionBuilding
 	{
 		base.Start();
 		dp = maxDp = 20;
-		productionTime = MONTH_DURATION * 1;
+		productionTime = MONTH_DURATION * 9;
 		stockBuildingsNames = new() { "Granary", "Magazine" };
 		getItemBuildingsNames = new string[]{"Granary"};
 		products = new()
@@ -22,6 +22,6 @@ public class Pigsty : ProductionBuilding
 		{
 			["Apple"] = 5
 		};
-		initStatus = BuildingStatus.goForItem;
+		initStatus = BuildingStatus.workerGoForItem;
 	}
 }

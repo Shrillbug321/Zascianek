@@ -8,7 +8,11 @@ public class Armory : StockBuilding
 	public override void Start()
 	{
 		base.Start();
-		dp = maxDp = 50;
+		dp = maxDp = 70;
+		needToBuild = new()
+		{
+			["Clay"] = 20
+		};
 		stockedItems = new()
 		{
 			["Sable"] = 0,
