@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,18 +8,20 @@ using Random = System.Random;
 
 public class AbstractWarrior : UnitModel
 {
-	public bool seenEnemy = false;
+	public bool seenEnemy;
 	public int attackSpeed { get; set; }
 	public int damageMin { get; set; }
 	public int damageMax { get; set; }
-	protected AbstractWarrior enemy;
-	protected Building building;
-	Vector2 enemyPos = Vector2.zero;
 	public string[] playerTags;
 	public string[] enemyTags;
 	public WeaponType weaponType { get; set; }
 
-	Random random = new();
+	protected AbstractWarrior enemy;
+	protected Building building;
+
+	private Vector2 enemyPos = Vector2.zero;
+	private Random random = new();
+
 	public override void Start()
 	{
 		base.Start();
@@ -28,17 +29,10 @@ public class AbstractWarrior : UnitModel
 		enemyTags = gameplay.enemyTags;
 	}
 
-	public override void Update()
-	{
-		base.Update();
-	}
-
 	protected async Task Attack(CancellationToken token)
 	{
 		if ((direction.x < 0 && enemy.sr.flipX) || (direction.x > 0 && !enemy.sr.flipX))
-		{
 			enemy.sr.flipX = !enemy.sr.flipX;
-		}
 
 		do
 		{
@@ -46,7 +40,6 @@ public class AbstractWarrior : UnitModel
 			enemy.Blinking(attackSpeed, token);
 			await Task.Delay(attackSpeed);
 		} while (enemy.hp > 0 && !token.IsCancellationRequested);
-
 
 		if (token.IsCancellationRequested)
 			return;
@@ -61,10 +54,8 @@ public class AbstractWarrior : UnitModel
 		{
 			building.DecreaseDP(Damage());
 			building.Blinking(attackSpeed, token);
-			print(building.dp);
 			await Task.Delay(attackSpeed);
 		} while (building.dp > 0 && !token.IsCancellationRequested);
-
 
 		if (token.IsCancellationRequested)
 			return;
@@ -81,31 +72,23 @@ public class AbstractWarrior : UnitModel
 	{
 		base.OnTriggerEnter2D(collision);
 		string tag = collision.tag;
-		if (tag == this.tag) return;
-		//Debug.LogWarning("lllll");
+		if (CompareTag(tag)) return;
 		if (playerTags.Contains(tag) || enemyTags.Contains(tag))
 		{
 			enemy = collision.GetComponent<AbstractWarrior>();
-			if (collision.GetType() == typeof(CircleCollider2D))
+			if (collision is CircleCollider2D)
 			{
 				if (seenEnemy) return;
 				if (weaponType == WeaponType.Cold && !seenEnemy)
 				{
 					enemyPos = collision.gameObject.transform.position;
-					float offx = direction.x > 0.0f ? -0.35f : 0.35f;
+					float offsetX = direction.x > 0.0f ? -0.35f : 0.35f;
 
 					temp.Push(movement);
-					movement.x = enemyPos.x + offx;
+					movement.x = enemyPos.x + offsetX;
 					movement.y = enemyPos.y;
-
-
-					/*Vector2 difference = (Vector2)transform.position - enemyPos;
-
-					movement.x = (difference.x / 2 + offx) * direction.x;
-					movement.y = difference.y / 2 * direction.y;*/
-					//moveStart = true;
-
 				}
+
 				if (weaponType == WeaponType.Distance)
 				{
 					moveStart = false;
@@ -113,17 +96,17 @@ public class AbstractWarrior : UnitModel
 					await Attack(unitToken);
 					moveStart = true;
 				}
+
 				if (enemy.weaponType == WeaponType.Distance)
 				{
-					//movement = enemy.gameObject.transform.position;
 					temp.Push(movement);
 					moveStart = true;
 				}
-				//movement = enemy.gameObject.transform.position;
-				//moveStart = true;
+
 				seenEnemy = true;
 			}
-			if (collision.GetType() == typeof(BoxCollider2D))
+
+			if (collision is BoxCollider2D)
 			{
 				if (weaponType == WeaponType.Cold)
 				{
@@ -131,7 +114,6 @@ public class AbstractWarrior : UnitModel
 					await Attack(unitToken);
 					moveStart = true;
 				}
-
 			}
 		}
 
@@ -139,8 +121,7 @@ public class AbstractWarrior : UnitModel
 		{
 			building = collision.GetComponent<Building>();
 			//string color = building.GetComponent<Building>().color;
-			if (collision.GetType() == typeof(CircleCollider2D) &&
-			color != building.color)
+			if (collision is CircleCollider2D && color != building.color)
 			{
 				moveStart = false;
 				await AttackBuilding(buildingToken);
@@ -155,29 +136,24 @@ public class AbstractWarrior : UnitModel
 		string tag = collision.tag;
 		if (playerTags.Contains(tag) || enemyTags.Contains(tag))
 		{
-			if (collision.GetType() == typeof(CircleCollider2D))
+			if (collision is CircleCollider2D)
 			{
 				if (seenEnemy)
 				{
 					seenEnemy = false;
 					movement = temp.Pop();
 				}
+
 				if (weaponType == WeaponType.Distance)
-				{
 					CreateToken();
-				}
 			}
 
-			if (collision.GetType() == typeof(BoxCollider2D))
-			{
+			if (collision is BoxCollider2D)
 				CreateToken();
-			}
 		}
 
-		if(tag=="Building")
-		{
+		if (tag == "Building")
 			CreateBuildingToken();
-		}
 	}
 
 	private void CreateToken()
@@ -199,5 +175,6 @@ public class AbstractWarrior : UnitModel
 
 public enum WeaponType
 {
-	Cold, Distance
+	Cold,
+	Distance
 }

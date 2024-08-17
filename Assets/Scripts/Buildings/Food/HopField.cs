@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using static GameplayControllerInitializer;
 
 public class HopField : ProductionBuilding
@@ -11,8 +8,8 @@ public class HopField : ProductionBuilding
 		base.Start();
 		dp = maxDp = 20;
 		productionTime = MONTH_DURATION * 6;
-		stockBuildingsNames = new() { "Magazine" };
-		products = new()
+		stockBuildingsNames = new List<string> { "Magazine" };
+		products = new Dictionary<string, int>
 		{
 			["Hop"] = 25
 		};

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using static GameplayControllerInitializer;
 
 public class Market : Building
@@ -30,7 +27,7 @@ public class Market : Building
 		base.Start();
 		dp = maxDp = 50;
 		buildingName = "Market";
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Wood"] = 5,
 			["Clay"] = 5,
@@ -58,11 +55,11 @@ public class Market : Building
 
 	public static bool CanBuy(string item)
 	{
-		return GameplayControllerInitializer.gameplay.items["Money"] >= prices[item];
+		return gameplay.items["Money"] >= prices[item];
 	}
 
 	public static bool CanSell(string item)
 	{
-		return GameplayControllerInitializer.gameplay.items[item] > 0;
+		return gameplay.items[item] > 0;
 	}
 }

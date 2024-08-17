@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using static GameplayControllerInitializer;
 
 public class MineGold : ProductionBuilding
@@ -11,12 +8,12 @@ public class MineGold : ProductionBuilding
 		base.Start();
 		dp = maxDp = 50;
 		productionTime = MONTH_DURATION * 2;
-		stockBuildingsNames = new() { "Magazine" };
-		needToBuild = new()
+		stockBuildingsNames = new List<string> { "Magazine" };
+		needToBuild = new Dictionary<string, int>
 		{
 			["Wood"] = 30
 		};
-		products = new()
+		products = new Dictionary<string, int>
 		{
 			["Gold"] = 2
 		};

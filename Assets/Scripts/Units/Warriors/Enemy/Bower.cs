@@ -13,10 +13,4 @@ public class Bower : Enemy
 		//SetCircleCollider(9);
 		gameObject.tag = "Enemy";
 	}
-
-	// Update is called once per frame
-	public override void Update()
-	{
-		base.Update();
-	}
 }

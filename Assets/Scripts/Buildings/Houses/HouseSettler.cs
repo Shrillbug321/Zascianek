@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using static GameplayControllerInitializer;
+﻿using static GameplayControllerInitializer;
 
 public class HouseSettler : AbstractHouse
 {

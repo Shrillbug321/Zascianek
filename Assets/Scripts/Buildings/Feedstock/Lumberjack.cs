@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using static GameplayControllerInitializer;
 
@@ -11,13 +9,13 @@ public class Lumberjack : ProductionBuilding
 		base.Start();
 		dp = maxDp = 50;
 		productionTime = MONTH_DURATION * 1;
-		stockBuildingsNames = new() { "Magazine" };
+		stockBuildingsNames = new List<string> { "Magazine" };
 		getItemBuildingsNames = new string[] { "Tree" };
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Wood"] = 5
 		};
-		products = new()
+		products = new Dictionary<string, int>
 		{
 			["Wood"] = 10
 		};
@@ -33,10 +31,7 @@ public class Lumberjack : ProductionBuilding
 		{
 			float distance = Vector3.Distance(pos, tree.transform.position);
 			if (distance < minDistance)
-			{
 				nearest = tree;
-				distance = minDistance;
-			}
 		}
 
 		return nearest;

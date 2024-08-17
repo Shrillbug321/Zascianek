@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
-using static GameplayControllerInitializer;
+﻿using System.Collections.Generic;
 
 public class Well : Building
 {
@@ -11,7 +7,7 @@ public class Well : Building
 		base.Start();
 		dp = maxDp = 50;
 		buildingName = "Well";
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Clay"] = 5
 		};

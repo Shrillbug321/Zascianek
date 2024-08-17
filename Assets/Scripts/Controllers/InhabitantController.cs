@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using static GameplayControllerInitializer;
 using Random = System.Random;
@@ -13,10 +10,10 @@ public class InhabitantController
 
 	public Dictionary<string, List<AbstractVillager>> inhabitants = new()
 	{
-		["Villager"] = new(),
-		["RichVillager"] = new(),
-		["Nobility"] = new(),
-		["Priest"] = new(),
+		["Villager"] = new List<AbstractVillager>(),
+		["RichVillager"] = new List<AbstractVillager>(),
+		["Nobility"] = new List<AbstractVillager>(),
+		["Priest"] = new List<AbstractVillager>(),
 	};
 
 	private Dictionary<string, int> points = new()
@@ -29,25 +26,25 @@ public class InhabitantController
 
 	private Dictionary<string, Dictionary<string, int>> foodRequirements = new()
 	{
-		["Villager"] = new()
+		["Villager"] = new Dictionary<string, int>
 		{
 			["Little"] = 1,
 			["Average"] = 2,
 			["Many"] = 3,
 		},
-		["RichVillager"] = new()
+		["RichVillager"] = new Dictionary<string, int>
 		{
 			["Little"] = 2,
 			["Average"] = 3,
 			["Many"] = 4,
 		},
-		["Nobility"] = new()
+		["Nobility"] = new Dictionary<string, int>
 		{
 			["Little"] = 3,
 			["Average"] = 4,
 			["Many"] = 5,
 		},
-		["Priest"] = new()
+		["Priest"] = new Dictionary<string, int>
 		{
 			["Little"] = 3,
 			["Average"] = 4,
@@ -78,25 +75,25 @@ public class InhabitantController
 
 	private Dictionary<string, Dictionary<string, int>> taxRequirements = new()
 	{
-		["Villager"] = new()
+		["Villager"] = new Dictionary<string, int>
 		{
 			["Little"] = 2,
 			["Average"] = 3,
 			["Many"] = 0,
 		},
-		["RichVillager"] = new()
+		["RichVillager"] = new Dictionary<string, int>
 		{
 			["Little"] = 5,
 			["Average"] = 3,
 			["Many"] = 0,
 		},
-		["Nobility"] = new()
+		["Nobility"] = new Dictionary<string, int>
 		{
 			["Little"] = 25,
 			["Average"] = 10,
 			["Many"] = 0,
 		},
-		["Priest"] = new()
+		["Priest"] = new Dictionary<string, int>
 		{
 			["Little"] = 25,
 			["Average"] = 10,
@@ -106,49 +103,49 @@ public class InhabitantController
 
 	private List<Dictionary<string, int>> taxLevels = new()
 	{
-		new()
+		new Dictionary<string, int>
 		{
 			["Villager"] = 0,
 			["RichVillager"] = 0,
 			["Nobility"] = 0,
 			["Priest"] = 0,
 		},
-		new()
+		new Dictionary<string, int>
 		{
 			["Villager"] = 1,
 			["RichVillager"] = 2,
 			["Nobility"] = 5,
 			["Priest"] = 0,
 		},
-		new()
+		new Dictionary<string, int>
 		{
 			["Villager"] = 2,
 			["RichVillager"] = 3,
 			["Nobility"] = 10,
 			["Priest"] = 0,
 		},
-		new()
+		new Dictionary<string, int>
 		{
 			["Villager"] = 3,
 			["RichVillager"] = 5,
 			["Nobility"] = 15,
 			["Priest"] = 0,
 		},
-		new()
+		new Dictionary<string, int>
 		{
 			["Villager"] = 4,
 			["RichVillager"] = 8,
 			["Nobility"] = 25,
 			["Priest"] = 0,
 		},
-		new()
+		new Dictionary<string, int>
 		{
 			["Villager"] = 5,
 			["RichVillager"] = 12,
 			["Nobility"] = 35,
 			["Priest"] = 0,
 		},
-		new()
+		new Dictionary<string, int>
 		{
 			["Villager"] = 6,
 			["RichVillager"] = 17,
@@ -184,23 +181,8 @@ public class InhabitantController
 		["Nobility"] = 0
 	};
 
-
-	/*private void Awake()
-	{
-		if (ic != null && ic != this)
-			Destroy(this);
-		else
-			ic = this;
-	}*/
-
-	public void Start()
-	{
-		//ic = this;
-	}
-
 	public void Update()
 	{
-		//if (gameplay.paused) return;
 		time += Time.deltaTime;
 		if (time > MONTH_DURATION)
 		{
@@ -208,6 +190,7 @@ public class InhabitantController
 			PayTax();
 			time = 0;
 		}
+
 		CalcSatisfaction();
 	}
 
@@ -215,8 +198,8 @@ public class InhabitantController
 	{
 		CalculateInhabitants();
 		CalculateWarriors();
-		int satisfaction = 0;
 
+		int satisfaction = 0;
 		satisfaction += CalculateFoodSatisfaction();
 		satisfaction += CalculateReligionSatisfaction();
 		satisfaction += CalculateCrowdSatisfaction();
@@ -235,44 +218,24 @@ public class InhabitantController
 			"HouseRichVillager",
 			"HouseNobility"
 		};
-		placesInHouses = 0; inhabitantsSum = 0; inhabitantsMax = 0;
+		placesInHouses = 0;
+		inhabitantsSum = 0;
+		inhabitantsMax = 0;
 
 		foreach (string house in houses)
 		{
-
-			//inhabitantsInHouse[houseType] = houses.Sum(h => h.inhabitans);
 			List<AbstractHouse> abstractHouses = gameplay.buildings[house].Cast<AbstractHouse>().ToList();
 			inhabitantsSum += abstractHouses.Sum(h => h.inhabitans);
 			placesInHouses += abstractHouses.Sum(h => h.maxInhabitans);
 		}
 
-		/*List<List<AbstractHouse>> housesOfTypes = new()
-		{
-			gameplay.buildings["HouseVillager"].Cast<AbstractHouse>().ToList(),
-			gameplay.buildings["HouseRichVillager"].Cast<AbstractHouse>().ToList(),
-			gameplay.buildings["HouseNobility"].Cast<AbstractHouse>().ToList()
-		};
-		foreach (List<AbstractHouse> houses in housesOfTypes)
-		{
-			if (houses.Count > 0)
-			{
-				string houseType = houses[0].GetType().ToString();
-				inhabitantsInHouse[houseType] = houses.Sum(h => h.inhabitans);
-				inhabitantsSum += inhabitantsInHouse[houseType];
-				placesInHouses += houses.Sum(h => h.maxInhabitans);
-			}
-		}*/
 		inhabitantsSum += Church.priests;
 		placesInHouses += Church.priests;
 
 		foreach (string inhabitant in inhabitants)
-		{
 			inhabitantsMax += gameplay.units[inhabitant].Count;
-		}
 
 		homelessInhabitans = inhabitantsMax - placesInHouses;
-		//inhabitantsMax = placesInHouses;
-		//inhabitantsMax = placesInHouses > inhabitantsMax ? placesInHouses : inhabitantsMax;
 	}
 
 	public Dictionary<string, int> ChangeTax(int level)
@@ -287,29 +250,23 @@ public class InhabitantController
 		{
 			List<AbstractVillager> villagers = slot.Value;
 			foreach (var villager in villagers)
-			{
 				gameplay.items["Money"] += taxLevels[taxLevel][villager.GetType().ToString()];
-			}
 		}
 	}
+
 	public void EatFood()
 	{
 		List<string> availableFoods = new();
 		foreach (string food in gameplay.foods)
-		{
 			if (gameplay.items[food] > 0)
 				availableFoods.Add(food);
-		}
+
 		if (availableFoods.Count == 0) return;
 		foreach (var slot in inhabitants)
 		{
 			List<AbstractVillager> villagers = slot.Value;
 			if (villagers.Count > 0)
 				DecreaseFoodByInhabitant(availableFoods, slot.Key);
-			/*foreach (var villager in villagers)
-			{
-				DecreaseFoodByInhabitant(availableFoods, villager.GetType().ToString());
-			}*/
 		}
 	}
 
@@ -320,17 +277,19 @@ public class InhabitantController
 			int foodIndex = random.Next(0, availableFoods.Count);
 			if (gameplay.items[availableFoods[foodIndex]] == 0)
 				foodIndex = random.Next(0, availableFoods.Count);
+
 			if (gameplay.items[availableFoods[foodIndex]] == 0)
 				return;
+
 			gameplay.items[availableFoods[foodIndex]]--;
 		}
 	}
 
 	private void CalculateWarriors()
 	{
-		warriorsSum = GameplayControllerInitializer.gameplay.units["Infrantry"].Count;
-		warriorsSum += GameplayControllerInitializer.gameplay.units["HeavyInfrantry"].Count;
-		warriorsSum += GameplayControllerInitializer.gameplay.units["Crossbower"].Count;
+		warriorsSum = gameplay.units["Infrantry"].Count;
+		warriorsSum += gameplay.units["HeavyInfrantry"].Count;
+		warriorsSum += gameplay.units["Crossbower"].Count;
 	}
 
 	private int CalculateFoodSatisfaction()
@@ -339,9 +298,8 @@ public class InhabitantController
 		int foodTypes = 0;
 		int inhabitantTypes = 0;
 		foreach (string food in gameplay.foods)
-		{
 			foodTypes += gameplay.items[food] > 0 ? 1 : 0;
-		}
+
 		foreach (var inhabitant in inhabitants)
 		{
 			if (inhabitant.Value.Count > 0)
@@ -351,77 +309,86 @@ public class InhabitantController
 					foodSatisfaction += points["Zero"];
 					foodCount[inhabitant.Key] = 0;
 				}
+
 				if (foodTypes >= foodRequirements[inhabitant.Key]["Little"])
 				{
 					foodSatisfaction += points["Little"];
 					foodCount[inhabitant.Key] = foodRequirements[inhabitant.Key]["Little"];
 				}
+
 				if (foodTypes >= foodRequirements[inhabitant.Key]["Average"])
 				{
 					foodSatisfaction += points["Average"];
 					foodCount[inhabitant.Key] = foodRequirements[inhabitant.Key]["Average"];
 				}
+
 				if (foodTypes >= foodRequirements[inhabitant.Key]["Many"])
 				{
 					foodSatisfaction += points["Many"];
 					foodCount[inhabitant.Key] = foodRequirements[inhabitant.Key]["Many"];
 				}
-				//inhabitantsTypes.Add(inhabitant.Key);
 				inhabitantTypes++;
 			}
 		}
+
 		return inhabitantTypes == 0 ? 20 : foodSatisfaction / inhabitantTypes;
 	}
 
 	private int CalculateReligionSatisfaction()
 	{
-		int satisfaction = 0;
 		if (inhabitantsSum == 0)
 			return points["Zero"];
+
 		float ratio = (float)Church.priests / (inhabitantsSum - Church.priests);
+
 		if (ratio < religionRequirements["Little"])
-			satisfaction = points["Zero"];
+			return points["Zero"];
+
 		if (ratio >= religionRequirements["Little"])
-			satisfaction = points["Little"];
+			return points["Little"];
+
 		if (ratio >= religionRequirements["Average"])
-			satisfaction = points["Average"];
-		if (ratio >= religionRequirements["Many"])
-			satisfaction = points["Many"];
-		return satisfaction;
+			return points["Average"];
+
+		return points["Many"];
 	}
 
 	private int CalculateCrowdSatisfaction()
 	{
-		int satisfaction = 0;
 		if (placesInHouses == 0 && inhabitantsMax == 0)
 			return points["Many"];
+
 		float crowd = (float)inhabitantsMax / placesInHouses;
+
 		if (crowd > crowdRequirements["Little"])
-			satisfaction = points["Zero"];
+			return points["Zero"];
+
 		if (crowd <= crowdRequirements["Little"])
-			satisfaction = points["Little"];
+			return points["Little"];
+
 		if (crowd <= crowdRequirements["Average"])
-			satisfaction = points["Average"];
-		if (crowd <= crowdRequirements["Many"])
-			satisfaction = points["Many"];
-		return satisfaction;
+			return points["Average"];
+
+		return points["Many"];
 	}
 
 	private int CalculateSecuritySatisfaction()
 	{
-		int satisfaction = 0;
 		if (inhabitantsMax == 0)
 			return points["Many"];
+
 		float security = (float)warriorsSum / inhabitantsMax;
+
 		if (security < securityRequirements["Little"])
-			satisfaction = points["Zero"];
+			return points["Zero"];
+
 		if (security >= securityRequirements["Little"])
-			satisfaction = points["Little"];
+			return points["Little"];
+
 		if (security >= securityRequirements["Average"])
-			satisfaction = points["Average"];
-		if (security >= securityRequirements["Many"])
-			satisfaction = points["Many"];
-		return satisfaction;
+			return points["Average"];
+
+		return points["Many"];
 	}
 
 	public int CalculateTaxSatisfaction()
@@ -433,19 +400,5 @@ public class InhabitantController
 			3 or 4 => points["Little"],
 			_ => points["Zero"],
 		};
-	}
-
-	public void ChangeNobilityToPriest()
-	{
-		if (gameplay.units["Nobility"].Count == 0) return;
-		Nobility nobility = (Nobility)gameplay.units["Nobility"][0];
-		Vector2 pos = nobility.transform.position;
-		gameplay.units["Nobility"].Remove(nobility);
-		/*AbstractVillager priest = Instantiate(Resources.Load<AbstractVillager>("Prefabs/Units/Villagers/Priest"));
-		Vector3 pos = GameObject.Find("Church").transform.position;
-		priest.transform.position = new Vector3(pos.x - 2.5f, pos.y - 3f, 0);
-		List<AbstractVillager> villagersList = gameplay.ic.inhabitants["Priest"];
-		villagersList.Add(priest);
-		Church.priests++;*/
 	}
 }

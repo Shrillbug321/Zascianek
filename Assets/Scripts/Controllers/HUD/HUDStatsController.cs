@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using static GameplayControllerInitializer;
 
@@ -53,10 +48,9 @@ public class HUDStatsController
 	private void UpdateStatsMain()
 	{
 		int money = gameplay.GetItem("Money");
-		//print(money);
 		woodCounter.text = gameplay.GetItem("Wood").ToString();
 		clayCounter.text = gameplay.GetItem("Clay").ToString();
-		moneyCounter.text = string.Format("{0:D2} gr", money);
+		moneyCounter.text = $"{money:D2} gr";
 		ironCounter.text = gameplay.GetItem("Iron").ToString();
 		goldCounter.text = gameplay.GetItem("Gold").ToString();
 		peopleCounter.text = $"{gameplay.ic.inhabitantsMax} / {gameplay.ic.placesInHouses}";
@@ -85,7 +79,6 @@ public class HUDStatsController
 		infrantryCounter.text = gameplay.units["Infrantry"].Count.ToString();
 		heavyInfrantryCounter.text = gameplay.units["HeavyInfrantry"].Count.ToString();
 		crossbowerCounter.text = gameplay.units["Crossbower"].Count.ToString();
-
 	}
 
 	public void SwitchStats(string name)
@@ -102,6 +95,5 @@ public class HUDStatsController
 			statsUnits.SetActive(true);
 			visible = "StatsUnits";
 		}
-
 	}
 }

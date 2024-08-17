@@ -8,45 +8,47 @@ using static GameplayControllerInitializer;
 
 public class Building : MonoBehaviour
 {
+	//General
 	public int id;
-	public int typeId { get; set; }
 	public string buildingName { get; set; }
+	public static int buildingsNumber;
 	public bool isFireable { get; set; }
 	public bool canStartFire { get; set; }
 	public int maxDp { get; set; }
 	public int dp { get; set; }
+	public string color;
+	
+	public BuildingStatus status;
+	public BuildingStatus initStatus = BuildingStatus.waitingForWorker;
+	public List<BuildingStatus> statuses;
+	
+	//Need to build
+	public Dictionary<string, int> needToBuild;
+	public string[] grounds;
+	
+	//Production
 	public int productionTime { get; set; }
 	public int transportTime { get; set; }
-	protected float time { get; set; }
 	public Dictionary<string, int> products { get; set; }
 	public Building stockBuilding;
 	public List<string> stockBuildingsNames;
 	public Dictionary<string, Building> getItemBuildings;
 	public Dictionary<string, int> stockedItems;
 	public string[] getItemBuildingsNames;
-	public string color;
-	public Dictionary<string, int> needToBuild;
 	public Dictionary<string, int> needToProduction;
-	public BuildingStatus status;
-	public BuildingStatus initStatus = BuildingStatus.waitingForWorker;
-	public List<BuildingStatus> statuses;
-	private int nextStatusIndex=0;
-	public string[] grounds;
-	public AbstractVillager worker = null;
-	public static int buildingsNumber;
-	public bool stopped = false;
-	public bool stopping = false;
+	public AbstractVillager worker;
+	public bool stopped;
+	public bool stopping;
 
+	//Unity Components
 	public Rigidbody2D rb2D;
 	public SpriteRenderer sr;
 	public bool isColliding;
 
-
+	protected float updateTime { get; set; }
 	public virtual void Start()
 	{
-		//UnitId = Units.Count;
 		buildingName = name;
-		//WorkBuildingId = 1;
 		status = BuildingStatus.waitingForWorker;
 		initStatus = BuildingStatus.waitingForWorker;
 
@@ -54,31 +56,17 @@ public class Building : MonoBehaviour
 		rb2D = GetComponent<Rigidbody2D>();
 		GetComponent<Rigidbody2D>().freezeRotation = true;
 
-		//gameObject.AddComponent<SpriteRenderer>();
 		sr = GetComponent<SpriteRenderer>();
 		sr.sortingLayerName = "InBuild";
 		gameObject.layer = LayerMask.NameToLayer("InBuild");
 
-		//BoxCollider2D bc2d = gameObject.AddComponent<BoxCollider2D>();
-		//bc2d.isTrigger = true;
-		//bc2d.size = new Vector2(1.17f, 2.27f);
-
+		//In this place should be health bar
 		/*oldPos = rb2D.position;
 		movement = rb2D.position;
 		healthBar = Instantiate(Resources.Load<Image>("Prefabs/HUD/HealthBar"));
 		healthBar.transform.position = Camera.main.WorldToScreenPoint(transform.position);
-		//healthBar.SetActive(false);
-
-		unitTokenSource = new CancellationTokenSource();
-		unitToken = unitTokenSource.Token;*/
-
-		//gameplay.AddBuilding(this);
-		//Production();
+		healthBar.SetActive(false);*/
 	}
-
-	/*public async Task WaitForProduct()
-	{
-	}*/
 
 	public virtual void DecreaseDP(int HowMany)
 	{
@@ -98,23 +86,9 @@ public class Building : MonoBehaviour
 		}
 	}
 
-	/*public void AddItem(string item, int howMany)
-	{
-		productionProgress =0;
-	}*/
-
 	public virtual void Reset()
 	{
 	}
-
-	/*public string CanBuild(Vector2 position, string groundType = "")
-	{
-		string result = "";
-		result += CheckItemsNeedToBuilding();
-		if (groundType != "")
-			result += CheckGround(position, groundType);
-		return result;
-	}*/
 
 	public string CheckItemsNeedToBuilding()
 	{
@@ -122,20 +96,15 @@ public class Building : MonoBehaviour
 		if (needToBuild == null) return result;
 		foreach (var item in needToBuild)
 		{
-			Debug.LogWarning(item.Key);
-			Debug.LogWarning(item.Value);
-			Debug.LogWarning(gameplay.items[item.Key]);
 			if (gameplay.items[item.Key] < item.Value)
-			{
 				result += item.Value + " " + Texts.itemsNames[item.Key] + " ";
-			}
 		}
 		return result;
 	}
 
 	public string CheckGround(Vector2 position)
 	{
-		string result = "Nieprawid³owe pod³o¿e";
+		string result = "NieprawidÅ‚owe podÅ‚oÅ¼e";
 		if (grounds.Length == 0) return "";
 		Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
 		foreach (string ground in grounds)
@@ -164,21 +133,7 @@ public class Building : MonoBehaviour
 		}
 		return "";
 	}
-
-	/*public string CheckGround(Vector2 position, string groundType)
-	{
-		string result = "";
-		if (grounds == null) return result;
-		Tilemap tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
-		foreach (string ground in ground)
-		{
-
-		}
-		bool inRange = tilemap.TileTypeInRange(groundType, position, 0);
-		if (!inRange)
-			result = "Nieprawid³owe pod³o¿e";
-		return result;
-	}*/
+	
 	public bool CanProduction(Dictionary<string, int> items = null)
 	{
 		if (needToProduction == null)
@@ -190,12 +145,9 @@ public class Building : MonoBehaviour
 		foreach (var item in items)
 		{
 			if (item.Value < needToProduction[item.Key])
-			{
 				return false;
-			}
 		}
 		status = BuildingStatus.production;
-		//NextStatus();
 		return true;
 	}
 
@@ -223,17 +175,13 @@ public class Building : MonoBehaviour
 	{
 		if (needToBuild == null) return;
 		foreach (var item in needToBuild)
-		{
 			gameplay.items[item.Key] -= item.Value;
-		}
 	}
 
 	public void AddItems(Dictionary<string, int> items)
 	{
 		foreach (var item in items)
-		{
 			gameplay.items[item.Key] += item.Value;
-		}
 	}
 
 	public async Task<Dictionary<string, int>> GetItems(Dictionary<string, int> items)
@@ -244,9 +192,7 @@ public class Building : MonoBehaviour
 			if (stockedItems.ContainsKey(item.Key))
 			{
 				if (gameplay.items[item.Key] < item.Value)
-				{
 					return null;
-				}
 				if (gameplay.items[item.Key] >= item.Value)
 				{
 					result.Add(item.Key, item.Value);
@@ -258,15 +204,7 @@ public class Building : MonoBehaviour
 		return result;
 	}
 
-
-
-	/*public void NextStatus()
-	{
-		status = statuses[nextStatusIndex];
-		if (++nextStatusIndex >= statuses.Count)
-			nextStatusIndex = 0;
-	}*/
-
+	//Two next functions should be responsible for unit-building collision
 	public virtual void OnTriggerEnter2D(Collider2D collision)
 	{
 		string tag = collision.tag;

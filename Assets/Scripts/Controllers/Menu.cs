@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -35,11 +30,13 @@ public class Menu : MonoBehaviour, IPointerClickHandler
 			PlayerPrefs.SetString("music", "true");
 			PlayerPrefs.Save();
 		}
+		
 		if (!PlayerPrefs.HasKey("fullScreen"))
 		{
 			PlayerPrefs.SetString("fullScreen", "true");
 			PlayerPrefs.Save();
 		}
+		
 		if (!PlayerPrefs.HasKey("hudScale"))
 		{
 			PlayerPrefs.SetFloat("hudScale", 1);
@@ -59,7 +56,6 @@ public class Menu : MonoBehaviour, IPointerClickHandler
 		{
 			case "NewGame":
 				SceneController.buttonClicked = "NewGame";
-				//SceneManager.LoadScene("Gameplay");
 				SceneManager.LoadScene("Gameplay");
 				break;
 			case "LoadGame":
@@ -75,13 +71,13 @@ public class Menu : MonoBehaviour, IPointerClickHandler
 				Application.Quit();
 				break;
 			case "MusicButton":
-				PlayerPrefs.SetString("music", (PlayerPrefs.GetString("music") == "true" ? "false" : "true").ToString());
+				PlayerPrefs.SetString("music", (PlayerPrefs.GetString("music") == "true" ? "false" : "true"));
 				PlayerPrefs.Save();
 				musicButton.sprite = PlayerPrefs.GetString("music") == "true" ? checkedButton : shortButton;
 				break;
 			case "FullScreenButton":
 				Screen.fullScreen = !Screen.fullScreen;
-				PlayerPrefs.SetString("fullScreen", (PlayerPrefs.GetString("fullScreen") == "true" ? "false" : "true").ToString());
+				PlayerPrefs.SetString("fullScreen", (PlayerPrefs.GetString("fullScreen") == "true" ? "false" : "true"));
 				PlayerPrefs.Save();
 				fullScreenButton.sprite = PlayerPrefs.GetString("fullScreen") == "true" ? checkedButton : shortButton;
 				break;

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class Armory : StockBuilding
 {
@@ -9,11 +6,11 @@ public class Armory : StockBuilding
 	{
 		base.Start();
 		dp = maxDp = 70;
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Clay"] = 20
 		};
-		stockedItems = new()
+		stockedItems = new Dictionary<string, int>
 		{
 			["Sable"] = 0,
 			["Crossbow"] = 0,

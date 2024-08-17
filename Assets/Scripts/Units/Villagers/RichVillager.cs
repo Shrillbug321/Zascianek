@@ -1,6 +1,4 @@
-﻿using Assets.Scripts;
-
-public class RichVillager: AbstractVillager
+﻿public class RichVillager: AbstractVillager
 {
 	public override void Start()
 	{
@@ -8,9 +6,5 @@ public class RichVillager: AbstractVillager
 		hp = 60;
 		speed = 4f;
 		color = "Green";
-	}
-	public override void Update()
-	{
-		base.Update();
 	}
 }

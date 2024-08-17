@@ -1,64 +1,79 @@
 ﻿using Assets.Scripts;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class GameplayControllerInitializer : MonoBehaviour
 {
-	protected string Type;
-	protected Vector2 mousePos, mousePosInWorld;
+	//Constants
+	public float mapWidth = 40;
+	public float mapHeight = 40;
+	public const int MONTH_DURATION = 1;
+	
+	//Constants collections
 	public readonly string[] playerTags = { "Warrior", "PlayerInfrantry", "PlayerCrossbower", "PlayerHeavyInfrantry" };
 	public readonly string[] enemyTags = { "Enemy", "EnemyInfrantry", "EnemyAxer", "EnemyBower" };
-	public Dictionary<string, int> items;
-	public static GameplayController gameplay;
-	public Camera camera;
+	public readonly string[] foods = { "Meat", "Apple", "Bread", "Beer", "Sausage" };
+	
+	//Unity objects
 	public Mouse mouse;
+	public Tilemap tilemap;
 	public GameObject mainCamera;
 	public GameObject minimapCamera;
-	public Dictionary<string, List<UnitModel>> units;
-	public Dictionary<string, List<Building>> buildings;
-	public List<Enemy> enemies;
-	protected string pathToCursors = "Prefabs/HUD/Cursors";
-	protected SaveLoadUtility slu;
-	protected GameObject building;
-	protected bool buildingIsPlacing;
-	public static HUDController hud;
-	public string lastClicked;
-	public bool unitIsChoosen;
-	public Mode mode = Mode.nothing;
-	public Tilemap tilemap;
-	public float mapWidth = 40;
-	public float mapHeight =40;
-	public string[] foods = { "Meat", "Apple", "Bread", "Beer", "Sausage" };
-	//public const int MONTH_DURATION = 30;
-	public const int MONTH_DURATION = 1;
 	public GameObject settler, houseSettler;
 	public GameObject roadSign;
-	public Vector2 startPath, endPath;
-	public bool paused = false;
-	public Building lastBuilding;
-	public int month = 1, year = 1500;
-	public float actualMonthPassed = 0;
-	public Building clickedBuilding;
-	public bool runningInhabitansTextIsShowed = false;
-	public bool isGameOver = false;
-	public float timeScale = 1;
-	public bool attack = false;
-	public Vector2 settlerHousePos;
-	public System.Random random = new();
+	
+	//Controllers
+	public static GameplayController gameplay;
+	public static HUDController hud;
 	public CameraController cameraController;
 	public InhabitantController ic = new();
 	public AttackController attackController;
 	public UnitController unitController = new();
 	public SaveGameController saveGameController;
 	public MusicController musicController;
+	
+	//Collections
+	public Dictionary<string, int> items;
+	public Dictionary<string, List<UnitModel>> units;
+	public Dictionary<string, List<Building>> buildings;
+	public List<Enemy> enemies;
+	
+	//Flags
+	[FormerlySerializedAs("unitIsChoosen")]
+	public bool unitIsChosen;
+	public bool paused;
+	public bool runningInhabitansTextIsShowed;
+	public bool isGameOver;
+	public bool attack;
+	
+	//Time
+	public int month = 1, year = 1500;
+	public float actualMonthPassed;
+	public float timeScale = 1;
+	
+	//Buildings
+	public Building lastBuilding;
+	public Building clickedBuilding;
+	
+	//Vectors
+	public Vector2 startPath, endPath;
+	public Vector2 settlerHousePos;
+	
+	//Other public
+	public Mode mode = Mode.nothing;
+	public System.Random random = new();
+	
+	protected Vector2 mousePos, mousePosInWorld;
+	protected string pathToCursors = "Prefabs/HUD/Cursors";
+	protected GameObject building;
+	protected bool buildingIsPlacing;
 
 	public virtual void Start()
 	{
-		//hud = new();
-		attackController = new();
+		attackController = new AttackController();
 		mode = Mode.nothing;
 		tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
 		items = new Dictionary<string, int>()
@@ -82,7 +97,8 @@ public class GameplayControllerInitializer : MonoBehaviour
 			["Crossbow"] = 10
 		};
 
-		buildings = new() {
+		buildings = new Dictionary<string, List<Building>>
+		{
 			["AppleField"] = new(),
 			["WheatField"] = new(),
 			["HopField"] = new(),
@@ -111,7 +127,7 @@ public class GameplayControllerInitializer : MonoBehaviour
 			["Church"] = new()
 		};
 
-		units = new()
+		units = new Dictionary<string, List<UnitModel>>
 		{
 			["Villager"] = new(),
 			["RichVillager"] = new(),
@@ -134,9 +150,7 @@ public class GameplayControllerInitializer : MonoBehaviour
 		musicController = GameObject.Find("MusicPlayer").GetComponent<MusicController>();
 		year = 1500;
 		settler = GameObject.Find("Settler");
-		enemies = new();
-		//camera = GameObject.Find("MainCamera(Clone)").GetComponent<Camera>();
-		//attackController.Start();
+		enemies = new List<Enemy>();
 	}
 	public int GetItem(string item)
 	{

@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.Collections.Generic;
 
 public class UnitController
 {
 	public Dictionary<string, Dictionary<string, int>> needToRecruits = new()
 	{
-		["Infrantry"] = new()
+		["Infrantry"] = new Dictionary<string, int>
 		{
 			["Sable"] = 1,
 			["Money"] = 1
 		},
-		["HeavyInfrantry"] = new()
+		["HeavyInfrantry"] = new Dictionary<string, int>
 		{
 			["Sable"] = 1,
 			["Armor"] = 1,
 			["Money"] = 1,
 		},
-		["Crossbower"] = new()
+		["Crossbower"] = new Dictionary<string, int>
 		{
 			["Crossbow"] = 1,
 			["Money"] = 1,

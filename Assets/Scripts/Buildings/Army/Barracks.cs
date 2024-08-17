@@ -1,9 +1,6 @@
 ﻿using Assets.Scripts;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
-using static GameplayControllerInitializer;
 
 public class Barracks : Building
 {
@@ -14,7 +11,7 @@ public class Barracks : Building
 		base.Start();
 		dp = maxDp = 60;
 		buildingName = "Barracks";
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Wood"] = 10,
 			["Clay"] = 5
@@ -23,11 +20,10 @@ public class Barracks : Building
 
 	public virtual void OnTriggerEnter2D(Collider2D collision)
 	{
-		string tag = collision.tag;
-		if (collision.GetType() == typeof(CircleCollider2D))
+		if (collision is CircleCollider2D)
 		{
 			AbstractVillager unit = collision.GetComponent<AbstractVillager>();
-			if (collision.tag == "Villager" && unit.goToBarracks)
+			if (collision.CompareTag("Villager") && unit.goToBarracks)
 			{
 				unit.house.RemoveInhabitantForWarrior();
 				//Destroy(collision.gameObject);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class Magazine : StockBuilding
 {
@@ -9,11 +6,11 @@ public class Magazine : StockBuilding
 	{
 		base.Start();
 		dp = maxDp = 50;
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Wood"] = 5
 		};
-		stockedItems = new()
+		stockedItems = new Dictionary<string, int>
 		{
 			["Wood"] = 0,
 			["Wheat"] = 0,

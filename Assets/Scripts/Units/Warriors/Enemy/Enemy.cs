@@ -15,12 +15,6 @@ public class Enemy : AbstractWarrior
 		gameplay.AddEnemy(this);
 	}
 
-	// Update is called once per frame
-	public override void Update()
-	{
-		base.Update();
-	}
-
 	private void OnDestroy()
 	{
 		gameplay.RemoveEnemy(this);
@@ -30,7 +24,7 @@ public class Enemy : AbstractWarrior
 	{
 		string tag = collision.tag;
 		colliderObject = collision;
-		if (tag == this.tag) return;
+		if (CompareTag(tag)) return;
 		base.OnTriggerEnter2D(collision);
 		if (GetComponent<BoxCollider2D>().IsTouching(collision))
 		{
@@ -39,7 +33,6 @@ public class Enemy : AbstractWarrior
 			{
 				oldPos = transform.position;
 				temp.Push(movement);
-				//todo ruch
 				movement.x = (transform.position.x + ((CircleCollider2D)collision).radius + 3) * direction.x;
 				movement.y = (transform.position.y + ((CircleCollider2D)collision).radius + 3) * direction.y;
 				movement.x = (transform.position.x + ((BoxCollider2D)collision).size.x + 3) * direction.x;
@@ -47,10 +40,7 @@ public class Enemy : AbstractWarrior
 				gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
 			}
 		}
-		if (collision.GetType() == typeof(CircleCollider2D))
-		{
+		if (collision is CircleCollider2D)
 			base.OnTriggerEnter2D(collision);
-		}
-
 	}
 }

@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class ProductionBuilding : Building
 {
 	public int productionProgress { get; set; }
+
 	public void Update()
 	{
 		if (stopped)
 		{
-			time = 0;
+			updateTime = 0;
 			status = BuildingStatus.waitingForWorker;
 			productionProgress = 0;
 			return;
 		}
+
 		if (status == BuildingStatus.production)
 		{
-			time += Time.deltaTime;
-			productionProgress = (int)Math.Round(time / productionTime * 100, 0);
-			if (time > productionTime)
+			updateTime += Time.deltaTime;
+			productionProgress = (int)Math.Round(updateTime / productionTime * 100, 0);
+			if (updateTime > productionTime)
 			{
-				time = 0;
+				updateTime = 0;
 				status = BuildingStatus.transport;
 				//NextStatus();
 			}

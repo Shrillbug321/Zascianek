@@ -1,5 +1,4 @@
-﻿using Assets.Scripts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,32 +10,45 @@ using static GameplayControllerInitializer;
 
 public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 {
-	protected Vector3 groupPos;
-	protected GameObject groupSelected;
-	protected GameObject detailsBar;
 	public GameObject list;
-	protected GameObject stocks;
-	protected GameObject stockSelected;
-	protected GameObject houseBar;
-	protected GameObject barracks;
-	protected GameObject market;
-	protected GameObject taxBar;
-	protected TextMeshProUGUI buildingText;
+	
+	protected Vector3 groupPos;
 	protected bool inList;
-	protected TextMeshProUGUI buildingName;
-	protected TextMeshProUGUI buildingDP;
-	protected TextMeshProUGUI productionProgress;
-	protected TextMeshProUGUI buildingStatus;
-	protected Image buildingItem;
-	protected Image buildingClicked;
+	
+	//Objects
+	private GameObject groupSelected;
+	private GameObject detailsBar;
+	private GameObject stocks;
+	private GameObject stockSelected;
+	private GameObject houseBar;
+	private GameObject barracks;
+	private GameObject market;
+	private GameObject taxBar;
+	
+	//Constants
 	private const int ITEM_WIDTH = 265;
 	private const int ITEM_HEIGHT = 265;
-	private string status, lastStatus, lastBuildingName;
-	private bool buildingChanged;
+	
+	//TextMesh
+	private TextMeshProUGUI buildingText;
+	private TextMeshProUGUI buildingName;
+	private TextMeshProUGUI buildingDP;
+	private TextMeshProUGUI productionProgress;
+	private TextMeshProUGUI buildingStatus;
+	
+	//Image
+	private Image buildingItem;
+	private Image buildingClicked;
+	
+	//Cancellation token
 	private CancellationTokenSource refreshTokenSource;
 	private CancellationToken refreshToken;
+	
+	//Other
+	private static HUDBuildingController hudBuilding;
+	private string status, lastStatus, lastBuildingName;
+	private bool buildingChanged;
 
-	public static HUDBuildingController hudBuilding;
 	public void Start()
 	{
 		groupSelected = GameObject.Find("BuildingsFood");
@@ -45,7 +57,6 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 		groupPos = groupSelected.transform.position;
 		buildingText = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "BuildingText")).GetComponent<TextMeshProUGUI>();
 		buildingName = GameObject.Find("BuildingName").GetComponent<TextMeshProUGUI>();
-		//buildingName = Resources.FindObjectsOfTypeAll<GameObject>().First(go => go.name == "BuildingName").GetComponent<TextMeshProUGUI>();
 		buildingDP = GameObject.Find("BuildingDP").GetComponent<TextMeshProUGUI>();
 		buildingStatus = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "BuildingStatus")).GetComponent<TextMeshProUGUI>();
 		list = GameObject.Find("BuildingsList");
@@ -57,7 +68,7 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 		barracks = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "BarracksBar");
 		market = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "MarketBar");
 		taxBar = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "TaxBar");
-		refreshTokenSource = new();
+		refreshTokenSource = new CancellationTokenSource();
 		refreshToken = refreshTokenSource.Token;
 		stocks.SetActive(false);
 	}
@@ -67,23 +78,21 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 		if (hudBuilding != null && hudBuilding != this)
 			Destroy(this);
 		else
-		{
 			hudBuilding = this;
-		}
 	}
 
-	public void ChangeGroup(string groupName)
+	private void ChangeGroup(string groupName)
 	{
 		groupSelected.SetActive(false);
 		groupSelected = list.transform.Find(groupName).gameObject;
 		groupSelected.SetActive(true);
 	}
-	public void ChangeStock(string groupName)
+
+	private void ChangeStock(string groupName)
 	{
 		list.SetActive(false);
 		detailsBar.SetActive(false);
 		stocks.SetActive(true);
-		Debug.LogWarning(groupName);
 		stockSelected.SetActive(false);
 		stockSelected = stocks.transform.transform.Find(groupName).gameObject;
 		stockSelected.SetActive(true);
@@ -173,28 +182,10 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 
 	public void OnPointerEnter(PointerEventData eventData)
 	{
-		//lastEntered = eventData.pointerCurrentRaycast.gameObject.name;
-		/*GraphicRaycaster raycaster = GameObject.Find("HUD").GetComponent<GraphicRaycaster>();
-		List<RaycastResult> results = new List<RaycastResult>();
-		List<RaycastResult> results2 = new List<RaycastResult>();
-		raycaster.Raycast(eventData, results);
-		foreach (RaycastResult result in results)
-		{
-  print(result);
-		}*/
 		switch (eventData.pointerCurrentRaycast.gameObject.name)
 		{
 			case "BuildingsList":
-				/*print(results[0].screenPosition);
-				print(results[0].worldPosition);
-				results2 = new List<RaycastResult>();
-				raycaster.Raycast(results[0]., results2);
-				foreach (RaycastResult result in results2)
-				{
-					print(result);
-				}*/
 				inList = true;
-				GameObject a = eventData.pointerCurrentRaycast.gameObject;
 				Transform child = eventData.pointerCurrentRaycast.gameObject.transform.GetChild(0);
 				Transform enteredBuilding = null;
 				Vector2 mousePos = MouseController.GetMousePos();
@@ -314,12 +305,11 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 			lastBuildingName = name;
 		}
 		else
-
 			buildingChanged = false;
+		
 		switch (building)
 		{
-			case ProductionBuilding a:
-				//OnMouseRightClick(gameplay.mode);
+			case ProductionBuilding pb:
 				refreshToken = refreshTokenSource.Token;
 				detailsBar.SetActive(true);
 				buildingItem.gameObject.SetActive(true);
@@ -328,15 +318,13 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 				buildingName.gameObject.SetActive(true);
 				buildingDP.gameObject.SetActive(true);
 				buildingClicked.gameObject.SetActive(true);
-
-
+				
 				buildingName.text = Texts.buildingsNames[name];
-				buildingDP.text = building.dp.ToString() + "/" + building.maxDp.ToString();
-				refreshProgress(a, refreshToken);
-				//refreshStatus(a.name, a.status.ToString());
-				buildingClicked.sprite = Resources.Load<Sprite>("Sprites/Buildings/" + name.ToSnakeCase());
-				buildingItem.sprite = Resources.Load<Sprite>("HUD/Icons/Items/" + Texts.itemInBuilding[name]);
-				//buildingClicked.SetNativeSize();
+				buildingDP.text = $"{building.dp}/{building.maxDp}";
+				refreshProgress(pb, refreshToken);
+				buildingClicked.sprite = Resources.Load<Sprite>($"Sprites/Buildings/{name.ToSnakeCase()}");
+				buildingItem.sprite = Resources.Load<Sprite>($"HUD/Icons/Items/{Texts.itemInBuilding[name]}");
+				
 				if (building.stopped)
 				{
 					lastStatus = status = "stopped";
@@ -345,7 +333,7 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 				}
 				else
 				{
-					lastStatus = status = a.status.ToString();
+					lastStatus = status = pb.status.ToString();
 					buildingStatus.text = Texts.statuses[name][lastStatus];
 					buildingItem.color = new Color(1, 1, 1, 1f);
 				}
@@ -354,16 +342,20 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 				SetSize(buildingItem);
 				SetSize(buildingClicked);
 				gameplay.mode = Mode.building;
-				Debug.LogWarning("Sprites/Buildings/" + name.ToSnakeCase());
-				Debug.LogWarning("HUD/Icons/Items/" + Texts.itemInBuilding[name]);
 				break;
 			case StockBuilding:
-				if (building.name == "Granary")
-					ChangeStock("StockFood");
-				if (building.name == "Magazine")
-					ChangeStock("StockMagazine");
-				if (building.name == "Armory")
-					ChangeStock("StockArmory");
+				switch (building.name)
+				{
+					case "Granary":
+						ChangeStock("StockFood");
+						break;
+					case "Magazine":
+						ChangeStock("StockMagazine");
+						break;
+					case "Armory":
+						ChangeStock("StockArmory");
+						break;
+				}
 				refreshStockCount(stockSelected.transform);
 				break;
 			case Barracks:
@@ -377,17 +369,16 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 				taxBar.SetActive(true);
 				UpdateTaxBar(gameplay.ic.taxLevel.ToString());
 				gameplay.mode = Mode.tax;
-				GameObject.Find("TaxBuildingDP").GetComponent<TextMeshProUGUI>().text = building.dp.ToString() + "/" + building.maxDp.ToString();
+				GameObject.Find("TaxBuildingDP").GetComponent<TextMeshProUGUI>().text = $"{building.dp}/{building.maxDp}";
 				break;
 			case AbstractHouse house:
 				list.SetActive(false);
 				detailsBar.SetActive(true);
 
 				buildingName.text = Texts.buildingsNames[name];
-				buildingDP.text = building.dp.ToString() + "/" + building.maxDp.ToString();
-				buildingClicked.sprite = Resources.Load<Sprite>("Sprites/Buildings/" + name.ToSnakeCase());
+				buildingDP.text = $"{building.dp}/{building.maxDp}";
+				buildingClicked.sprite = Resources.Load<Sprite>($"Sprites/Buildings/{name.ToSnakeCase()}");
 				buildingItem.gameObject.SetActive(false);
-				//buildingStatus.gameObject.SetActive(false);
 				productionProgress.gameObject.SetActive(false);
 				buildingStatus.text = house.inhabitans + "/" + house.maxInhabitans;
 
@@ -417,7 +408,7 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 				buildingItem.gameObject.SetActive(true);
 				productionProgress.gameObject.SetActive(false);
 				buildingName.text = Texts.buildingsNames[name];
-				buildingDP.text = building.dp.ToString() + "/" + building.maxDp.ToString();
+				buildingDP.text = building.dp + "/" + building.maxDp;
 				buildingClicked.sprite = Resources.Load<Sprite>("Sprites/Buildings/" + name.ToSnakeCase());
 				buildingItem.sprite = Resources.Load<Sprite>("Sprites/Units/priest");
 				buildingItem.SetNativeSize();
@@ -431,12 +422,14 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 		bool hasItems = true;
 		AbstractVillager villager = gameplay.FindUnemployedVillager();
 		if (villager == null)
-		{ ShowBuildingText("Brak ludzi", 5000); return; }
+		{
+			ShowBuildingText("Brak ludzi", 5000);
+			return;
+		}
 		villager.goToBarracks = true;
 		villager.movement = GameObject.Find("Barracks").transform.position;
 		villager.StartMove();
 		GameObject.Find("Barracks").GetComponent<Barracks>().unitTypes.Add(unitName);
-		//GameObject.Find("Barracks").GetComponent<Barracks>().unitIds.Add(villager.unitId);
 		/*foreach (var item in gameplay.unitController.needToRecruits[unitName])
 		{
 			if (gameplay.items[item.Key] == 0)
@@ -531,7 +524,7 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 	{
 		while (!token.IsCancellationRequested)
 		{
-			productionProgress.text = building.productionProgress.ToString() + "%";
+			productionProgress.text = building.productionProgress + "%";
 			await Task.Delay(100);
 		}
 	}
@@ -548,9 +541,7 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 		while (true)
 		{
 			foreach (Transform item in items)
-			{
 				item.transform.Find("Count").gameObject.GetComponent<TextMeshProUGUI>().text = gameplay.items[item.name].ToString();
-			}
 			await Task.Delay(100);
 		}
 	}
@@ -559,9 +550,7 @@ public class HUDBuildingController : MonoBehaviour, IPointerEnterHandler
 		while (true)
 		{
 			foreach (Transform item in items.transform)
-			{
 				item.transform.Find("Count").gameObject.GetComponent<TextMeshProUGUI>().text = gameplay.units[item.name].Count.ToString();
-			}
 			await Task.Delay(100);
 		}
 	}

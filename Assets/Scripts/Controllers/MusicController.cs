@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using Random = System.Random;
-using static GameplayControllerInitializer;
 
 public class MusicController : MonoBehaviour
 {
@@ -14,7 +10,7 @@ public class MusicController : MonoBehaviour
 	private Random random = new();
 	private Dictionary<string, List<string>> music = new()
 	{
-		["Ambient"] = new()
+		["Ambient"] = new List<string>
 		{
 			"Nadchodzi Husaria",
 			"Chudy i Gruby",
@@ -24,13 +20,13 @@ public class MusicController : MonoBehaviour
 			"Pani jeziora",
 			"Dziewica"
 		},
-		["Battle"] = new()
+		["Battle"] = new List<string>
 		{
 			"Nadchodzi zwycięstwo",
 			"Przeciwnik nadchodzi",
 			"Walka smoków"
 		},
-		["Other"] = new()
+		["Other"] = new List<string>
 		{
 			"GameOver"
 		}

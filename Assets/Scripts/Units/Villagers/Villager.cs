@@ -1,6 +1,4 @@
-﻿using Assets.Scripts;
-
-public class Villager: AbstractVillager
+﻿public class Villager: AbstractVillager
 {
 	public override void Start()
 	{
@@ -8,9 +6,5 @@ public class Villager: AbstractVillager
 		hp = 50;
 		speed = 4f;
 		color = "Green";
-	}
-	public override void Update()
-	{
-		base.Update();
 	}
 }

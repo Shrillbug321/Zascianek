@@ -22,12 +22,12 @@ public class CameraController : MonoBehaviour
 	private float upScroll = 0.8f * Screen.height;
 	private float downScroll = 0.1f * Screen.height;
 
-	//Im mniejsze tym bli¿ej
+	//Im mniejsze tym bliÅ¼ej
 	private readonly float zoomMin = 10;
 	private readonly float zoomStart = 6; //6
 	private readonly float zoomMax = 4;
-	private Camera camera = null;
-	// Start is called before the first frame update
+	private Camera camera;
+	
 	void Start()
 	{
 		cameraTransform = gameObject.transform;
@@ -44,11 +44,6 @@ public class CameraController : MonoBehaviour
 		float x = mouse.position.ReadValue().x;
 		float y = mouse.position.ReadValue().y;
 		float scroll = mouse.scroll.ReadValue().y;
-		float zoom = Camera.main.orthographicSize;
-		/*xMin = zoom * 1.45f - zoomStart * 1.75f;
-		xMax = 50 - zoom * 1.15f - zoomStart * 1.15f;
-		yMin = zoom - zoomStart * 1.25f;
-		yMax = 16 - zoom; //17-7=10*/
 
 		switch (scroll)
 		{
@@ -61,34 +56,20 @@ public class CameraController : MonoBehaviour
 		}
 
 		if (x > rightScroll)
-		{
 			if (cameraTransform.position.x < xMax)
-			{
 				cameraTransform.position += new Vector3(speed, 0, 0);
-			}
-		}
+        
 		if (x < leftScroll)
-		{
 			if (cameraTransform.position.x > xMin)
-			{
 				cameraTransform.position += new Vector3(-speed, 0, 0);
-			}
-		}
+        
 		if (y > upScroll)
-		{
 			if (cameraTransform.position.y < yMax)
-			{
 				cameraTransform.position += new Vector3(0, speed, 0);
-			}
-		}
+        
 		if (y < downScroll)
-		{
 			if (cameraTransform.position.y > yMin)
-			{
 				cameraTransform.position += new Vector3(0, -speed, 0);
-			}
-		}
-
 	}
 
 	public void ZoomMinus()

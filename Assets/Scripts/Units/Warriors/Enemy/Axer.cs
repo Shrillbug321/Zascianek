@@ -13,10 +13,4 @@
 		SetCircleCollider(15);
 		gameObject.tag = "Enemy";
 	}
-
-	// Update is called once per frame
-	public override void Update()
-	{
-		base.Update();
-	}
 }

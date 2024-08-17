@@ -1,29 +1,28 @@
 ﻿using Assets.Scripts;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class AbstractVillager : UnitModel
 {
-	Dictionary<string, int> items = new();
 	public string workBuildingName;
 	public int workBuildingId = -1;
 	public List<string> stockBuildingsNames;
 	public List<string> getItemBuildingsNames;
 	public List<string> buildingActions;
 	public List<GameObject> route;
+	public Vector2 housePos { get; set; }
+	public bool haveHome;
+    public bool employed;
+    public bool goToBarracks;
+    public AbstractHouse house;
+	
+    private Dictionary<string, int> items = new();
 	private Dictionary<string, int> needToProduction;
-	private int buildingInRoute = 0;
+	private int buildingInRoute;
 	private bool hitTree;
 	private GameObject nextBuilding;
-	public Vector2 HousePos { get; set; }
 	private string lastEntered = "";
-	public bool haveHome;
-	public bool employed = false;
-	public bool goToBarracks = false;
-	public AbstractHouse house;
-
+	
 	public override void Start()
 	{
 		base.Start();
@@ -31,7 +30,7 @@ public class AbstractVillager : UnitModel
 	}
 	public void AssignToBuilding(Building building)
 	{
-		route = new();
+		route = new List<GameObject>();
 		workBuildingName = building.name;
 		workBuildingId = building.id;
 		foreach (string buildingName in building.getItemBuildingsNames)
@@ -90,7 +89,7 @@ public class AbstractVillager : UnitModel
 		nextBuilding = route[0];
 		movement = nextBuilding.transform.position;
 		buildingInRoute = 0;
-		items = new();
+		items = new Dictionary<string, int>();
 		employed = true;
 		moveStart = true;
 	}
@@ -98,13 +97,13 @@ public class AbstractVillager : UnitModel
 	public void GoToHouse()
 	{
 		moveStart = true;
-		movement = HousePos;
+		movement = housePos;
 	}
 
+	//This part is responsible for collision and should be refactor
 	public override async void OnTriggerEnter2D(Collider2D collision)
 	{
-
-		if (collision.GetType() == typeof(CircleCollider2D))
+		if (collision is CircleCollider2D)
 		{
 			/*if (route.Count == 0) return;
 			if (lastEntered == collision.name) return;*/
@@ -183,9 +182,9 @@ public class AbstractVillager : UnitModel
 					moveStart = false;
 					if (buildingActions[buildingInRoute] == "stock")
 					{
-					await Wait(2000);
+						await Wait(2000);
 						building.AddItems(items);
-						items = new();
+						items = new Dictionary<string, int>();
 						/*var itemsFromBuilding = building.GetItems(needToProduction);
 						foreach (KeyValuePair<string, int> item in itemsFromBuilding)
 						{
@@ -210,7 +209,7 @@ public class AbstractVillager : UnitModel
 					moveStart = true;*/
 				}
 			}
-			if (collision.tag == "Tree" && !hitTree)
+			if (collision.CompareTag("Tree") && !hitTree)
 			{
 				GameObject tree = route[buildingInRoute];
 				if (collision.GetComponent<Tree>().id == tree.GetComponent<Tree>().id)
@@ -253,16 +252,15 @@ public class AbstractVillager : UnitModel
 				base.OnTriggerEnter2D(collision);*/
 			return;
 		}
-		if (collision.GetType() == typeof(EdgeCollider2D))
-		{
+		if (collision is EdgeCollider2D)
 			GoToHouse();
-		}
 	}
 
 	public override async void OnTriggerExit2D(Collider2D collision)
 	{
 		string name = collision.name;
-		if (!stockBuildingsNames.Contains(name) && getItemBuildingsNames.Contains(name) && workBuildingName != name) base.OnTriggerExit2D(collision);
+		if (!stockBuildingsNames.Contains(name) && getItemBuildingsNames.Contains(name) && workBuildingName != name)
+			base.OnTriggerExit2D(collision);
 	}
 
 	public void MoveFromStartPathToHome()

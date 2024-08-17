@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using static GameplayControllerInitializer;
 
 public class Pigsty : ProductionBuilding
@@ -11,14 +8,14 @@ public class Pigsty : ProductionBuilding
 		base.Start();
 		dp = maxDp = 20;
 		productionTime = MONTH_DURATION * 9;
-		stockBuildingsNames = new() { "Granary", "Magazine" };
+		stockBuildingsNames = new List<string> { "Granary", "Magazine" };
 		getItemBuildingsNames = new string[]{"Granary"};
-		products = new()
+		products = new Dictionary<string, int>
 		{
 			["Meat"] = 15,
 			["Leather"] = 2
 		};
-		needToProduction = new()
+		needToProduction = new Dictionary<string, int>
 		{
 			["Apple"] = 5
 		};

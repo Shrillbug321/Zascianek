@@ -13,9 +13,4 @@
 		SetCircleCollider(5);
 		gameObject.tag = "Enemy";
 	}
-
-	public override void Update()
-	{
-		base.Update();
-	}
 }

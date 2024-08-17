@@ -1,5 +1,4 @@
-﻿using Assets.Scripts;
-using UnityEngine;
+﻿using UnityEngine;
 using static GameplayControllerInitializer;
 
 public class Nobility : AbstractVillager

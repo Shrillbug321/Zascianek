@@ -8,7 +8,6 @@ public class Warrior : AbstractWarrior
 	{
 		base.Start();
 		color = "Green";
-		//gameplay.AddWarrior(this);
 	}
 
 	public override void Update()
@@ -19,26 +18,23 @@ public class Warrior : AbstractWarrior
 		Vector2 mousePos = new Vector2(mousePos3D.x, mousePos3D.y);
 
 		if (mouse.leftButton.wasPressedThisFrame)
-		{
 			LeftClick(mousePos);
-		}
+		
 		if (mouse.rightButton.wasPressedThisFrame)
-		{
 			RightClick();
-		}
 	}
 
 	protected void LeftClick(Vector2 mousePos)
 	{
-		if (!isChoosen)
+		if (!isChosen)
 		{
 			RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1f);
 			if (hit.collider?.gameObject.name == unitName)
 			{
 				if (gameplay.MouseInRange(mousePos, hit, 0.5f))
 				{
-					isChoosen = true;
-					gameplay.unitIsChoosen = true;
+					isChosen = true;
+					gameplay.unitIsChosen = true;
 					gameplay.mode = Mode.unit;
 				}
 			}
@@ -52,20 +48,18 @@ public class Warrior : AbstractWarrior
 			}
 			else
 			{
-
 				oldPos = rb2D.position;
 				movement = new Vector2(mousePos.x, mousePos.y);
 				moveStart = true;
 
 			}
 		}
-
 	}
 
 	public void RightClick()
 	{
-		isChoosen = false;
-		gameplay.unitIsChoosen = false;
+		isChosen = false;
+		gameplay.unitIsChosen = false;
 		gameplay.SetCursor("Assets/HUD/cursor.png");
 	}
 
@@ -73,10 +67,8 @@ public class Warrior : AbstractWarrior
 	{
 		base.OnTriggerEnter2D(collision);
 		string tag = collision.tag;
-		if (tag == this.tag) return;
-		if (collision.name == "Church" && collision.tag == "Building")
-		{
+		if (CompareTag(tag)) return;
+		if (collision.name == "Church" && collision.CompareTag("Building"))
 			FullHP();
-		}
 	}
 }

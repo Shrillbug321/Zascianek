@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using static GameplayControllerInitializer;
 
 public class Bakery : ProductionBuilding
@@ -11,17 +8,17 @@ public class Bakery : ProductionBuilding
 		base.Start();
 		dp = maxDp = 60;
 		productionTime = MONTH_DURATION * 1;
-		stockBuildingsNames = new() { "Granary" };
+		stockBuildingsNames = new List<string> { "Granary" };
 		getItemBuildingsNames = new string[] { "Magazine" };
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Wood"] = 10
 		};
-		products = new()
+		products = new Dictionary<string, int>
 		{
 			["Bread"] = 5
 		};
-		needToProduction = new()
+		needToProduction = new Dictionary<string, int>
 		{
 			["Flour"] = 1
 		};

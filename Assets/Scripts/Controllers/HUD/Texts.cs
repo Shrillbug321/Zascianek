@@ -1,31 +1,32 @@
-﻿
-using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class Texts
 {
 	public static Dictionary<string, Dictionary<string, string>> statuses = new()
 	{
-		["AppleField"] = new(){
+		["AppleField"] = new Dictionary<string, string>
+		{
 			["production"] = "Jabłka rosną",
 			["transport"] = "Jabłka są niesione do spichlerza",
 			["waitingForWorker"] = "Czeka na pracownika",
 			["workerReturnFromStock"] = "Pracownik wraca ze spichlerza"
 		},
-		["WheatField"] = new(){
+		["WheatField"] = new Dictionary<string, string>
+		{
 			["production"] = "Zboże rośnie",
 			["transport"] = "Zboże jest niesione do składu",
 			["waitingForWorker"] = "Czeka na pracownika",
 			["workerReturnFromStock"] = "Pracownik wraca ze składu"
 		},
-		["HopField"] = new(){
+		["HopField"] = new Dictionary<string, string>
+		{
 			["production"] = "Chmiel rośnie",
 			["transport"] = "Chmiel jest niesiony do składu",
 			["waitingForWorker"] = "Czeka na pracownika",
 			["workerReturnFromStock"] = "Pracownik wraca ze składu"
 		},
-		["Pigsty"] = new(){
+		["Pigsty"] = new Dictionary<string, string>
+		{
 			["production"] = "Świnie rosną",
 			["transport"] = "Mięso do spichlerza, skóra do składu",
 			["waitingForWorker"] = "Czeka na pracownika",
@@ -33,7 +34,8 @@ public class Texts
 			["workerReturnWithItem"] = "Pracownik wraca z jabłkami",
 			["workerReturnFromStock"] = "Pracownik wraca ze składu"
 		},
-		["Mill"] = new(){
+		["Mill"] = new Dictionary<string, string>
+		{
 			["production"] = "Zboże jest mielone",
 			["transport"] = "Mąka jest niesiona do składu",
 			["waitingForWorker"] = "Czeka na pracownika",
@@ -41,7 +43,8 @@ public class Texts
 			["workerReturnWithItem"] = "Pracownik wraca ze zbożem",
 			["workerReturnFromStock"] = "Pracownik wraca ze składu"
 		},
-		["Brewery"] = new(){
+		["Brewery"] = new Dictionary<string, string>
+		{
 			["production"] = "Piwo jest warzone",
 			["transport"] = "Piwo jest niesione do spichlerza",
 			["waitingForWorker"] = "Czeka na pracownika",
@@ -49,7 +52,8 @@ public class Texts
 			["workerReturnWithItem"] = "Pracownik wraca z chmielem",
 			["workerReturnFromStock"] = "Pracownik wraca ze składu"
 		},
-		["Bakery"] = new(){
+		["Bakery"] = new Dictionary<string, string>
+		{
 			["production"] = "Chleb jest pieczony",
 			["transport"] = "Chleb jest niesiony do spichlerza",
 			["waitingForWorker"] = "Czeka na pracownika",
@@ -57,7 +61,8 @@ public class Texts
 			["workerReturnWithItem"] = "Pracownik wraca z mąką",
 			["workerReturnFromStock"] = "Pracownik wraca ze spichlerza"
 		},
-		["Butcher"] = new(){
+		["Butcher"] = new Dictionary<string, string>
+		{
 			["production"] = "Kiełbasa jest wypychana",
 			["transport"] = "Kiełbasa jest niesiona do spichlerza",
 			["waitingForWorker"] = "Czeka na pracownika",
@@ -65,28 +70,32 @@ public class Texts
 			["workerReturnWithItem"] = "Pracownik wraca z mięsem i skórą",
 			["workerReturnFromStock"] = "Pracownik wraca ze spichlerza"
 		},
-		["Lumberjack"] = new(){
+		["Lumberjack"] = new Dictionary<string, string>
+		{
 			["production"] = "Drzewo jest cięte na deski",
 			["transport"] = "Deski są niesione do składu",
 			["waitingForWorker"] = "Czeka na pracownika",
 			["workerGoForItem"] = "Pracownik szuka drzewa"
 		},
-		["MineClay"] = new(){
+		["MineClay"] = new Dictionary<string, string>
+		{
 			["production"] = "Glina jest wydobywana",
 			["transport"] = "Glina jest niesiona do składu",
 			["waitingForWorker"] = "Czeka na pracownika"
 		},
-		["MineGold"] = new(){
+		["MineGold"] = new Dictionary<string, string>
+		{
 			["production"] = "Złoto jest wydobywane",
 			["transport"] = "Złoto jest niesione do składu",
 			["waitingForWorker"] = "Czeka na pracownika"
 		},
-		["MineIron"] = new(){
+		["MineIron"] = new Dictionary<string, string>
+		{
 			["production"] = "Żelazo jest wydobywane",
 			["transport"] = "Żelazo jest niesione do składu",
 			["waitingForWorker"] = "Czeka na pracownika"
 		},
-		["Armorer"] = new()
+		["Armorer"] = new Dictionary<string, string>
 		{
 			["production"] = "Zbroja jest wykuwana",
 			["transport"] = "Zbroja jest niesiona do zbrojowni",
@@ -95,7 +104,7 @@ public class Texts
 			["workerReturnWithItem"] = "Pracownik wraca z żelazem",
 			["workerReturnFromStock"] = "Pracownik wraca ze zbrojowni"
 		},
-		["CrossbowMaker"] = new()
+		["CrossbowMaker"] = new Dictionary<string, string>
 		{
 			["production"] = "Kusza jest wytwarzana",
 			["transport"] = "Kusza jest niesiona do zbrojowni",
@@ -104,7 +113,7 @@ public class Texts
 			["workerReturnWithItem"] = "Pracownik wraca z drewnem",
 			["workerReturnFromStock"] = "Pracownik wraca ze zbrojowni"
 		},
-		["Smith"] = new()
+		["Smith"] = new Dictionary<string, string>
 		{
 			["production"] = "Szabla jest wykuwana",
 			["transport"] = "Szabla jest niesiona do zbrojowni",
@@ -194,11 +203,6 @@ public class Texts
 		["Armor"] = "Zbroja",
 		["Crossbow"] = "Kusza"
 	};
-
-	/*protected Dictionary<string, Type> buildingsClasses = new()
-	{
-		["AppleField"] = typeof(AppleField)
-	};*/
 
 	public static Dictionary<string, string> other = new()
 	{

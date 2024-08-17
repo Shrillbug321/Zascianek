@@ -21,18 +21,18 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 	private Image gameOver;
 	public Dictionary<int, string> monthNames = new()
 	{
-		[1] = "styczeÒ",
+		[1] = "stycze≈Ñ",
 		[2] = "luty",
 		[3] = "marzec",
-		[4] = "kwiecieÒ",
+		[4] = "kwiecie≈Ñ",
 		[5] = "maj",
 		[6] = "czerwiec",
 		[7] = "lipiec",
-		[8] = "sierpieÒ",
-		[9] = "wrzesieÒ",
-		[10] = "paüdziernik",
+		[8] = "sierpie≈Ñ",
+		[9] = "wrzesie≈Ñ",
+		[10] = "pa≈∫dziernik",
 		[11] = "listopad",
-		[12] = "grudzieÒ",
+		[12] = "grudzie≈Ñ",
 	};
 	public Image undo;
 	public TextMeshProUGUI date;
@@ -47,37 +47,35 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 	public Dictionary<string, string> unitNames = new()
 	{
 		["Infrantry"] = "Piechur",
-		["HeavyInfrantry"] = "CiÍøki piechur",
+		["HeavyInfrantry"] = "Ciƒô≈ºki piechur",
 		["Crossbower"] = "Kusznik",
-		["Settler"] = "Za≥oøyciel",
+		["Settler"] = "Za≈Ço≈ºyciel",
 
 		["EnemyInfrantry"] = "Wrogi piechur",
 		["Axer"] = "Topornik",
-		["Bower"] = "£ucznik",
+		["Bower"] = "≈Åucznik",
 
-		["Villager"] = "Ch≥op",
-		["RichVillager"] = "KmieÊ",
+		["Villager"] = "Ch≈Çop",
+		["RichVillager"] = "Kmieƒá",
 		["Nobility"] = "Szlachcic",
-		["Priest"] = "Ksiπdz",
+		["Priest"] = "KsiƒÖdz",
 	};
 	public HUDStatsController stats = new();
 
 	public GameObject unitBar;
 	private TextMeshProUGUI unitName;
 	private TextMeshProUGUI unitHP;
-	private Image unitChoosen;
+	private Image unitChosen;
 
 	public void Start()
 	{
 		hudObject = GameObject.Find("HUD");
 		hudObject.GetComponent<CanvasScaler>().scaleFactor = PlayerPrefs.GetFloat("hudScale");
-		   buildingController = new();
+		buildingController = new HUDBuildingController();
 		stats.Start();
 		buildingText = GameObject.Find("BuildingText").GetComponent<TextMeshProUGUI>();
 		//stats.UpdateStats();
 		housesVillagers = gameplay.buildings["HouseVillager"].Cast<HouseVillager>().ToList();
-		/*housesRichVillagers = gameplay.buildings["HouseRichVillager"].Cast<HouseRichVillager>().ToList();
-		housesNobiles = gameplay.buildings["HouseNobile"].Cast<HouseNobile>().ToList();*/
 
 		buildingController.Start();
 		gameOver = GameObject.Find("GameOver").GetComponent<Image>();
@@ -89,7 +87,7 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		unitBar = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitBar");
 		unitName = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitName")).GetComponent<TextMeshProUGUI>();
 		unitHP = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitHP")).GetComponent<TextMeshProUGUI>();
-		unitChoosen = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitChoosen")).GetComponent<Image>();
+		unitChosen = ((GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "UnitChosen")).GetComponent<Image>();
 
 		startButton = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "StartButton");
 		pauseButton = (GameObject)Resources.FindObjectsOfTypeAll(typeof(GameObject)).First(go => go.name == "PauseButton");
@@ -97,39 +95,22 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		//DontDestroyOnLoad(this);
 	}
 
-	/*private void Awake()
-	{
-		if (hud != null && hud != this)
-			Destroy(this);
-		else
-		{
-			hud = this;
-
-			//buildingText.transform.parent = GameObject.Find("HUD").transform;
-			//buildingText.rectTransform.position = new Vector3(475, 225, 0);
-		}
-	}*/
-
-	// Update is called once per frame
 	public virtual void Update()
 	{
 		stats.UpdateStats();
 		buildingController.Update();
 	}
 
-
 	public void ShowGameOverScreen()
 	{
 		gameOver.color = Color.white;
 		Time.timeScale = 0;
-		//Application.Quit();
 	}
 
 	public void HideGameOverScreen()
 	{
 		gameOver.color = Color.clear;
 		Time.timeScale = 1;
-		//Application.Quit();
 	}
 
 	public void IconClick(GameObject gameObject)
@@ -173,7 +154,7 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 				case "GoToStatsMain" or "GoToStatsUnits":
 					stats.SwitchStats(name);
 					break;
-				case "UnitChoosen":
+				case "UnitChosen":
 					var inh = Instantiate(Resources.Load<GameObject>("Prefabs/Units/Villagers/Villager"));
 					inh.transform.position = gameObject.transform.position;
 					Destroy(gameObject);
@@ -182,21 +163,11 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 					buildingController.IconClick(gameObject);
 					break;
 			}
-			/*switch (gameplay.mode)
-			{
-				default:
-					buildingController.IconClick(gameObject);
-					break;
-			}*/
 		}
 		if (tag == "ActionBarIcon")
-		{
 			ActionBarIconClick(name);
-		}
 		if (tag == "GroupIcon")
-		{
 			buildingController.GroupClick(name);
-		}
 	}
 
 	private string CalculateInhabitants()
@@ -208,7 +179,6 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 			gameplay.buildings["HouseNobility"].Cast<AbstractHouse>().ToList()
 		};
 		int max = 0, sum = 0;
-		//housesVillagers = gameplay.buildings["HouseVillager"].Cast<HouseVillager>().ToList();
 		foreach (List<AbstractHouse> houses in housesOfTypes)
 		{
 			if (houses.Count > 0)
@@ -221,7 +191,7 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		}
 		sum += Church.priests;
 		max += Church.priests;
-		return string.Format("{0}/{1}", sum, max);
+		return $"{sum}/{max}";
 	}
 
 	private void ActionBarIconClick(string name)
@@ -230,7 +200,6 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		{
 			case "OpenMenu":
 				SceneManager.LoadScene("MainMenu");
-				//Application.Quit();
 				break;
 			case "Repair":
 				gameplay.SetCursor("HUD/Icons/hammer");
@@ -265,7 +234,7 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 				UnitModel unit = eventData.pointerCurrentRaycast.gameObject.GetComponent<UnitModel>();
 				buildingController.list.SetActive(false);
 				unitName.text = unitNames[unit.name];
-				unitHP.text = unit.hp.ToString() + "/" + unit.maxHp.ToString();
+				unitHP.text = unit.hp + "/" + unit.maxHp;
 				break;
 			default:
 				hud.IconClick(eventData.pointerCurrentRaycast.gameObject);
@@ -279,10 +248,9 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		buildingController.list.SetActive(false);
 		unitBar.SetActive(true);
 		unitName.text = unitNames[name];
-		unitHP.text = unit.hp.ToString() + "/" + unit.maxHp.ToString();
-		unitChoosen.sprite = Resources.Load<Sprite>("Sprites/Units/" + name.ToSnakeCase());
-		//unitChoosen.sprite.SetNa
-		}
+		unitHP.text = $"{unit.hp}/{unit.maxHp}";
+		unitChosen.sprite = Resources.Load<Sprite>("Sprites/Units/" + name.ToSnakeCase());
+	}
 
 	public void OnPointerEnter(PointerEventData eventData)
 	{
@@ -291,8 +259,6 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 
 	public void OnPointerExit(PointerEventData eventData)
 	{
-		//Destroy(lastText);
-		//Debug.LogWarning(lastEntered);
 		lastEntered = "";
 		//ShowBuildingText("");
 		/*switch (eventData.pointerCurrentRaycast.gameObject.name)
@@ -315,12 +281,9 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 		Destroy(image);
 	}
 
-
 	public async Task ShowGUIText(string text, float xPos = 675, float yPos = 225, int time = int.MaxValue)
 	{
 		TextMeshProUGUI guiText = Instantiate(Resources.Load<TextMeshProUGUI>("Prefabs/HUD/Text"));
-		//GUILayout.Label(text);
-		//Text guiText = go.AddComponent<Text>();
 		guiText.text = text;
 		print(text);
 		guiText.rectTransform.position = new Vector3(xPos, yPos, 0);
@@ -338,10 +301,8 @@ public class HUDController : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 	public async Task ShowShortGUIText(string text, int time = int.MaxValue)
 	{
 		buildingText.text = text;
-
 		await Task.Delay(time);
 		buildingText.text = "";
 	}
 
 }
-/*281*/

@@ -1,11 +1,13 @@
-﻿public class HouseNobility : AbstractHouse
+﻿using System.Collections.Generic;
+
+public class HouseNobility : AbstractHouse
 {
 	public override void Start()
 	{
 		base.Start();
 		dp = maxDp = 70;
 		buildingName = "HouseNobility";
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Wood"] = 10,
 			["Clay"] = 30,

@@ -1,27 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class Granary : StockBuilding
 {
-	/*public Dictionary<string, int> stocked = new()
-	{
-		["apple"] = 0,
-		["beer"] = 0,
-		["meat"] = 0,
-		["bread"] = 0,
-		["wurst"] = 0
-	};*/
 	public override void Start()
 	{
 		base.Start();
 		dp = maxDp = 60;
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Wood"] = 10
 		};
-		stockedItems = new()
+		stockedItems = new Dictionary<string, int>
 		{
 			["Apple"] = 0,
 			["Meat"] = 0,

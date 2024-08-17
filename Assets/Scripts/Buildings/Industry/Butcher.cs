@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using static GameplayControllerInitializer;
 
 public class Butcher : ProductionBuilding
@@ -11,13 +8,13 @@ public class Butcher : ProductionBuilding
 		base.Start();
 		dp = maxDp = 50;
 		productionTime = MONTH_DURATION * 1;
-		stockBuildingsNames = new() { "Granary" };
+		stockBuildingsNames = new List<string> { "Granary" };
 		getItemBuildingsNames = new string[]{"Magazine", "Granary"};
-		products = new()
+		products = new Dictionary<string, int>
 		{
 			["Sausage"] = 2
 		};
-		needToProduction = new()
+		needToProduction = new Dictionary<string, int>
 		{
 			["Meat"] = 2,
 			["Leather"] = 1

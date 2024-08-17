@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -11,32 +10,36 @@ namespace Assets.Scripts
 	public class UnitModel : MonoBehaviour
 	{
 		public int unitId { get; set; }
-		//public int workBuildingId { get; set; }
 		public string unitName { get; set; }
 		public float speed { get; set; }
 		public int hp { get; set; } = 100;
 		public int maxHp { get; set; } = 100;
 		public string type { get; set; }
 		public int armor { get; set; }
-		public bool isChoosen { get; set; } = false;
+		public bool isChosen { get; set; }
 		public string color { get; set; }
 
 		public Rigidbody2D rb2D;
 		public SpriteRenderer sr;
-		protected Vector2 oldPos = new();
-		public Vector2 movement = new();
+		public Vector2 movement;
 		public Stack<Vector2> directionBeforeAround = new();
-		protected Stack<Vector2> temp = new();
 		public Vector2 direction;
 		public Building workBuilding;
-		protected bool moveStart = false;
-		protected float movementStatus = 0;
-		//public bool stopped = true;
 		public Collider2D colliderObject;
 		public Image healthBar;
+		
+		protected bool moveStart;
+		protected Stack<Vector2> temp = new();
+		protected Vector2 oldPos;
+		protected CancellationTokenSource unitTokenSource;
+		protected CancellationToken unitToken;
+		protected CancellationTokenSource buildingTokenSource;
+		protected CancellationToken buildingToken;
+		
+		private static int units;
 		private bool around;
 		private float aroundDistance;
-		protected List<Vector2> directions = new()
+		private List<Vector2> directions = new()
 		{
 			Vector2.up,
 			new Vector2(1, 1),
@@ -47,31 +50,13 @@ namespace Assets.Scripts
 			Vector2.left,
 			new Vector2(-1, 1),
 		};
-		private int waitCounter = 0;
-		public static int units = 0;
 
-		public CancellationTokenSource unitTokenSource;
-		public CancellationToken unitToken;
-		public CancellationTokenSource buildingTokenSource;
-		public CancellationToken buildingToken;
 		public virtual void Start()
 		{
 			unitId = units++;
 			unitName = name;
-			//WorkBuildingId = 1;
-
-			//gameObject.AddComponent<Rigidbody2D>();
 			rb2D = GetComponent<Rigidbody2D>();
-			//GetComponent<Rigidbody2D>().freezeRotation = true;
-
-			//gameObject.AddComponent<SpriteRenderer>();
 			sr = GetComponent<SpriteRenderer>();
-			/*sr.sortingLayerName = "Characters";
-			gameObject.layer = LayerMask.NameToLayer("Characters");*/
-
-			/*BoxCollider2D bc2d = gameObject.AddComponent<BoxCollider2D>();
-			bc2d.isTrigger = true;
-			bc2d.size = new Vector2(1.17f, 2.27f);*/
 
 			oldPos = rb2D.position;
 			//movement = rb2D.position;
@@ -90,82 +75,35 @@ namespace Assets.Scripts
 
 		public virtual void Update()
 		{
-			//if (GetType().ToString() == "Settler")
+			if (moveStart && Vector2.Distance(transform.position, movement) > 0.5)
 			{
-				if (moveStart && Vector2.Distance(transform.position, movement) > 0.5)
-				{
-					transform.position = Vector2.MoveTowards(transform.position, movement, speed * Time.deltaTime);
-					direction = CalcDirection();
-					if (direction.x != 0)
-						sr.flipX = direction.x < 0;
-				}
-				if (around && Vector2.Distance(transform.position, movement) <= 0.6)
-				{
-					around = false;
-					direction = directionBeforeAround.Pop();
-					movement = temp.Pop();
-				}
-				RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 1, LayerMask.GetMask("Buildings"));
-				/*if (hit.collider != null && hit.collider is EdgeCollider2D)
-				{
-					around = true;
-					oldPos = transform.position;
-					temp.Push(movement);
-					directionBeforeAround.Push(direction);
-					//aroundDistance = ((EdgeCollider2D)hit.collider).edgeRadius / 5;
-					aroundDistance = 3;
-					direction = findAvailableDirection(direction);
-					movement = SetMovementForAround(direction);
-					//((EdgeCollider2D)hit.collider).isTrigger = false;
-				}*/
+				transform.position = Vector2.MoveTowards(transform.position, movement, speed * Time.deltaTime);
+				direction = CalcDirection();
+				if (direction.x != 0)
+					sr.flipX = direction.x < 0;
 			}
-
-			/*if (around)
+			if (around && Vector2.Distance(transform.position, movement) <= 0.6)
 			{
-				//transform.RotateAround(((CircleCollider2D)colliderObject).bounds.center, Vector3.forward, 20 * Time.deltaTime);
-				//around = false;
-				if (Vector2.Distance(transform.position, movement) <= 0.6)
-				{
-						around = false;
-					RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, Mathf.Infinity, LayerMask.GetMask("Buildings"));
-					if (hit.collider == null)
-					{
-						movement = temp.Pop();
-					}
-					else
-					{
-						Vector2 availableDirection = findAvailableDirection(direction);
-						movement = SetMovementForAround(availableDirection);
-					}
-				}
-
-				*//*oldPos = transform.position;
-				movement = temp.Pop();*//*
-
-			}*/
-			/*else {
-   moveStart = false;
-			}*/
+				around = false;
+				direction = directionBeforeAround.Pop();
+				movement = temp.Pop();
+			}
 		}
 
-
-
-		public virtual void DecreaseHP(int HowMany)
+		public void DecreaseHP(int HowMany)
 		{
 			print(HowMany);
 			hp = HowMany > 0 ? hp - HowMany : hp;
 		}
 
-		public virtual void IncreaseHP(int HowMany)
+		public void IncreaseHP(int HowMany)
 		{
-			hp = maxHp;
-			//hp = HowMany > 0 ? hp - HowMany : hp;
+			hp = hp + HowMany <= maxHp ? hp + HowMany : maxHp;
 		}
 
-		public virtual void FullHP()
+		public void FullHP()
 		{
 			hp = maxHp;
-			//hp = HowMany > 0 ? hp - HowMany : hp;
 		}
 
 		public async Task Blinking(int attackSpeed, CancellationToken token)
@@ -183,18 +121,20 @@ namespace Assets.Scripts
 		private Vector2 CalcDirection()
 		{
 			Vector2 direction = (movement - oldPos).normalized;
-			switch (direction.x)
+			direction.x = direction.x switch
 			{
-				case < -0.02f: direction.x = -1; break;
-				case >= -0.02f and <= 0.02f: direction.x = 0; break;
-				case > 0.02f: direction.x = 1; break;
-			}
-			switch (direction.y)
+				< -0.02f => -1,
+				>= -0.02f and <= 0.02f => 0,
+				> 0.02f => 1,
+				_ => direction.x
+			};
+			direction.y = direction.y switch
 			{
-				case < -0.02f: direction.y = -1; break;
-				case >= -0.02f and <= 0.02f: direction.y = 0; break;
-				case > 0.02f: direction.y = 1; break;
-			}
+				< -0.02f => -1,
+				>= -0.02f and <= 0.02f => 0,
+				> 0.02f => 1,
+				_ => direction.y
+			};
 			return direction;
 		}
 
@@ -210,42 +150,24 @@ namespace Assets.Scripts
 			gameplay.RemoveUnit(this);
 		}
 
-		public virtual async void OnTriggerEnter2D(Collider2D collision)
+		public virtual void OnTriggerEnter2D(Collider2D collision)
 		{
 			string tag = collision.tag;
 			colliderObject = collision;
-			//if (CompareTag(tag)) return;
 
-			if (collision.GetType() == typeof(EdgeCollider2D))
+			if (collision is EdgeCollider2D)
 			{
-				if (collision.tag == "Building")
+				if (collision.CompareTag("Building"))
 				{
 					around = true;
 					oldPos = transform.position;
 					//moveStart = false;
 					temp.Push(movement);
 					temp.Push(movement);
-					//Debug.LogWarning(direction);
-					RaycastHit2D hit;// = Physics2D.Raycast(transform.position, direction, Mathf.Infinity, LayerMask.GetMask("Buildings"));
-									 //Debug.LogWarning(hit.collider);
 					directionBeforeAround.Push(direction);
-					//aroundDistance = ((CircleCollider2D)collision).radius / 5;
 					aroundDistance = 3;
 					direction = findAvailableDirection(direction);
-
-					/*if (hit.collider == null)
-					{
-
-						//hit = Physics2D.Raycast(transform.position, movement, 100f, LayerMask.GetMask("Buildings"));
-						Debug.LogWarning(hit.collider);
-					}*/
-					//Debug.LogWarning(transform.position);
-					//Debug.LogWarning(new Vector3(movement.x, movement.y, 0));
-					//collision.isTrigger = false;
 					movement = SetMovementForAround(direction);
-					/*movement.x = (transform.position.x + ((CircleCollider2D)collision).radius * 2) * direction.x;
-					movement.y = (transform.position.y + ((CircleCollider2D)collision).radius * 2) * direction.y;*/
-
 					moveStart = true;
 				}
 				return;
@@ -253,38 +175,20 @@ namespace Assets.Scripts
 
 			if (GetComponent<BoxCollider2D>().IsTouching(collision))
 			{
-				/*if (tag == "Building")// && !around)
-				{
-
-					//else
-					{
-						//around = true;
-						oldPos = transform.position;
-						temp = movement;
-						//todo ruch
-						//movement.x = (transform.position.x + ((CircleCollider2D)collision).radius * 2) * direction.x;
-						//movement.y = (transform.position.y + ((CircleCollider2D)collision).radius * 2) * direction.y;
-					//movement.x = (transform.position.x + ((BoxCollider2D)collision).size.x + 3) * direction.x;
-					//movement.y = (transform.position.y + ((BoxCollider2D)collision).size.y + 3) * direction.y;
-						gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
-					}
-
-
-				}*/
-				if (tag == "InBuild")// && !around)
+				if (tag == "InBuild")
 				{
 					Building entered = collision.GetComponent<Building>();
 					entered.isColliding = true;
 					entered.sr.color = Color.gray;
 				}
 			}
-
 		}
 
 		public void StartMove()
 		{
 			moveStart = true;
 		}
+		
 		public void EndMove()
 		{
 			moveStart = false;
@@ -294,22 +198,13 @@ namespace Assets.Scripts
 		{
 			string tag = collision.tag;
 			colliderObject = null;
-			if (tag == "InBuild")// && !around)
+			if (tag == "InBuild")
 			{
 				Building entered = collision.GetComponent<Building>();
 				entered.isColliding = false;
 				entered.sr.color = Color.white;
 			}
-			/*if (collision.GetType() == typeof(BoxCollider2D))
-			{
-				if (tag == "Finish")
-				{
-					gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
-					oldPos = transform.position;
-					movement = temp;
-				}
-
-			}*/
+			
 			if (collision.GetType() == typeof(CircleCollider2D))
 			{
 				//collision.GetComponent<CircleCollider2D>().isTrigger = true;
@@ -322,28 +217,10 @@ namespace Assets.Scripts
 				}
 			}
 		}
-		protected async Task Hide()
-		{
-			print("jkjkjk");
-			Color color = sr.color;
-			Color newColor = new Color(1, 1, 1, 0);
-			for (float i = 0; i == 10; i += 0.1f)
-			{
-				//sr.color = new Color(1, 1, 1, 0.1f * i);
-				sr.color = Color.Lerp(color, newColor, i);
-				await Task.Delay(1000);
-			}
-		}
+		
 		protected async Task Wait(int time)
 		{
-			//for (float i = 0; i == 10; i+=0.1f)
-			//{
-			/*if (waitCounter++ % 2 == 0)
-				return;*/
-
 			await Task.Delay(time);
-			//Thread.Sleep(time);
-			//}
 		}
 
 		private Vector2 findAvailableDirection(Vector2 direction)
@@ -358,7 +235,6 @@ namespace Assets.Scripts
 				hit = Physics2D.Raycast(transform.position, directions[i], 20, LayerMask.GetMask("Buildings"));
 				if (hit.collider == null)
 				{
-					//Debug.LogWarning(directions[i]);
 					findDirection = true;
 					availableDirection = directions[i];
 					break;
@@ -371,7 +247,6 @@ namespace Assets.Scripts
 					hit = Physics2D.Raycast(transform.position, directions[i], 2, LayerMask.GetMask("Buildings"));
 					if (hit.collider == null)
 					{
-						//Debug.LogWarning(directions[i]);
 						findDirection = true;
 						availableDirection = directions[i];
 						break;
@@ -428,4 +303,3 @@ namespace Assets.Scripts
 
 	}
 }
-/*344*/

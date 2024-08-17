@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using static GameplayControllerInitializer;
 
@@ -24,18 +21,16 @@ public class AbstractHouse : Building
 	{
 		if (CompareTag("Building"))
 		{
-			time += Time.deltaTime;
+			updateTime += Time.deltaTime;
 			if (inhabitans < maxInhabitans)
 			{
 				if (gameplay.ic.homelessInhabitans > 0)
-				{
 					AssignHomeless();
-				}
 				else if (gameplay.ic.satisfaction >= 50)
 				{
-					if (time > timeToAddInhabitant)
+					if (updateTime > timeToAddInhabitant)
 					{
-						time = 0;
+						updateTime = 0;
 						AddInhabitant();
 					}
 				}
@@ -43,9 +38,9 @@ public class AbstractHouse : Building
 
 			if (gameplay.ic.satisfaction < 50 && inhabitans > 0)
 			{
-				if (time > timeToRemoveInhabitant)
+				if (updateTime > timeToRemoveInhabitant)
 				{
-					time = 0;
+					updateTime = 0;
 					RemoveInhabitant();
 				}
 			}
@@ -54,20 +49,18 @@ public class AbstractHouse : Building
 
 	}
 
-	protected void AddInhabitant()
+	private void AddInhabitant()
 	{
 		AbstractVillager inhabitant = Instantiate(Resources.Load<GameObject>("Prefabs/Units/Villagers/" + inhabitantType).GetComponent<AbstractVillager>());
 		inhabitant.haveHome = true;
 		inhabitant.house = this;
-		//inhabitant.transform.position = gameplay.startPath;
 		inhabitant.transform.position = new Vector2(transform.position.x, transform.position.y - 2);
 		List<AbstractVillager> villagersList = gameplay.ic.inhabitants[inhabitantType];
 		villagersList.Add(inhabitant);
-		inhabitant.HousePos = new Vector2(transform.position.x, transform.position.y - 2);
+		inhabitant.housePos = new Vector2(transform.position.x, transform.position.y - 2);
 		inhabitansList.Add(inhabitant);
 		inhabitans++;
 		inhabitant.MoveFromStartPathToHome();
-		//gameplay.inhabitants.Add(houseType, List. inhabitant);
 	}
 
 	public void AddInhabitantFromWarrior()
@@ -75,18 +68,16 @@ public class AbstractHouse : Building
 		AbstractVillager inhabitant = Instantiate(Resources.Load<GameObject>("Prefabs/Units/Villagers/" + inhabitantType).GetComponent<AbstractVillager>());
 		inhabitant.haveHome = true;
 		inhabitant.house = this;
-		//inhabitant.transform.position = gameplay.startPath;
 		inhabitant.transform.position = new Vector2(transform.position.x, transform.position.y - 2);
 		List<AbstractVillager> villagersList = gameplay.ic.inhabitants[inhabitantType];
 		villagersList.Add(inhabitant);
-		inhabitant.HousePos = new Vector2(transform.position.x, transform.position.y - 2);
+		inhabitant.housePos = new Vector2(transform.position.x, transform.position.y - 2);
 		inhabitansList.Add(inhabitant);
 		inhabitans++;
 		inhabitant.MoveFromStartPathToHome();
-		//gameplay.inhabitants.Add(houseType, List. inhabitant);
 	}
 
-	protected void RemoveInhabitant()
+	private void RemoveInhabitant()
 	{
 		List<AbstractVillager> villagersList = gameplay.ic.inhabitants[inhabitantType];
 		AbstractVillager inhabitant = villagersList[0];
@@ -96,7 +87,6 @@ public class AbstractHouse : Building
 		inhabitansList.Remove(inhabitant);
 		Destroy(inhabitant.gameObject);
 		inhabitans--;
-		//gameplay.inhabitants.Add(houseType, List. inhabitant);
 	}
 
 	public void RemoveInhabitantForWarrior()
@@ -109,7 +99,6 @@ public class AbstractHouse : Building
 		inhabitansList.Remove(inhabitant);
 		inhabitans--;
 		Destroy(inhabitant.gameObject);
-		//gameplay.inhabitants.Add(houseType, List. inhabitant);
 	}
 
 	private void AssignHomeless()
@@ -121,8 +110,7 @@ public class AbstractHouse : Building
 				if (maxInhabitans - inhabitans > 0)
 				{
 					inhabitant.haveHome = true;
-					inhabitant.HousePos = new Vector2(transform.position.x, transform.position.y - 2);
-					//inhabitant.movement = inhabitant.HousePos;
+					inhabitant.housePos = new Vector2(transform.position.x, transform.position.y - 2);
 					inhabitant.GoToHouse();
 					inhabitansList.Add(inhabitant);
 					inhabitans++;

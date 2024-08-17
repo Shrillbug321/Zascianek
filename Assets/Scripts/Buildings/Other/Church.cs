@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
 using static GameplayControllerInitializer;
 
 public class Church : Building
@@ -12,7 +10,7 @@ public class Church : Building
 		base.Start();
 		dp = maxDp = 70;
 		buildingName = "Church";
-		needToBuild = new()
+		needToBuild = new Dictionary<string, int>
 		{
 			["Wood"] = 30,
 			["Money"] = 100,

@@ -13,10 +13,4 @@ public class Infrantry : Warrior
 		//SetCircleCollider(5);
 		gameObject.tag = "Warrior";
 	}
-
-	public override void Update()
-	{
-		base.Update();
-	}
-
 }

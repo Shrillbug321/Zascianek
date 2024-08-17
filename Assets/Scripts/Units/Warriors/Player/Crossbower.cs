@@ -13,10 +13,4 @@
 		//SetCircleCollider(9);
 		gameObject.tag = "Warrior";
 	}
-
-	public override void Update()
-	{
-		base.Update();
-	}
-
 }
