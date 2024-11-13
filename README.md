@@ -10,6 +10,10 @@ Another important part is development of industry, delivering intermediate produ
 Unfortunately village is dangerous by Moskals [_Polish historical name of Russians_]. To defend player need villagers recruit, trained and equip in weapon. Combat unit is infantry, heavy infantry and crossbower. Enemy such has axer, bower and infantry.<br>
 Game is failed, if enemy destroy house of settler.
 
+**Launching**
+1. Download and extract .zip from [Google Drive](https://drive.google.com/file/d/1GYoN5sAjhke5Y31g40Xxtw_gPhYFOH8-) 
+2. Run Zaścianek.exe
+
 Main menu<br>
 ![img.png](Readme/img.png)
 Settings<br>
