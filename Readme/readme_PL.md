@@ -10,6 +10,10 @@ Ważna jest także rozbudowa przemysłu dostarczającego półproduktów np. mą
 Niestety wiosce zagrażają Moskale. W celu obrony gracz musi zrekrutować chłopów, wyćwiczyć ich oraz wyposażyć w broń. Jednostki bojowe to piechur, ciężki piechur oraz kusznik. Wróg z kolei dysponuje topornikiem, łucznikiem czy również piechurem.<br>
 Gra kończy się porażką, gdy zostanie zniszczony dworek założyciela wsi.
 
+**Uruchamianie**
+1. Pobieramy i wypakowujemy .zip z [dysku Google](https://drive.google.com/file/d/1GYoN5sAjhke5Y31g40Xxtw_gPhYFOH8-)
+2. Uruchamiamy Zaścianek.exe
+
 Menu główne<br>
 ![img.png](img.png)
 Ustawienia<br>
